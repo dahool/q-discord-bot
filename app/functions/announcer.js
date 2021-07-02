@@ -47,7 +47,7 @@ getRoles = (channel, message) => {
         let roles = [];
         if (m) {
             m.forEach(v => {
-                let role = channel.guild.cache.roles.roles.cache.find(r => r.name === v.substring(1));
+                let role = channel.guild.roles.cache.find(r => r.name === v.substring(1));
                 if (role) {
                     roles.push(`<@&${role.id}>`);
                 }

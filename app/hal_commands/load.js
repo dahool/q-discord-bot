@@ -4,7 +4,7 @@ const calendar = require('../functions/calendar');
 module.exports = {
 	name: 'load',
 	description: 'Reload events calendar',
-	dm: true,
+	dm: false,
 	admin: true,
 	async execute(client, message, args) {
 		message.channel.send('On it');
