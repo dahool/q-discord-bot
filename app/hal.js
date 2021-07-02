@@ -10,12 +10,16 @@ const announcer = require('./functions/announcer');
 const calendar = require('./functions/calendar');
 const membersOnline = require('./functions/online');
 
+var dailies = require('./maia_commands/dailies');
+var cron = require('node-cron');
+
 const client = new Client({ ws: { intents: Intents.ALL } });
 client.commands = new Discord.Collection();
 
 const commandFiles = fs.readdirSync('./hal_commands').filter(file => file.endsWith('.js'));
 
 const { MembersDb, ConfigDb, connectionManager } = require('./db/db');
+const { connect } = require('http2');
 
 var ready = false;
 
@@ -95,6 +99,30 @@ client.on('message', message => {
 	})().catch(console.error);
 });
 
+scheduleTasks = async (client, connection) => {
+	const props = {timezone: "UTC"};
+	cron.schedule('0 4 * * *', () => {
+		console.log('rotate daily calendar');
+		dailies.rotate(connection);
+	}, props);
+	cron.schedule('50 3 * * *', () => {
+		console.log('dailes reset');
+		dailies.notify(connection, "0400", client);
+	}, props);
+	cron.schedule('50 9 * * *', () => {
+		console.log('dailes 1st mid');
+		dailies.notify(connection, "1000", client);
+	}, props);
+	cron.schedule('50 15 * * *', () => {
+		console.log('dailes mid reset');
+		dailies.notify(connection, "1600", client);
+	}, props);	
+	cron.schedule('50 21 * * *', () => {
+		console.log('dailes 2nd mid');
+		dailies.notify(connection, "2200", client);
+	}, props);	
+}
+
 var connection;
 module.exports = {
 	async start(connectionManager) {
@@ -108,7 +136,10 @@ module.exports = {
 
 		memberDb = new MembersDb(connectionManager);
 		configDb = new ConfigDb(connectionManager);
+		
 		client.login(process.env.HAL_TOKEN);
+
+		scheduleTasks(client, connection);
 	},
 	async announce(num) {
 		if (!ready) {

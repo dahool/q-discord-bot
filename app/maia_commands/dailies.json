@@ -1,0 +1,530 @@
+[
+	{
+		"day": 1,
+		"start": "0400",
+		"duration": 12,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 1,
+		"start": "0400",
+		"duration": 6,
+		"event": "Research SLB",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 1,
+		"start": "1000",
+		"duration": 6,
+		"event": "Officer Recruit Heroic",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_Heroic.jpg",
+		"color": "#00d4ff"
+	},
+	{
+		"day": 1,
+		"start": "1600",
+		"duration": 12,
+		"event": "Officer Recruit",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},	
+	{
+		"day": 1,
+		"start": "1600",
+		"duration": 6,
+		"event": "Officer XP SLB",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 1,
+		"start": "2200",
+		"duration": 6,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 2,
+		"start": "0400",
+		"duration": 12,
+		"event": "Officer XP",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 2,
+		"start": "0400",
+		"duration": 6,
+		"event": "Limited Time Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 2,
+		"start": "1000",
+		"duration": 6,
+		"event": "Ship SLB",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 2,
+		"start": "1600",
+		"duration": 12,
+		"event": "Station SLB",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},	
+	{
+		"day": 2,
+		"start": "1600",
+		"duration": 6,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 2,
+		"start": "2200",
+		"duration": 6,
+		"event": "Limited Time Ship",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 3,
+		"start": "0400",
+		"duration": 12,
+		"event": "Officer Recruit",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},
+	{
+		"day": 3,
+		"start": "0400",
+		"duration": 6,
+		"event": "Officer XP",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 3,
+		"start": "1000",
+		"duration": 6,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 3,
+		"start": "1600",
+		"duration": 12,
+		"event": "Ship SLB",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},	
+	{
+		"day": 3,
+		"start": "1600",
+		"duration": 6,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 3,
+		"start": "2200",
+		"duration": 6,
+		"event": "Limited Time Ship",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 4,
+		"start": "0400",
+		"duration": 12,
+		"event": "Research SLB",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 4,
+		"start": "0400",
+		"duration": 6,
+		"event": "Officer Recruit Heroic",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},
+	{
+		"day": 4,
+		"start": "1000",
+		"duration": 6,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 4,
+		"start": "1600",
+		"duration": 12,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},	
+	{
+		"day": 4,
+		"start": "1600",
+		"duration": 6,
+		"event": "Officer XP",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 4,
+		"start": "2200",
+		"duration": 6,
+		"event": "Ship SLB",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},	
+	{
+		"day": 5,
+		"start": "0400",
+		"duration": 12,
+		"event": "Ship",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 5,
+		"start": "0400",
+		"duration": 6,
+		"event": "Research SLB",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 5,
+		"start": "1000",
+		"duration": 6,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 5,
+		"start": "1600",
+		"duration": 12,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},	
+	{
+		"day": 5,
+		"start": "1600",
+		"duration": 6,
+		"event": "Officer Recruit SLB",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},
+	{
+		"day": 5,
+		"start": "2200",
+		"duration": 6,
+		"event": "Ship Heroic",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 6,
+		"start": "0400",
+		"duration": 12,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 6,
+		"start": "0400",
+		"duration": 6,
+		"event": "Officer XP SLB",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 6,
+		"start": "1000",
+		"duration": 6,
+		"event": "Officer Recruit Heroic",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},
+	{
+		"day": 6,
+		"start": "1600",
+		"duration": 12,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},	
+	{
+		"day": 6,
+		"start": "1600",
+		"duration": 6,
+		"event": "Limited Time Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 6,
+		"start": "2200",
+		"duration": 6,
+		"event": "Ship SLB",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},		
+	{
+		"day": 7,
+		"start": "0400",
+		"duration": 12,
+		"event": "Officer XP",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 7,
+		"start": "0400",
+		"duration": 6,
+		"event": "Limited Time Officer XP",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 7,
+		"start": "1000",
+		"duration": 6,
+		"event": "Limited Time Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 7,
+		"start": "1600",
+		"duration": 12,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},	
+	{
+		"day": 7,
+		"start": "1600",
+		"duration": 6,
+		"event": "Officer Recruit Heroic",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},
+	{
+		"day": 7,
+		"start": "2200",
+		"duration": 6,
+		"event": "Officer XP SLB",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 8,
+		"start": "0400",
+		"duration": 12,
+		"event": "Ship",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 8,
+		"start": "0400",
+		"duration": 6,
+		"event": "Limited Time Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 8,
+		"start": "1000",
+		"duration": 6,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 8,
+		"start": "1600",
+		"duration": 12,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},	
+	{
+		"day": 8,
+		"start": "1600",
+		"duration": 6,
+		"event": "Limited Time Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},
+	{
+		"day": 8,
+		"start": "2200",
+		"duration": 6,
+		"event": "Limited Time Ship",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},	
+	{
+		"day": 9,
+		"start": "0400",
+		"duration": 12,
+		"event": "Officer Recruit",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},
+	{
+		"day": 9,
+		"start": "0400",
+		"duration": 6,
+		"event": "Limited Time Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 9,
+		"start": "1000",
+		"duration": 6,
+		"event": "Officer XP",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 9,
+		"start": "1600",
+		"duration": 12,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},	
+	{
+		"day": 9,
+		"start": "1600",
+		"duration": 6,
+		"event": "Officer XP SLB",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 9,
+		"start": "2200",
+		"duration": 6,
+		"event": "Research SLB",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},	
+	{
+		"day": 10,
+		"start": "0400",
+		"duration": 12,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 10,
+		"start": "0400",
+		"duration": 6,
+		"event": "Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 10,
+		"start": "1000",
+		"duration": 6,
+		"event": "Limited Time Ship",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 10,
+		"start": "1600",
+		"duration": 12,
+		"event": "Station",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},	
+	{
+		"day": 10,
+		"start": "1600",
+		"duration": 6,
+		"event": "Limited Time Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 10,
+		"start": "2200",
+		"duration": 6,
+		"event": "Limited Time Station SLB",
+		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
+		"color": "#1c66e8"
+	},	
+	{
+		"day": 11,
+		"start": "0400",
+		"duration": 12,
+		"event": "Officer XP",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
+		"color": "#8c4cdc"
+	},
+	{
+		"day": 11,
+		"start": "0400",
+		"duration": 6,
+		"event": "Ship Heroic",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 11,
+		"start": "1000",
+		"duration": 6,
+		"event": "Limited Time Research",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	},
+	{
+		"day": 11,
+		"start": "1600",
+		"duration": 12,
+		"event": "Officer Recruit",
+		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
+		"color": "#00d4ff"
+	},	
+	{
+		"day": 11,
+		"start": "1600",
+		"duration": 6,
+		"event": "Ship Heroic",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
+	},
+	{
+		"day": 11,
+		"start": "2200",
+		"duration": 6,
+		"event": "Research SLB",
+		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
+		"color": "#f07d0a"
+	}
+]

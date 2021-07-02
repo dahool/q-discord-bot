@@ -1,5 +1,6 @@
 {
 	"prefix": "!",
+    "dailiesMax": 11,
     "statusKey": {
         "NEUTRAL": {
             "name": "Neutral",

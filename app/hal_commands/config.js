@@ -50,7 +50,8 @@ module.exports = {
 
 			if (cs.ANNOUNCE_CHANNEL == command
 				|| cs.TERRITORY_CHANNEL == command
-				|| cs.LOG_CHANNEL == command) {
+				|| cs.LOG_CHANNEL == command
+				|| cs.DAILY_CHANNEL == command) {
 				const id = extract_id(CHANNEL_ID, params);
 				if (id == null) {
 					return message.reply(`Invalid argument \`${params}\`. Specify a valid channel.`);

@@ -1,26 +1,7 @@
 const Discord = require('discord.js');
 const { statusKey } = require('../config.json');
 const db = require('../db/db');
-
-/*var groupBy = function(xs, key) {
-	return xs.reduce(function(rv, x) {
-		(rv[x[key]] = rv[x[key]] || []).push(x);
-		return rv;
-	}, {});
-};*/
-function groupBy(list, keyGetter) {
-    const map = new Map();
-    list.forEach((item) => {
-         const key = keyGetter(item);
-         const collection = map.get(key);
-         if (!collection) {
-             map.set(key, [item]);
-         } else {
-             collection.push(item);
-         }
-    });
-    return map;
-}
+const { groupBy } = require('../utils')
 
 module.exports = {
 	name: 'diplomacy',

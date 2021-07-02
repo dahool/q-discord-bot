@@ -1,0 +1,373 @@
+[
+	{
+		"zone": "Framtid",
+		"type": 1,
+		"weekday": 5,
+		"time": "1700",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Hrojost",
+		"type": 2,
+		"weekday": 4,
+		"time": "2200",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Nujord",
+		"type": 1,
+		"weekday": 3,
+		"time": "2200",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Nyrheimur",
+		"type": 3,
+		"weekday": 6,
+		"time": "2200",
+		"particle": "Quantum"
+	},	
+	{
+		"zone": "Innlasn",
+		"type": 1,
+		"weekday": 7,
+		"time": "1800",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Vantar",
+		"type": 2,
+		"weekday": 4,
+		"time": "1700",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Klefaski",
+		"type": 1,
+		"weekday": 5,
+		"time": "2300",
+		"particle": "Quantum"
+	},	
+	{
+		"zone": "Tefkari",
+		"type": 1,
+		"weekday": 3,
+		"time": "2100",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Zhian",
+		"type": 2,
+		"weekday": 1,
+		"time": "1800",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Helvi",
+		"type": 1,
+		"weekday": 7,
+		"time": "2000",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Lenara",
+		"type": 1,
+		"weekday": 4,
+		"time": "0100",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Triss",
+		"type": 2,
+		"weekday": 4,
+		"time": "2000",
+		"particle": "Surex"
+	},
+	{
+		"zone": "Mak'ala",
+		"type": 3,
+		"weekday": 6,
+		"time": "2000",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Vemira",
+		"type": 1,
+		"weekday": 7,
+		"time": "1900",
+		"particle": "Surex"
+	},
+	{
+		"zone": "Hoobishan",
+		"type": 2,
+		"weekday": 1,
+		"time": "1700",
+		"particle": "Surex"
+	},
+	{
+		"zone": "Perim",
+		"type": 1,
+		"weekday": 3,
+		"time": "1800",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Ezla",
+		"type": 1,
+		"weekday": 5,
+		"time": "2000",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Adia",
+		"type": 1,
+		"weekday": 3,
+		"time": "1600",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Tezera",
+		"type": 2,
+		"weekday": 4,
+		"time": "2300",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Tigan",
+		"type": 1,
+		"weekday": 6,
+		"time": "0100",
+		"particle": "Surex"
+	},
+	{
+		"zone": "Tholus",
+		"type": 3,
+		"weekday": 7,
+		"time": "0000",
+		"particle": "Phantom"
+	},	
+	{
+		"zone": "Abilakk",
+		"type": 2,
+		"weekday": 2,
+		"time": "0100",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Thosz",
+		"type": 1,
+		"weekday": 4,
+		"time": "0000",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Eldur",
+		"type": 2,
+		"weekday": 2,
+		"time": "0000",
+		"particle": "Quantum"
+	},	
+	{
+		"zone": "Aylus",
+		"type": 1,
+		"weekday": 1,
+		"time": "0100",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Duportas",
+		"type": 2,
+		"weekday": 1,
+		"time": "2300",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Brellan",
+		"type": 3,
+		"weekday": 7,
+		"time": "0100",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Ber'Tho",
+		"type": 2,
+		"weekday": 5,
+		"time": "0100",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Tazolka",
+		"type": 1,
+		"weekday": 6,
+		"time": "0000",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Zamaro",
+		"type": 1,
+		"weekday": 3,
+		"time": "2300",
+		"particle": "Phantom"
+	},	
+	{
+		"zone": "Anzat",
+		"type": 2,
+		"weekday": 5,
+		"time": "0000",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Parturi",
+		"type": 1,
+		"weekday": 1,
+		"time": "0000",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Asiti",
+		"type": 1,
+		"weekday": 3,
+		"time": "2000",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Qeyma",
+		"type": 1,
+		"weekday": 7,
+		"time": "1600",
+		"particle": "Surex"
+	},
+	{
+		"zone": "Crios",
+		"type": 2,
+		"weekday": 1,
+		"time": "1900",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Corva",
+		"type": 3,
+		"weekday": 6,
+		"time": "2100",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Stilhe",
+		"type": 1,
+		"weekday": 7,
+		"time": "2300",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Kolava",
+		"type": 1,
+		"weekday": 5,
+		"time": "2100",
+		"particle": "Surex"
+	},
+	{
+		"zone": "Bolari",
+		"type": 2,
+		"weekday": 1,
+		"time": "2000",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Saldeti",
+		"type": 1,
+		"weekday": 5,
+		"time": "1900",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Gelida",
+		"type": 1,
+		"weekday": 7,
+		"time": "1700",
+		"particle": "Phantom"
+	},
+	{
+		"zone": "Bimasa",
+		"type": 2,
+		"weekday": 1,
+		"time": "2200",
+		"particle": "Phantom"
+	},	
+	{
+		"zone": "Beku",
+		"type": 1,
+		"weekday": 5,
+		"time": "2200",
+		"particle": "Phantom"
+	},	
+	{
+		"zone": "Brijac",
+		"type": 2,
+		"weekday": 4,
+		"time": "2100",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Barasa",
+		"type": 3,
+		"weekday": 6,
+		"time": "2300",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Burran",
+		"type": 2,
+		"weekday": 4,
+		"time": "1900",
+		"particle": "Surex"
+	},	
+	{
+		"zone": "Roshar",
+		"type": 2,
+		"weekday": 1,
+		"time": "2100",
+		"particle": "Quantum"
+	},	
+	{
+		"zone": "Thaylen",
+		"type": 1,
+		"weekday": 3,
+		"time": "1900",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Comst",
+		"type": 1,
+		"weekday": 5,
+		"time": "1600",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Aonad",
+		"type": 1,
+		"weekday": 7,
+		"time": "2100",
+		"particle": "Quantum"
+	},	
+	{
+		"zone": "Ruhe",
+		"type": 1,
+		"weekday": 5,
+		"time": "1800",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Avansa",
+		"type": 2,
+		"weekday": 4,
+		"time": "1800",
+		"particle": "Quantum"
+	},
+	{
+		"zone": "Otima",
+		"type": 1,
+		"weekday": 3,
+		"time": "1700",
+		"particle": "Quantum"
+	}	
+]

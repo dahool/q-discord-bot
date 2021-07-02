@@ -33,16 +33,19 @@ class AllianceStatus {
 		const confirm = new Discord.MessageEmbed()
 			.setColor(`#${this.status.color}`)
 			.setTitle(`Alliance **${alliance}** set to ***${this.status.name}*** status`)
-			.setDescription(`The status of ${alliance} alliance has been update.`)
+			.setDescription(`The status of **${alliance}** alliance has been updated`)
 			.setThumbnail(this.status.image)
 			.addFields(
 				{ name: `Alliance`, value: `${alliance}`, inline: true },
 				{ name: `Status`, value: `${status}`, inline: true },
-				{ name: `Reason`, value: `${reason}`, inline: false }
 			)
 			.setTimestamp()
 			.setFooter(`!${this.cmd} • Executed by ${message.author.username}`, `${message.author.displayAvatarURL()}`);
-		
+
+		if (this.status == statusKey.ENEMY) {
+			this.config.addField('Reason', reason);
+		}
+
 		message.channel.send(confirm);
 
 		this.config.findOne(guild, 'announce').then(cfg => {

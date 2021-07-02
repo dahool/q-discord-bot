@@ -55,6 +55,14 @@ class DbHelper {
         return undefined;
     }
 
+    async getCommon(uuid, property) {
+        return this.findOne("general", uuid, property);
+    }
+
+    async pushCommon(uuid, data) {
+        return this.push("general", uuid, data);
+    }
+
     async findOneBy(query) {
         var results = []
         var returnValue = undefined;
