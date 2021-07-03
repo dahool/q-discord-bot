@@ -3,8 +3,6 @@ const favicon = require('serve-favicon');
 const maia = require('./maia')
 const hal = require('./hal')
 
-
-
 const app = express()
 app.use(express.json());
 app.use(favicon('public/favicon.ico'));
@@ -36,11 +34,17 @@ app.get('/online', function(req, resp) {
     resp.send("OK");
 });
 
+app.get('/rotate', function(req, resp) {
+    console.log("rotate")
+    maia.rotate();
+    resp.send("OK");
+});
+
 connectionManager.connect().then(() => {
     hal.start(connectionManager);
     maia.start(connectionManager);
-})
 
-app.listen(port, () => {
-    console.log("Ready on port " + port);
+    app.listen(port, () => {
+        console.log("Ready on port " + port);
+    })    
 })

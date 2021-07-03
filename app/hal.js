@@ -10,7 +10,6 @@ const announcer = require('./functions/announcer');
 const calendar = require('./functions/calendar');
 const membersOnline = require('./functions/online');
 
-var dailies = require('./maia_commands/dailies');
 var cron = require('node-cron');
 
 const client = new Client({ ws: { intents: Intents.ALL } });
@@ -19,7 +18,6 @@ client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./hal_commands').filter(file => file.endsWith('.js'));
 
 const { MembersDb, ConfigDb, connectionManager } = require('./db/db');
-const { connect } = require('http2');
 
 var ready = false;
 
@@ -101,7 +99,7 @@ client.on('message', message => {
 
 scheduleTasks = async (client, connection) => {
 	const props = {timezone: "UTC"};
-	cron.schedule('0 4 * * *', () => {
+	/*cron.schedule('0 4 * * *', () => {
 		console.log('rotate daily calendar');
 		dailies.rotate(connection);
 	}, props);
@@ -120,7 +118,7 @@ scheduleTasks = async (client, connection) => {
 	cron.schedule('50 21 * * *', () => {
 		console.log('dailes 2nd mid');
 		dailies.notify(connection, "2200", client);
-	}, props);	
+	}, props);	*/
 }
 
 var connection;

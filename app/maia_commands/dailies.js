@@ -95,8 +95,9 @@ rotate = async (connection) => {
 module.exports = {
 	name: 'dailies',
 	aliases: ['daily'],
-    description: 'Show current dailies',
+    description: 'Show current and future dailies',
 	usage: '<name>',
+	man_description: 'Use without arguments to get a list of current dailies.',
 	dm: true,
 	rotate,
 	notify,

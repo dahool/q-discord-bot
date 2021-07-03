@@ -36,7 +36,7 @@ createMessage = (data) => {
         .setThumbnail('https://www.dropbox.com/s/6jzlixqvk4nhpg9/redalert.gif?raw=1')
         .addFields(
             { name: 'Zone', value: data.location },
-            { name: 'Starts at', value: '`' + pstTime + '` - `' + cstTime + '` - `' + estTime + '` - `' + mstTime + '`', inline: true });
+            { name: 'Starts at', value: '`' + pstTime + '` - `' + mstTime + '` - `' + cstTime + '` - `' + estTime + '`', inline: true });
     
     return message;
 }

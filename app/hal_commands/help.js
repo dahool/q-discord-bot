@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports = {
-	name: 'maia',
+	name: 'hal',
 	description: 'Help',
 	dm: true,
 	help: false,

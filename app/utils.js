@@ -12,6 +12,11 @@ function randomColor() {
 	return COLORS[Math.floor(Math.random() * COLORS.length)]
 }
 
+function safeLower(value) {
+    if (value != undefined) return value.toLowerCase();
+    return value;
+}
+
 function groupBy(list, keyGetter) {
     const map = new Map();
     list.forEach((item) => {
@@ -28,5 +33,6 @@ function groupBy(list, keyGetter) {
 
 module.exports = {
 	groupBy,
-	randomColor
+	randomColor,
+    safeLower
 };

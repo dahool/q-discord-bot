@@ -9,9 +9,13 @@ const { Client, Intents } = require('discord.js');
 const client = new Client({ ws: { intents: Intents.ALL } });
 client.commands = new Discord.Collection();
 
+var dailies = require('./maia_commands/dailies');
+var cron = require('node-cron');
+
 const commandFiles = fs.readdirSync('./maia_commands').filter(file => file.endsWith('.js'));
 
 const { ConfigDb } = require('./db/db');
+const { rotate } = require('./maia_commands/dailies');
 
 client.once('ready', () => {
 	client.user.setActivity(`and serving the alliance` , { type: `WATCHING` });
@@ -76,8 +80,31 @@ client.on('message', message => {
 	})().catch(console.error);
 });
 
+scheduleTasks = async (client, connection) => {
+	const props = {timezone: "UTC"};
+	cron.schedule('50 3 * * *', () => {
+		console.log('dailes reset');
+		dailies.notify(connection, "0400", client);
+	}, props);
+	cron.schedule('50 9 * * *', () => {
+		console.log('dailes 1st mid');
+		dailies.notify(connection, "1000", client);
+	}, props);
+	cron.schedule('50 15 * * *', () => {
+		console.log('dailes mid reset');
+		dailies.notify(connection, "1600", client);
+	}, props);	
+	cron.schedule('50 21 * * *', () => {
+		console.log('dailes 2nd mid');
+		dailies.notify(connection, "2200", client);
+	}, props);	
+}
 
 module.exports = {
+	async rotate() {
+		console.log('rotate daily calendar');
+		dailies.rotate(connection);
+	},
 	async start(connectionManager) {
 		for (const file of commandFiles) {
 			const command = require(`./maia_commands/${file}`);
@@ -87,5 +114,7 @@ module.exports = {
 
 		configDb = new ConfigDb(connectionManager);
 		client.login(process.env.MAIA_TOKEN);
+
+		scheduleTasks(client, connectionManager);
 	}
 };

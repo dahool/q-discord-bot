@@ -5,7 +5,7 @@ const { groupBy } = require('../utils')
 
 module.exports = {
 	name: 'diplomacy',
-	description: 'List diplomacy status',
+	description: 'List alliance diplomacy status',
 	dm: false,
 	async execute(client, message, args) {
 		const al = new db.AllianceDb(this.conn);

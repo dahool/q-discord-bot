@@ -4,17 +4,18 @@ const { DateTime } = require('luxon');
 const zones = require('./zones.json');
 
 function get_next_execution(zone) {
-	const zoneTime = DateTime.utc().set({hour: zone.time.substr(0,2), minute: zone.time.substr(2,2)}).setLocale('en');
 	const today = DateTime.utc();
-	if (zoneTime.weekday == zone.weekday) {
+	var zoneTime = today.set({hour: zone.time.substr(0,2), minute: zone.time.substr(2,2)}).setLocale('en');
+	if (today.weekday == zone.weekday) {
 		if (zoneTime < today) {
 			return zoneTime.plus({days: 7});
 		}
 		return zoneTime;
-	} else if (zoneTime.weekday < zone.weekday) {
-		return zoneTime.plus({days: zone.weekday - zoneTime.weekday});
 	}
-	return zoneTime.plus({days: (zoneTime.weekday + zone.weekday) - 1});
+	do {
+		zoneTime = zoneTime.plus({days: 1});
+	} while (zoneTime.weekday != zone.weekday);
+	return zoneTime;
 }
 
 function list_by_particle(particle) {
@@ -33,7 +34,8 @@ module.exports = {
 	name: 'zone',
 	aliases: ['territory','zones'],
     description: 'Show territory details',
-	usage: '<zone_name|particles> <particle_name>',
+	usage: '<option> <argument>',
+	man_usage: ['* *<zonename>* :: `List details for specific zone`', '* particle *<particle_name>* :: `List zones with specific particle`'],
 	args: true,
 	dm: true,
     async execute(client, message, args) {
@@ -54,7 +56,8 @@ module.exports = {
 			return message.reply('No zones found matching criteria');
 		}
 
-		const icon = message.channel.guild ? message.channel.guild.iconURL() : "https://www.dropbox.com/s/5xeeuzuopinq6bd/maia.png?raw=1";
+		//const icon = message.channel.guild ? message.channel.guild.iconURL() : "https://www.dropbox.com/s/5xeeuzuopinq6bd/maia.png?raw=1";
+		const icon = message.channel.guild ? message.channel.guild.iconURL() : client.user.avatarURL();
 
 		const msgEmbed = new Discord.MessageEmbed()
 			.setColor('#e1dad8')
@@ -62,11 +65,13 @@ module.exports = {
 			.setTitle("Territory")
 			.setTimestamp();
 
-		zones.sort((a,b) => a.zone.localeCompare(b.zone)) .forEach(z => {
+		const today = DateTime.utc();
+		zones.sort((a,b) => a.next - b.next).forEach(z => {
+			const next = z.next.hasSame(today, "day") ? z.next.toRelative() : z.next.toFormat('LLL, dd') + ' ' +z.next.toRelative();
 			var content = "`Particle: " + z.particle + "`\n";
 			content+= "`Type: " + z.type + "`\n";
-			content+= "`Takeover Time: " + z.next.toFormat('h:mma ZZZZ') + "`\n";
-			content+= "`Next: " + z.next.toRelative() + "`";
+			content+= "`Takeover Time: " + z.next.toFormat('ccc, h:mma ZZZZ') + "`\n";
+			content+= "`Next: " + next + "`";
 			msgEmbed.addField(z.zone, content);
 		})	
 
