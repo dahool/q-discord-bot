@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 const { safeLower } = require('../utils');
-const { add_event } = require('../functions/calendar');
 const db = require('../db/db');
 
 const zones = require('./zones.json');

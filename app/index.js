@@ -18,26 +18,26 @@ app.get('/', function(req, resp) {
 app.get('/notify', function(req, resp) {
     console.log("notify")
     const num = req.query.number || 30;
-    hal.announce(num);
-    resp.send("OK");
+    hal.announce(num).then(() => resp.send("OK"))
+    .catch((error) => resp.send(error));
 });
 
 app.get('/load', function(req, resp) {
-    console.log("load")
-    hal.events();
-    resp.send("OK");
+    //console.log("load")
+    hal.events().then(() => resp.send("OK"))
+    .catch((error) => resp.send(error));
 });
 
 app.get('/online', function(req, resp) {
-    console.log("online")
-    hal.online();
-    resp.send("OK");
+    //console.log("online")
+    hal.online().then(() => resp.send("OK"))
+    .catch((error) => resp.send(error));
 });
 
 app.get('/rotate', function(req, resp) {
-    console.log("rotate")
-    maia.rotate();
-    resp.send("OK");
+    //console.log("rotate")
+    maia.rotate().then((r) => resp.send("OK " + r))
+    .catch((error) => resp.send(error));
 });
 
 connectionManager.connect().then(() => {

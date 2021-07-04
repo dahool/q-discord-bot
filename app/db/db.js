@@ -151,7 +151,7 @@ class MembersDb extends DbHelper {
     async updateOnline(member) {
         const query = { gid: member.user.id, guild: member.guild.id }
         const data = { $set: { gid: member.user.id, lastOnline: DateTime.utc().toJSDate(), userName: member.user.username, guild: member.guild.id } }
-        console.log("Saved " + member.user.username);
+        //console.log("Saved " + member.user.username);
         return this.db.updateOne(query, data, { upsert: true});
     }
 
@@ -159,9 +159,9 @@ class MembersDb extends DbHelper {
         for (let member of members) {
             const query = { gid: member.user.id, guild: member.guild.id }
             const data = { $set: { gid: member.user.id, lastOnline: DateTime.utc().toJSDate(), displayName: member.displayName, userName: member.user.username, guild: member.guild.id} }
-            this.db.updateOne(query, data, { upsert: true});
+            await this.db.updateOne(query, data, { upsert: true});
         }
-        console.log("Saved " + members.length);
+        //console.log("Saved " + members.length);
     }
     
 }

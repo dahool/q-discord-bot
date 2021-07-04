@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 
-const { groupBy, randomColor } = require('../utils')
+const { groupBy } = require('../utils')
 
 const cs = require('../values')
 
@@ -82,9 +82,9 @@ notify = async (connection, section, client) => {
 	})
 }
 
-rotate = async (connection) => {
-    const config = new ConfigDb(connection);
-    var general = await config.getCommon("general") || {rotation: 1};
+async function rotate(connection) {
+    const config = new db.ConfigDb(connection);
+    var general = await config.getCommon("general") || {'rotation': 1};
     if (general.rotation == dailiesMax) {
         general.rotation = 1;
     } else {

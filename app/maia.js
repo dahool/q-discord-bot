@@ -104,7 +104,7 @@ var connection;
 module.exports = {
 	async rotate() {
 		console.log('rotate daily calendar');
-		dailies.rotate(connection);
+		return dailies.rotate(connection);
 	},
 	async start(connectionManager) {
 		connection = connectionManager;

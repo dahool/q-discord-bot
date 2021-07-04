@@ -4,17 +4,9 @@ const { DateTime } = require("luxon");
 const { ConfigDb, CalendarDb } = require("../db/db");
 const cs = require('../values')
 
-const MENTION_REX = /@([\w]+)/gm;
+const { randomColor } = require('../utils')
 
-const COLORS = [
-    '#ff00ff',
-    '#0099ff',
-    '#00cc00',
-    '#ff0000',
-    '#ff6600',
-    '#6600ff',
-    '#cc99ff'
-];
+const MENTION_REX = /@([\w]+)/gm;
 
 createMessage = (data) => {
     let startTime;
@@ -29,7 +21,7 @@ createMessage = (data) => {
     const mstTime = startTime.setZone('America/Denver').toFormat('h:mma ZZZZ');
 
     const message = new Discord.MessageEmbed()
-        .setColor(COLORS[Math.floor(Math.random() * COLORS.length)])
+        .setColor(randomColor())
         .setTitle(data.summary)
         .setURL('https://zoner.netlify.app/?t=' + startTime.setZone('UTC').toFormat('Hmm'))
         .setDescription(data.description || ' ')

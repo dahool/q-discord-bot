@@ -55,7 +55,6 @@ loadEvents = async (guild, url, type, connection) => {
 }
 
 module.exports = {
-    add_event,
 	async execute(connection) {
         const config = new ConfigDb(connection);
 
