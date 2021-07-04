@@ -100,12 +100,14 @@ scheduleTasks = async (client, connection) => {
 	}, props);	
 }
 
+var connection;
 module.exports = {
 	async rotate() {
 		console.log('rotate daily calendar');
 		dailies.rotate(connection);
 	},
 	async start(connectionManager) {
+		connection = connectionManager;
 		for (const file of commandFiles) {
 			const command = require(`./maia_commands/${file}`);
 			command.conn = connectionManager;

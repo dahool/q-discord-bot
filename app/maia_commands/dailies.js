@@ -26,7 +26,7 @@ function get_next_execution(rotation, zone) {
 function running(day, z) {
 	if (z.day == day) {
 		const today = DateTime.utc();
-		const start = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setLocale('en')
+		const start = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)})
 		const end = start.plus({hours: z.duration});
 		return (today >= start && today < end);
 	}
@@ -64,6 +64,7 @@ notify = async (connection, section, client) => {
 			dailies
 			.filter(z => z.day == rotation && z.start == section)
 			.forEach((z) => {
+				const end = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setLocale('en').plus({hours: z.duration});
 				guilds.forEach((guild) => {
 					const channel = client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
 					const msgEmbed = new Discord.MessageEmbed()
@@ -72,6 +73,7 @@ notify = async (connection, section, client) => {
 					.setDescription("Starting soon")
 					.setTitle(z.event + ' Event')
 					.setImage(z.image)
+					.addFields({name: "Ends", value: end.toRelative()})
 					.setTimestamp();
 					channel.send(msgEmbed);
 				})

@@ -135,7 +135,12 @@ class CalendarDb {
     async insert(list) {
         return this.db.insertMany(list);
     }
-    
+
+    async findBy(query) {
+        var results = []
+        return this.db.find(query);
+    }
+        
 }
 
 class MembersDb extends DbHelper {

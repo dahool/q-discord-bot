@@ -94,7 +94,10 @@ client.on('message', message => {
 			console.error(error);
 			message.reply('There was an error trying to execute the command!');
 		}		
-	})().catch(console.error);
+	})().catch((error) => { 
+		message.reply('There was an error trying to execute the command!')
+		console.error(error);
+	});
 });
 
 scheduleTasks = async (client, connection) => {

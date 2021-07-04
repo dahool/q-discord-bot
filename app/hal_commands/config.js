@@ -37,7 +37,7 @@ module.exports = {
 					{ name: 'Territory Announcement Channel', value: '`!config <set/get> '+cs.TERRITORY_CHANNEL+' #channel_name`'},
 					{ name: 'Logging Channel', value: '`!config <set/get> '+cs.LOG_CHANNEL+' #channel_name`'},
 					{ name: 'Dailies Channel', value: '`!config <set/get> '+cs.DAILY_CHANNEL +' #channel_name`'},
-					{ name: 'Territory Events Calendar', value: '`!config set territory_events calendar_ical_url`'},
+					{ name: 'Territory Events Calendar', value: '`!config territory_events calendar_ical_url`'},
 					{ name: 'Add privileged role', value: '`!config addrole @rolename`'},
 					{ name: 'Removed privileged role', value: '`!config delrole @rolename`'},
 					{ name: 'List privileged roles', value: '`!config roles`'},
