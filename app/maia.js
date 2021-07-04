@@ -82,19 +82,19 @@ client.on('message', message => {
 
 scheduleTasks = async (client, connection) => {
 	const props = {timezone: "UTC"};
-	cron.schedule('50 3 * * *', () => {
+	cron.schedule('5 3 * * *', () => {
 		console.log('dailes reset');
 		dailies.notify(connection, "0400", client);
 	}, props);
-	cron.schedule('50 9 * * *', () => {
+	cron.schedule('5 9 * * *', () => {
 		console.log('dailes 1st mid');
 		dailies.notify(connection, "1000", client);
 	}, props);
-	cron.schedule('50 15 * * *', () => {
+	cron.schedule('5 15 * * *', () => {
 		console.log('dailes mid reset');
 		dailies.notify(connection, "1600", client);
 	}, props);	
-	cron.schedule('50 21 * * *', () => {
+	cron.schedule('5 21 * * *', () => {
 		console.log('dailes 2nd mid');
 		dailies.notify(connection, "2200", client);
 	}, props);	
