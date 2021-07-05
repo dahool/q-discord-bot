@@ -40,6 +40,13 @@ app.get('/rotate', function(req, resp) {
     .catch((error) => resp.send(error));
 });
 
+app.get('/events', function(req, resp) {
+    //console.log("rotate")
+    const num = req.query.number || 0;
+    maia.events(num).then((r) => resp.send("OK"))
+    .catch((error) => resp.send(error));
+});
+
 connectionManager.connect().then(() => {
     hal.start(connectionManager);
     maia.start(connectionManager);

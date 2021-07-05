@@ -53,31 +53,35 @@ function find_by_name(rotation, name) {
 		});
 }
 
-notify = async (connection, section, client) => {
+function doRotate(value) {
+	if (value == dailiesMax) return 1;
+	return ++value;
+}
+
+async function notify(connection, section, client, rotate) {
 	const config = new db.ConfigDb(connection);
 	config.getCommon("general").then(general => {
 		if (!general) {
 			general = {rotation: 1};
 		}
 		config.findBy({uuid: cs.DAILY_CHANNEL}).then(guilds => {
-			const rotation = ++general.rotation;
-			dailies
-			.filter(z => z.day == rotation && z.start == section)
-			.forEach((z) => {
-				const end = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setLocale('en').plus({hours: z.duration});
-				guilds.forEach((guild) => {
-					const channel = client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
-					const msgEmbed = new Discord.MessageEmbed()
-					.setColor(z.color)
-					.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
-					.setDescription("Starting soon")
-					.setTitle(z.event + ' Event')
-					.setImage(z.image)
-					.addFields({name: "Ends", value: end.toRelative()})
-					.setTimestamp();
-					channel.send(msgEmbed);
+			if (rotate) general.rotation = doRotate(general.rotation);
+			dailies.filter(z => z.day == general.rotation && z.start == section)
+				.forEach((z) => {
+					const end = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setLocale('en').plus({hours: z.duration});
+					guilds.forEach((guild) => {
+						const channel = client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
+						const msgEmbed = new Discord.MessageEmbed()
+						.setColor(z.color)
+						.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
+						.setDescription("Starting soon")
+						.setTitle(z.event + ' Event')
+						.setImage(z.image)
+						.addFields({name: "Ends", value: end.toRelative()})
+						.setTimestamp();
+						channel.send(msgEmbed);
+					})
 				})
-			})
 		});
 	})
 }

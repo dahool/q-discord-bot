@@ -16,6 +16,7 @@ const commandFiles = fs.readdirSync('./maia_commands').filter(file => file.endsW
 
 const { ConfigDb } = require('./db/db');
 const { rotate } = require('./maia_commands/dailies');
+const { events } = require('./hal');
 
 client.once('ready', () => {
 	client.user.setActivity(`and serving the alliance` , { type: `WATCHING` });
@@ -79,7 +80,7 @@ client.on('message', message => {
 		}		
 	})().catch(console.error);
 });
-
+/* not working :/ maybe server issue?
 scheduleTasks = async (client, connection) => {
 	const props = {timezone: "UTC"};
 	cron.schedule('5 3 * * *', () => {
@@ -99,12 +100,17 @@ scheduleTasks = async (client, connection) => {
 		dailies.notify(connection, "2200", client);
 	}, props);	
 }
-
+*/
 var connection;
 module.exports = {
 	async rotate() {
 		console.log('rotate daily calendar');
 		return dailies.rotate(connection);
+	},
+	async events(part) {
+		const parts = ["0400","1000","1600","2200"]
+		console.log('dailies part ' + parts[part]);
+		return dailies.notify(connection, parts[part], client, part == 0);
 	},
 	async start(connectionManager) {
 		connection = connectionManager;
