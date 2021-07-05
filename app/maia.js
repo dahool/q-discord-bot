@@ -123,6 +123,6 @@ module.exports = {
 		configDb = new ConfigDb(connectionManager);
 		client.login(process.env.MAIA_TOKEN);
 
-		scheduleTasks(client, connectionManager);
+		//scheduleTasks(client, connectionManager);
 	}
 };
