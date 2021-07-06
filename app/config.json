@@ -1,6 +1,7 @@
 {
 	"prefix": "!",
     "dailiesMax": 11,
+    "dailiesPart": ["0400","1000","1600","2200"],
     "statusKey": {
         "NEUTRAL": {
             "name": "Neutral",

@@ -74,7 +74,11 @@ async function handle_tag(conn, message, zone) {
 
 	const collector = message.channel.createMessageCollector(m => m.author.id == message.author.id, {time: 60000});
 	collector.on('collect', m => {
-		if (title == undefined) {
+		if ('cancel' == m.content.toLowerCase()) {
+			message.reply("Cancelled.");
+			title = "canceled"; // to prevent end message
+			collector.stop();
+		} else if (title == undefined) {
 			title = m.content;
 			message.reply("Do you want to schedule a recurrent event?");
 		} else if (recurrent == undefined) {

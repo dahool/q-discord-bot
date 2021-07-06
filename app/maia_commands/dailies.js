@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 
-const { groupBy } = require('../utils')
+const { groupBy, safeLower } = require('../utils')
 
 const cs = require('../values')
 
@@ -9,12 +9,15 @@ const db = require('../db/db');
 
 const dailies = require('./dailies.json');
 
-const { dailiesMax } = require('../config.json');
+const { dailiesMax, dailiesPart } = require('../config.json');
 
 function get_next_execution(rotation, zone) {
 	var start = DateTime.utc().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).setLocale('en');
 	if (rotation == zone.day) {
-		start = start.plus({days: 11});
+		const today = DateTime.utc();
+		if (today > start) {
+			start = start.plus({days: dailiesMax});
+		}
 	} else if (rotation > zone.day) {
 		start = start.plus({days: (dailiesMax - rotation) + zone.day});
 	} else {
@@ -51,6 +54,20 @@ function find_by_name(rotation, name) {
 			z.running = running(rotation, z);
 			return z;
 		});
+}
+
+function find_next(rotation) {
+	const current = parseInt(DateTime.utc().toFormat('HHmm'));
+	var ls = dailies.filter(z => rotation == z.day && parseInt(z.start) > current)
+	if (!ls) {
+		const r = doRotate(rotation);
+		ls = dailies.filter(z => r == z.day && z.start == dailiesPart[0])
+	}
+	return ls.map(z => {
+		z.next = get_next_execution(rotation, z);
+		z.running = false;
+		return z;
+	});
 }
 
 function doRotate(value) {
@@ -113,8 +130,13 @@ module.exports = {
 		const rotation = (await config.getCommon("general") || {rotation: 1}).rotation;
 
 		if (args.length) {
-			const name = args.join(' ').toLowerCase();
-			const list = find_by_name(rotation, name);
+			var list;
+			if ('next' == safeLower(args[0])) {
+				list = find_next(rotation);
+			} else {
+				const name = args.join(' ').toLowerCase();
+				list = find_by_name(rotation, name);
+			}
 
 			if (list.length == 0) {
 				return message.reply('No matching dailies found');
