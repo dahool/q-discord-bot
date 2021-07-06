@@ -11,9 +11,9 @@
 		"day": 1,
 		"start": "0400",
 		"duration": 6,
-		"event": "Research SLB",
-		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"event": "Limited Time Ship",
+		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
+		"color": "#e3f134"
 	},
 	{
 		"day": 1,
