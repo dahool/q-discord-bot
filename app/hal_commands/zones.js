@@ -7,6 +7,7 @@ const zones = require('./zones.json');
 
 const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup']
 const NEGATIVE = ['no']
+const DAYS = ['*mon','*tue','*wed','*thu','*fri','*sat','*sun']
 
 function get_next_execution(zone) {
 	const today = DateTime.utc();
@@ -32,6 +33,12 @@ function list_by_particle(particle) {
 function find_by_name(name) {
 	return zones
 		.filter(z => z.zone.toLowerCase().includes(name))
+		.map(z => Object.assign({next: get_next_execution(z)}, z));
+}
+
+function find_by_weekday(weekday) {
+	return zones
+		.filter(z => z.weekday == weekday)
 		.map(z => Object.assign({next: get_next_execution(z)}, z));
 }
 
@@ -135,6 +142,10 @@ module.exports = {
 				return message.reply('Please, specify particle name (quantum, surax, phatom)');
 			}
 			zones = list_by_particle(param);
+		} else if (DAYS.some(v => v == cmd)) {
+			zones = find_by_weekday(DAYS.indexOf(cmd) + 1);
+		} else if ('today' == cmd) {
+			zones = find_by_weekday(DateTime.local().weekday)
 		} else {
 			zones = find_by_name(cmd);
 			if ('tag' == param) {
@@ -163,15 +174,22 @@ module.exports = {
 			.setColor('#e1dad8')
 			.setThumbnail(icon)
 			.setTitle("Territory")
+			.setDescription("Takeover times are in UTC. Other timezones shown for information only.")
 			.setTimestamp();
+
 
 		const today = DateTime.utc();
 		zones.sort((a,b) => a.next - b.next).forEach(z => {
 			const next = z.next.hasSame(today, "day") ? z.next.toRelative() : z.next.toFormat('LLL, dd') + ' ' +z.next.toRelative();
-			var content = "`Particle: " + z.particle + "`\n";
-			content+= "`Type: " + z.type + "`\n";
-			content+= "`Takeover Time: " + z.next.toFormat('ccc, h:mma ZZZZ') + "`\n";
-			content+= "`Next: " + next + "`";
+			const estTime = z.next.setZone('America/New_York').toFormat('ccc, h:mma ZZZZ');
+			const cstTime = z.next.setZone('America/Chicago').toFormat('ccc, h:mma ZZZZ');
+			const pstTime = z.next.setZone('America/Los_Angeles').toFormat('ccc, h:mma ZZZZ');
+			const mstTime = z.next.setZone('America/Denver').toFormat('ccc, h:mma ZZZZ');
+
+			var content = "`Particle:` " + z.particle + "\n";
+			content+= "`Type:` " + z.type + "\n";
+			content+= "`Takeover Time:` " + z.next.toFormat('ccc, h:mma ZZZZ') + " `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
+			content+= "`Next:` " + next;
 			msgEmbed.addField(z.zone, content);
 		})	
 
