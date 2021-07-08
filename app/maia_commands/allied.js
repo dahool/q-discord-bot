@@ -43,7 +43,7 @@ class AllianceStatus {
 			.setFooter(`!${this.cmd} • Executed by ${message.author.username}`, `${message.author.displayAvatarURL()}`);
 
 		if (this.status == statusKey.ENEMY) {
-			this.config.addField('Reason', reason);
+			confirm.addField('Reason', reason);
 		}
 
 		message.channel.send(confirm);
