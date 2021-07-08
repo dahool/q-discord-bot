@@ -18,10 +18,12 @@ function get_next_execution(rotation, zone) {
 		if (today > start) {
 			start = start.plus({days: dailiesMax});
 		}
-	} else if (rotation > zone.day) {
-		start = start.plus({days: (dailiesMax - rotation) + zone.day});
 	} else {
-		start = start.plus({days: (dailiesMax - rotation) + (dailiesMax - zone.day)});
+		var r = rotation;
+		do {
+			r = doRotate(r);
+			start = start.plus({days: 1});
+		} while (r != zone.day);
 	}
 	return start;
 }
@@ -144,7 +146,6 @@ module.exports = {
 
 			groupBy(list.sort((a,b) => a.next - b.next), a => a.event).forEach((value, key) => {
 				const first = value[0];
-
 				const msgEmbed = new Discord.MessageEmbed()
 				.setColor(first.color)
 				.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
