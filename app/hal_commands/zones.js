@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
-const { safeLower } = require('../utils');
+const { safeLower, groupBy } = require('../utils');
 const db = require('../db/db');
+const cs = require('../values')
 
 const zones = require('./zones.json');
 
-const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup']
-const NEGATIVE = ['no']
+const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup','make it so','y']
+const NEGATIVE = ['no','n']
 const DAYS = ['*mon','*tue','*wed','*thu','*fri','*sat','*sun']
 
 function get_next_execution(zone) {
@@ -42,21 +43,25 @@ function find_by_weekday(weekday) {
 		.map(z => Object.assign({next: get_next_execution(z)}, z));
 }
 
-function add_event(connection, guild, time, title, location, recurrent) {
-	return new Promise((resolve) => {
-		const eventID = "Z" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-		var times = [time.toJSDate()];
-		if (recurrent) {
-			do {
-				times.push(time.plus({days: 7}).toJSDate());
-			} while (times.length < 12)
-		}
-		const calendar = new CalendarDb(connection);
-		times.forEach((tm) => {
-			calendar.insert([{guild: guild, type: 'zone', uid: eventID, summary: title, location: location, start: tm, description: '', notified: false}]);
-		})
-		resolve.resolve();
+async function add_event(connection, guild, time, title, location, recurrent) {
+	const eventID = "Z" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+	var times = [time.toJSDate()];
+	if (recurrent) {
+		do {
+			times.push(time.plus({days: 7}).toJSDate());
+		} while (times.length < 12)
+	}
+	const calendar = new db.CalendarDb(connection);
+	const zevent = new db.ZoneEventsDb(connection);
+
+	times.forEach((tm, index) => {
+		calendar.insert([{guild: guild, type: cs.TERRITORY_CHANNEL, uid: eventID, recurrence: index, summary: title, location: location, start: tm, description: '', notified: false}]);
 	})
+
+	var zoneevent = await zevent.findOne(guild, location) || {events: []};
+	zoneevent.events.push({id: eventID, title: title, last: times[times.length-1]})
+
+	return zevent.push(guild, location, zoneevent);
 }
 
 async function create_event(conn, message, zone, title, recurrent) {
@@ -109,18 +114,100 @@ async function handle_tag(conn, message, zone) {
 	})
 
 }
-/*
+
+async function handle_deltag(conn, message, zone) {
+	const zevent = new db.ZoneEventsDb(conn);
+	const calendar = new db.CalendarDb(conn);
+
+	const ze = await zevent.findOneBy({
+		guild: message.channel.guild.id,
+		uuid: zone.zone,
+		events: { $elemMatch: {last: { $gte: DateTime.utc().toJSDate() }} }
+	});
+	if (ze && ze.events) {
+		var handled = false;
+		message.channel.send("Enter the ID of the event you want to delete (or type cancel):\n\n>>> " + ze.events.map(ev => 'ID: `' + ev.id + '`     Title: `' + ev.title + '`\n'));
+		const collector = message.channel.createMessageCollector(m => m.author.id == message.author.id, {time: 60000});
+		collector.on('collect', m => {
+			if ('cancel' == m.content.toLowerCase()) {
+				message.reply("Cancelled.");
+				handled = true;
+				collector.stop();
+			} else {
+				const ev = ze.events.find(ev => ev.id == m.content);
+				if (!ev) {
+					message.reply("Sorry, can't find event `" + m.content + "`. Try again.")
+				} else {
+					handled = true;
+
+					ze.events = ze.events.filter(ev => ev.id != m.content);
+					calendar.delete({guild: message.channel.guild.id, type: cs.TERRITORY_CHANNEL, uid: m.content});
+					zevent.push(message.channel.guild.id, zone.zone, ze);
+					message.reply("Event deleted");
+					
+					collector.stop();
+				}
+			}
+		})
+		collector.on('end', m => {
+			if (!handled) {
+				return message.reply("Sorry, I'm done waiting. Good bye.");
+			}
+		})
+
+	} else {
+		message.reply("No events scheduled for " + zone.zone);
+	}
+
+}
+
 async function list_events(conn, message, zone) {
-	const cal = new db.CalendarDb(conn);
+	const zevent = new db.ZoneEventsDb(conn);
+	const calendar = new db.CalendarDb(conn);
 
-	cal.findBy({guild: message.channel.guild.id, type: 'zone', location: zone.zone, notified: false}).then(ev => {
-
+	const zevents = zevent.findOneBy({
+		guild: message.channel.guild.id,
+		uuid: zone.zone,
+		events: { $elemMatch: {last: { $gte: DateTime.utc().toJSDate() }} }
 	});
 
+	const calevents = await calendar.findBy({
+		guild: message.channel.guild.id,
+		location: zone.zone,
+		type: cs.TERRITORY_CHANNEL,
+		src: 'calendar',
+		notified: false,
+		start: { $gte: DateTime.utc().toJSDate() }
+	});
 	
-	calendar.insert([{guild: guild, type: 'zone', uid: eventID, summary: title, location: location, start: tm, description: '', notified: false}]);
+	zevents.then(ze => {
+		if (ze && ze.events) {
+
+			const msgEmbed = new Discord.MessageEmbed()
+			.setColor('#e1dad8')
+			.setThumbnail(message.channel.guild ? message.channel.guild.iconURL() : client.user.avatarURL())
+			.setTitle("Events for " + zone.zone)
+			.addFields({
+				name: 'Scheduled Events', value: ze.events.map(ev => 'ID: `' + ev.id + '`     Title: `' + ev.title + '`\n')
+			})
+			.setTimestamp();
+
+			var caevents = [];
+			groupBy(calevents, u => u.uid).forEach(values => {
+				caevents.push(values[0].summary);
+			})
+			if (caevents.length > 0) {
+				msgEmbed.addField('Calendar Events', caevents.join('\n'))
+			}
+			message.channel.send(msgEmbed);
+
+		} else {
+			message.reply("No events scheduled for " + zone.zone);
+		}
+	})
+
 }
-*/
+
 module.exports = {
 	name: 'zone',
 	aliases: ['territory','zones'],
@@ -145,7 +232,8 @@ module.exports = {
 		} else if (DAYS.some(v => v == cmd)) {
 			zones = find_by_weekday(DAYS.indexOf(cmd) + 1);
 		} else if ('today' == cmd) {
-			zones = find_by_weekday(DateTime.local().weekday)
+			const today = DateTime.local();
+			zones = find_by_weekday(today.weekday).filter(z => z.next.startOf("day") == today.startOf("day"))
 		} else {
 			zones = find_by_name(cmd);
 			if ('tag' == param) {
@@ -153,6 +241,12 @@ module.exports = {
 					message.reply('Sorry, too many zones matching ' + cmd + '. Narrow your search.');		
 				} else if (zones.length == 1) {
 					return handle_tag(this.conn, message, zones[0]);
+				}
+			} else if ('-tag' == param) {
+				if (zones.length > 1) {
+					message.reply('Sorry, too many zones matching ' + cmd + '. Narrow your search.');		
+				} else if (zones.length == 1) {
+					return handle_deltag(this.conn, message, zones[0]);
 				}
 			} else if ('events' == param) {
 				if (zones.length > 1) {

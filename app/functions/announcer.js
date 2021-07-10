@@ -63,7 +63,7 @@ module.exports = {
         calendar.readEvents({minutes: number}, true).then(events => {
             console.log(events);
             events.forEach(e => {
-                config.findOne(e.guild, cs.TERRITORY_CHANNEL).then(cfg => {
+                config.findOne(e.guild, e.type).then(cfg => {
                     if (cfg) {
                         const channel = client.guilds.cache.get(e.guild).channels.cache.get(cfg.channel);
                         if (channel) sendMessage(channel, createMessage(e));

@@ -179,7 +179,7 @@
 		"day": 4,
 		"start": "1600",
 		"duration": 6,
-		"event": "Officer XP",
+		"event": "Limited Time Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
 		"color": "#8c4cdc"
 	},
@@ -235,7 +235,7 @@
 		"day": 5,
 		"start": "2200",
 		"duration": 6,
-		"event": "Ship Heroic",
+		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
 		"color": "#e3f134"
 	},

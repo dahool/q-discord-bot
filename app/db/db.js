@@ -64,9 +64,8 @@ class DbHelper {
     }
 
     async findOneBy(query) {
-        var results = []
         var returnValue = undefined;
-        await this.db.find(query).forEach((m) => results.push(m));
+        var results = await this.db.find(query).toArray();
         if (results.length > 0) {
             returnValue = results[0];
         }
@@ -74,9 +73,7 @@ class DbHelper {
     }
 
     async findBy(query) {
-        var results = []
-        await this.db.find(query).forEach((m) => results.push(m));
-        return results;
+        return await this.db.find(query).toArray();
     }
 
     async delete(guild, uuid) {
@@ -100,6 +97,12 @@ class AllianceDb extends DbHelper {
 class ConfigDb extends DbHelper {
     constructor(connection) {
         super(connection, "config");
+    }
+}
+
+class ZoneEventsDb extends DbHelper {
+    constructor(connection) {
+        super(connection, "zone_events");
     }
 }
 
@@ -137,8 +140,7 @@ class CalendarDb {
     }
 
     async findBy(query) {
-        var results = []
-        return this.db.find(query);
+        return await this.db.find(query).toArray();
     }
         
 }
@@ -168,4 +170,4 @@ class MembersDb extends DbHelper {
 
 const connectionManager = new ConnectionManager();
 
-module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb }
+module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb }

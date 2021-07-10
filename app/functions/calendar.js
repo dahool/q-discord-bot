@@ -1,11 +1,8 @@
 
-const Discord = require("discord.js");
 const { DateTime } = require("luxon");
 const { ConfigDb, CalendarDb } = require("../db/db");
 const ical = require('node-ical');
 const cs = require('../values');
-const { load } = require("dotenv");
-
 
 processRecurrentEvent = (ev) => {
     let events = [];
@@ -30,7 +27,7 @@ loadEvents = async (guild, url, type, connection) => {
 
     const calendar = new CalendarDb(connection);
 
-    await calendar.delete({guild: guild, type: type});
+    await calendar.delete({guild: guild, type: type, src: 'calendar'});
 
     for (let k in data) {
         if (data.hasOwnProperty(k)) {
@@ -40,12 +37,12 @@ loadEvents = async (guild, url, type, connection) => {
                     const events = processRecurrentEvent(ev);
                     if (events.length > 0) {
                         console.log(events);
-                        await calendar.insert(events.map(e => Object.assign({}, e, {guild: guild, type: type})));
+                        await calendar.insert(events.map(e => Object.assign({}, e, {guild: guild, type: type, src: 'calendar'})));
                     }
                 } else {
                     if (DateTime.fromJSDate(ev.start) > DateTime.local()) {
                         console.log(ev);
-                        await calendar.insert([{guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false}]);
+                        await calendar.insert([{guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'}]);
                     }
                 }
             }
@@ -60,7 +57,7 @@ module.exports = {
 
         const configs = await config.findBy({uuid: 'territory_events'});
         configs.forEach(ev => {
-                loadEvents(ev.guild, ev.url, 'territory_events', connection);
+                loadEvents(ev.guild, ev.url, cs.TERRITORY_CHANNEL, connection);
         });
 
         console.log("Processed " + configs.length);
