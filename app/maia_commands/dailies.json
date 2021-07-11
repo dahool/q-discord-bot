@@ -5,7 +5,8 @@
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 1,
@@ -13,7 +14,8 @@
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 1,
@@ -21,7 +23,8 @@
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_Heroic.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},
 	{
 		"day": 1,
@@ -29,15 +32,17 @@
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},	
 	{
 		"day": 1,
 		"start": "1600",
 		"duration": 6,
-		"event": "Limited Time Officer",
+		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 1,
@@ -45,7 +50,8 @@
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 2,
@@ -53,7 +59,8 @@
 		"duration": 12,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 2,
@@ -61,7 +68,8 @@
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 2,
@@ -69,7 +77,8 @@
 		"duration": 6,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 2,
@@ -77,7 +86,8 @@
 		"duration": 12,
 		"event": "Station SLB",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},	
 	{
 		"day": 2,
@@ -85,7 +95,8 @@
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 2,
@@ -93,7 +104,8 @@
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 3,
@@ -101,7 +113,8 @@
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},
 	{
 		"day": 3,
@@ -109,7 +122,8 @@
 		"duration": 6,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 3,
@@ -117,7 +131,8 @@
 		"duration": 6,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 3,
@@ -125,7 +140,8 @@
 		"duration": 12,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},	
 	{
 		"day": 3,
@@ -133,7 +149,8 @@
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 3,
@@ -141,7 +158,8 @@
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 4,
@@ -149,7 +167,8 @@
 		"duration": 12,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 4,
@@ -157,7 +176,8 @@
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},
 	{
 		"day": 4,
@@ -165,7 +185,8 @@
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 4,
@@ -173,7 +194,8 @@
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},	
 	{
 		"day": 4,
@@ -181,7 +203,8 @@
 		"duration": 6,
 		"event": "Limited Time Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 4,
@@ -189,7 +212,8 @@
 		"duration": 6,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},	
 	{
 		"day": 5,
@@ -197,7 +221,8 @@
 		"duration": 12,
 		"event": "Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 5,
@@ -205,7 +230,8 @@
 		"duration": 6,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 5,
@@ -213,7 +239,8 @@
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 5,
@@ -221,7 +248,8 @@
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},	
 	{
 		"day": 5,
@@ -229,7 +257,8 @@
 		"duration": 6,
 		"event": "Officer Recruit SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},
 	{
 		"day": 5,
@@ -237,7 +266,8 @@
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 6,
@@ -245,7 +275,8 @@
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 6,
@@ -253,7 +284,8 @@
 		"duration": 6,
 		"event": "Officer XP SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 6,
@@ -261,7 +293,8 @@
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},
 	{
 		"day": 6,
@@ -269,7 +302,8 @@
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},	
 	{
 		"day": 6,
@@ -277,7 +311,8 @@
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 6,
@@ -285,7 +320,8 @@
 		"duration": 6,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},		
 	{
 		"day": 7,
@@ -293,7 +329,8 @@
 		"duration": 12,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 7,
@@ -301,7 +338,8 @@
 		"duration": 6,
 		"event": "Limited Time Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 7,
@@ -309,7 +347,8 @@
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 7,
@@ -317,7 +356,8 @@
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},	
 	{
 		"day": 7,
@@ -325,7 +365,8 @@
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},
 	{
 		"day": 7,
@@ -333,7 +374,8 @@
 		"duration": 6,
 		"event": "Officer XP SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 8,
@@ -341,7 +383,8 @@
 		"duration": 12,
 		"event": "Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 8,
@@ -349,7 +392,8 @@
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 8,
@@ -357,7 +401,8 @@
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 8,
@@ -365,7 +410,8 @@
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},	
 	{
 		"day": 8,
@@ -373,7 +419,8 @@
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},
 	{
 		"day": 8,
@@ -381,7 +428,8 @@
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},	
 	{
 		"day": 9,
@@ -389,7 +437,8 @@
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},
 	{
 		"day": 9,
@@ -397,7 +446,8 @@
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 9,
@@ -405,7 +455,8 @@
 		"duration": 6,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 9,
@@ -413,7 +464,8 @@
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},	
 	{
 		"day": 9,
@@ -421,7 +473,8 @@
 		"duration": 6,
 		"event": "Officer XP SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 9,
@@ -429,7 +482,8 @@
 		"duration": 6,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},	
 	{
 		"day": 10,
@@ -437,7 +491,8 @@
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 10,
@@ -445,7 +500,8 @@
 		"duration": 6,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	},
 	{
 		"day": 10,
@@ -453,7 +509,8 @@
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 10,
@@ -461,7 +518,8 @@
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},	
 	{
 		"day": 10,
@@ -477,7 +535,8 @@
 		"duration": 6,
 		"event": "Limited Time Station SLB",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
-		"color": "#1c66e8"
+		"color": "#1c66e8",
+		"description": "Build and Upgrade modules to strengthen your Station"
 	},	
 	{
 		"day": 11,
@@ -485,7 +544,8 @@
 		"duration": 12,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
-		"color": "#8c4cdc"
+		"color": "#8c4cdc",
+		"description": "Spend officer XP"
 	},
 	{
 		"day": 11,
@@ -493,7 +553,8 @@
 		"duration": 6,
 		"event": "Ship Heroic",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 11,
@@ -509,7 +570,8 @@
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
-		"color": "#00d4ff"
+		"color": "#00d4ff",
+		"description": "Collect officer shards"
 	},	
 	{
 		"day": 11,
@@ -517,7 +579,8 @@
 		"duration": 6,
 		"event": "Ship Heroic",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
-		"color": "#e3f134"
+		"color": "#e3f134",
+		"description": "Spend ship XP"
 	},
 	{
 		"day": 11,
@@ -525,6 +588,7 @@
 		"duration": 6,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Conduct Researches in your R&D department"
 	}
 ]

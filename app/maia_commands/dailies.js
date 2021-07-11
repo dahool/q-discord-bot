@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 
-const { groupBy, safeLower } = require('../utils')
+const { groupBy, safeLower, randomColor } = require('../utils')
 
 const cs = require('../values')
 
@@ -93,10 +93,11 @@ async function notify(connection, section, client, rotate) {
 						const msgEmbed = new Discord.MessageEmbed()
 						.setColor(z.color)
 						.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
-						.setDescription("Starting soon")
+						.setDescription("Coming up next")
 						.setTitle(z.event + ' Event')
 						.setImage(z.image)
-						.addFields({name: "Ends", value: end.toRelative()})
+						.setFooter(z.description)
+						.addFields({name: "Ends", value: end.toRelative(), inline: true})
 						.setTimestamp();
 						channel.send(msgEmbed);
 					})
@@ -144,38 +145,40 @@ module.exports = {
 				return message.reply('No matching dailies found');
 			}
 
+			const msgEmbed = new Discord.MessageEmbed()
+			.setColor('#f2f542')
+			.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
+			.setTitle('Upcoming Events')
+			.setTimestamp();
+		
 			groupBy(list.sort((a,b) => a.next - b.next), a => a.event).forEach((value, key) => {
-				const first = value[0];
-				const msgEmbed = new Discord.MessageEmbed()
-				.setColor(first.color)
-				.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
-				.setTitle(first.event + ' Event')
-				.addFields({
-					name: "Next", value: first.next.toRelative(), inline: true
-				})
-				.setImage(first.image)
-				.setTimestamp();
-				if (first.running) {
-					msgEmbed.description("Running now");
+				const z = value[0];
+				var suffix;
+				if (z.running) {
+					suffix = "running now";
+				} else {
+					suffix = "next " + z.next.toRelative();
 				}
-				message.channel.send(msgEmbed);
+				msgEmbed.addField(z.event + ' Event (' + suffix + ")", z.description)
+			})
 
-			});
+			message.channel.send(msgEmbed);
 
 		} else {
 			const list = find_by_day(rotation);
+
+			const msgEmbed = new Discord.MessageEmbed()
+			.setColor('#0099ff')
+			.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
+			.setTitle('Current Events')
+			.setFooter(`(${rotation})`)
+			.setTimestamp();
+		
 			list.sort((a,b) => a.next - b.next).forEach(z => {
-				const msgEmbed = new Discord.MessageEmbed()
-				.setColor(z.color)
-				.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
-				.setDescription("Running now")
-				.setTitle(z.event + ' Event')
-				.setImage(z.image)
-				.addFields({name: "Ends", value: z.end.toRelative()})
-				.setTimestamp();
-				message.channel.send(msgEmbed);
+				msgEmbed.addField(z.event + ' Event (ends ' + z.end.toRelative() + ')', z.description)
 			})
 
+			message.channel.send(msgEmbed);
 		}
     },
 };

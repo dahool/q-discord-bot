@@ -118,11 +118,16 @@ module.exports = {
 					const configRole = Object.assign({roles: []}, await config.findOne(guild, "roles"))
 					const roles = configRole.roles.map(rid => '<@&' + rid + '>');
 	
-					msgEmbed
+					if (roles.length) {
+						msgEmbed
 						.setDescription(`List of privileged roles`)
 						.addFields(
 							{ name: 'Roles', value : roles.join(" ")}
 						)
+					} else {
+						msgEmbed
+						.setDescription(`No roles defined`)
+					}
 	
 					log = false;
 				} else if ("territory_events" == command) {
