@@ -34,9 +34,9 @@ createMessage = (data) => {
 }
 
 getRoles = (channel, message) => {
+    let roles = [];
     if (message.description != '') {
         const m = message.description.match(MENTION_REX);
-        let roles = [];
         if (m) {
             m.forEach(v => {
                 let role = channel.guild.roles.cache.find(r => r.name === v.substring(1));
@@ -44,14 +44,14 @@ getRoles = (channel, message) => {
                     roles.push(`<@&${role.id}>`);
                 }
             });
-            return roles.join(' ');
+            
         }
     }
-    return '';
+    return roles.join(' ');
 }
 
-sendMessage = async (channel, message) => {
-    return channel.send({ embed: message, content: '@here ' + getRoles(channel, message) });
+sendMessage = async (mention, channel, message) => {
+    return channel.send({ embed: message, content: '@here ' + mention.map(r => '<@&' + r + '>').join(' ') + getRoles(channel, message) });
 }
 
 
@@ -66,7 +66,7 @@ module.exports = {
                 config.findOne(e.guild, e.type).then(cfg => {
                     if (cfg) {
                         const channel = client.guilds.cache.get(e.guild).channels.cache.get(cfg.channel);
-                        if (channel) sendMessage(channel, createMessage(e));
+                        if (channel) sendMessage(cfg.mention || [], channel, createMessage(e));
                     }
                 })
             });

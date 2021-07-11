@@ -37,10 +37,9 @@ module.exports = {
 					{ name: 'Territory Announcement Channel', value: '`!config <set/get> '+cs.TERRITORY_CHANNEL+' #channel_name`'},
 					{ name: 'Logging Channel', value: '`!config <set/get> '+cs.LOG_CHANNEL+' #channel_name`'},
 					{ name: 'Dailies Channel', value: '`!config <set/get> '+cs.DAILY_CHANNEL +' #channel_name`'},
-					{ name: 'Territory Events Calendar', value: '`!config territory_events calendar_ical_url`'},
-					{ name: 'Add privileged role', value: '`!config addrole @rolename`'},
-					{ name: 'Removed privileged role', value: '`!config delrole @rolename`'},
-					{ name: 'List privileged roles', value: '`!config roles`'},
+					{ name: 'Set Territory Events Calendar', value: '`!config territory_events calendar_ical_url`'},
+					{ name: 'Add/Remove privileged roles', value: '`!config (+/-)role <@rolename>`'},
+					{ name: 'Add/Remove Territory/Events roles mention', value: '`!config (+/-)mention <@rolename>`'},
 				)
 		} else {
 			const config = new db.ConfigDb(this.conn);
@@ -85,12 +84,15 @@ module.exports = {
 					}
 
 				} else {
+					if (!key) {
+						return message.reply(`Missing required argument`);	
+					}
 					return message.reply(`Sorry, don't know what to do with \`${key}\``);
 				}
 				
 			} else {
 				const params = args.join(" ")
-				if ("addrole" == command || "delrole" == command) {
+				if ("+role" == command || "-role" == command) {
 					const id = extract_id(ROLE_ID, params);
 					if (id == null) {
 						return message.reply(`Invalid argument \`${params}\`. Specify a valid role.`);
@@ -98,7 +100,7 @@ module.exports = {
 	
 					const configRole = Object.assign({roles: []}, await config.findOne(guild, "roles"))
 					
-					if ("addrole" == command) {
+					if ("+role" == command) {
 						// prevent duplicates
 						configRole.roles = configRole.roles.filter(r => r != id)
 						configRole.roles.push(id);
@@ -114,7 +116,28 @@ module.exports = {
 						.addFields(
 							{ name: 'Role', value : '<@&' + id + '>'}
 						)
-				} else if ("roles" == command) {
+
+				} else if ("+mention" == command || "-mention" == command) {
+					const id = extract_id(ROLE_ID, params);
+					if (id == null) {
+						return message.reply(`Invalid argument \`${params}\`. Specify a valid role.`);
+					}
+	
+					const configRole = Object.assign({mention: []}, await config.findOne(guild, cs.TERRITORY_CHANNEL))
+					
+					if ("+mention" == command) {
+						// prevent duplicates
+						configRole.mention = configRole.mention.filter(r => r != id)
+						configRole.mention.push(id);
+						msgEmbed.setDescription(`Added ` + params)
+					} else {
+						configRole.mention = configRole.mention.filter(r => r != id)
+						msgEmbed.setDescription(`Removed ` + params)
+					}
+	
+					config.push(guild, cs.TERRITORY_CHANNEL, configRole);
+
+				} else if ("role" == command) {
 					const configRole = Object.assign({roles: []}, await config.findOne(guild, "roles"))
 					const roles = configRole.roles.map(rid => '<@&' + rid + '>');
 	
@@ -130,6 +153,21 @@ module.exports = {
 					}
 	
 					log = false;
+				} else if ("mention" == command) {
+					const configRole = Object.assign({mention: []}, await config.findOne(guild, cs.TERRITORY_CHANNEL))
+					const roles = configRole.mention.map(rid => '<@&' + rid + '>');
+	
+					if (roles.length) {
+						msgEmbed
+						.addFields(
+							{ name: 'Roles', value : roles.join(" ")}
+						)
+					} else {
+						msgEmbed
+						.setDescription(`No roles defined`)
+					}
+	
+					log = false;					
 				} else if ("territory_events" == command) {
 	
 					try {
