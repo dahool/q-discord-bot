@@ -9,6 +9,8 @@ const { Client, Intents } = require('discord.js');
 const announcer = require('./functions/announcer');
 const calendar = require('./functions/calendar');
 const membersOnline = require('./functions/online');
+const hook = require('./functions/hooksender');
+const cs = require('./values')
 
 var cron = require('node-cron');
 
@@ -46,11 +48,21 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 })
 
 var configDb;
+
+handleNonCommand = async (message) => {
+	if (message.author.bot) return;
+
+	const cfg = await configDb.findOneBy({guild: message.guild.id, uuid: cs.WEEBHOOK, channel: message.channel.id});
+	if (cfg && cfg.url) {
+		return hook.sendMessage(message, cfg.url);
+	}
+}
+
 client.on('message', message => {
 
 	;(async () => {
 
-		if (!message.content.startsWith(prefix) || message.author.bot || message.mentions.everyone) return;
+		if (!message.content.startsWith(prefix) || message.author.bot || message.mentions.everyone) return handleNonCommand(message);
 
 		const args = message.content.slice(prefix.length).split(/ +/);
 		

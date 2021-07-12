@@ -40,6 +40,12 @@ class DbHelper {
         this.db.updateOne(query, toInsert, { upsert: true});
     }
 
+    async pushBy(query, data) {
+        const mergedData = Object.assign({}, data, query);
+        const toInsert= { $set: mergedData }
+        this.db.updateOne(query, toInsert, { upsert: true});
+    }
+
     async findOne(guild, uuid, property) {
         const query = { guild: guild, uuid: uuid }
         var results = []

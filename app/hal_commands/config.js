@@ -3,6 +3,7 @@ const db = require('../db/db');
 const cs = require('../values')
 const ical = require('node-ical');
 const { safeLower } = require('../utils');
+const { validateHookUrl } = require('../functions/hooksender');
 
 const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
@@ -40,6 +41,7 @@ module.exports = {
 					{ name: 'Set Territory Events Calendar', value: '`!config territory_events calendar_ical_url`'},
 					{ name: 'Add/Remove privileged roles', value: '`!config (+/-)role <@rolename>`'},
 					{ name: 'Add/Remove Territory/Events roles mention', value: '`!config (+/-)mention <@rolename>`'},
+					{ name: 'Add Webhook relay', value: '`!config hook #channel_name webhook_url`'},
 				)
 		} else {
 			const config = new db.ConfigDb(this.conn);
@@ -49,7 +51,35 @@ module.exports = {
 				return message.reply(`Missing required arguments \`!${this.name} <command> <arguments>\``);
 			}
 
-			if (command == 'set' || command == 'get') {
+			if (command == 'hook') {
+				const channel = args.shift();
+				const url = args.shift();
+
+				if (channel && url) {
+					const channelId = extract_id(CHANNEL_ID, channel);
+					if (channelId == null) {
+						return message.reply(`Invalid argument \`${channel}\`. Specify a valid channel.`);
+					}
+					if (!validateHookUrl(url)) {
+						return message.reply(`Invalid discord weebhook url \`${url}\`.`);
+					}
+
+					const hooks = (await config.findOneBy({guild: guild, uuid: cs.WEEBHOOK, channel: channelId})) || { url: []};
+					hooks.url.push(url);
+					config.pushBy({guild: guild, uuid: cs.WEEBHOOK, channel: channelId}, hooks);
+
+					msgEmbed
+					.setDescription(`Add Webhook relay`)
+					.addFields(
+						{ name: 'Channel', value : '<#' + channelId + '>'},
+						{ name: 'URL', value : url}
+					)
+
+				} else {
+					return message.reply('Missing required arguments');	
+				}
+
+			} else if (command == 'set' || command == 'get') {
 				const key = safeLower(args.shift());
 
 				if (cs.ANNOUNCE_CHANNEL == key
@@ -125,14 +155,21 @@ module.exports = {
 	
 					const configRole = Object.assign({mention: []}, await config.findOne(guild, cs.TERRITORY_CHANNEL))
 					
+					msgEmbed
+						.setDescription('Territory/Events roles mention')
+
 					if ("+mention" == command) {
 						// prevent duplicates
 						configRole.mention = configRole.mention.filter(r => r != id)
 						configRole.mention.push(id);
-						msgEmbed.setDescription(`Added ` + params)
+						msgEmbed.addFields(
+							{ name: 'Add', value : '<@&' + id + '>'}
+						)
 					} else {
 						configRole.mention = configRole.mention.filter(r => r != id)
-						msgEmbed.setDescription(`Removed ` + params)
+						msgEmbed.addFields(
+							{ name: 'Remove', value : '<@&' + id + '>'}
+						)
 					}
 	
 					config.push(guild, cs.TERRITORY_CHANNEL, configRole);
@@ -159,6 +196,7 @@ module.exports = {
 	
 					if (roles.length) {
 						msgEmbed
+						.setDescription('Territory/Events roles mention')
 						.addFields(
 							{ name: 'Roles', value : roles.join(" ")}
 						)
