@@ -15,7 +15,7 @@ module.exports = {
 	name: 'relay',
 	aliases: ['broadcast'],
     description: 'Add Webhook broadcast',
-	usage: 'relay #channel_name webhook_url',
+	usage: '#channel_name webhook_url',
     async execute(configDb, cmd, message, params) {
 		const guild = message.guild.id;
 
