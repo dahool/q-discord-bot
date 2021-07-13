@@ -30,8 +30,8 @@ function get_next_execution(rotation, zone) {
 
 function running(day, z) {
 	if (z.day == day) {
-		const today = DateTime.utc();
-		const start = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)})
+		const today = DateTime.local();
+		const start = DateTime.local().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)})
 		const end = start.plus({hours: z.duration});
 		return (today >= start && today < end);
 	}

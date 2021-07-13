@@ -4,8 +4,8 @@ const { randomColor } = require('../utils')
 
 const HOOK_REX = /\/webhooks\/(?<ID>[^\/]+)\/(?<TOKEN>[^\/]+)/;
 
-validateHookUrl = async(url) => {
-    return (ma = url.match(HOOK_REX) == undefined);
+validateHookUrl = (url) => {
+    return (ma = url.match(HOOK_REX)) != undefined;
 }
 
 sendMessage = async (message, target) => {
