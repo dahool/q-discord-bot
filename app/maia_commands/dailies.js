@@ -9,17 +9,19 @@ const db = require('../db/db');
 
 const dailies = require('./dailies.json');
 
+const ROT_FORMAT = 'yyyy-MM-dd';
+
 const { dailiesMax, dailiesPart } = require('../config.json');
 
 function get_next_execution(rotation, zone) {
 	var start = DateTime.utc().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).setLocale('en');
-	if (rotation == zone.day) {
+	if (rotation.rotation == zone.day) {
 		const today = DateTime.utc();
 		if (today > start) {
 			start = start.plus({days: dailiesMax});
 		}
 	} else {
-		var r = rotation;
+		var r = rotation.rotation;
 		do {
 			r = doRotate(r);
 			start = start.plus({days: 1});
@@ -28,21 +30,21 @@ function get_next_execution(rotation, zone) {
 	return start;
 }
 
-function running(day, z) {
-	if (z.day == day) {
-		const today = DateTime.local();
-		const start = DateTime.local().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)})
+function running(rotation, z) {
+	if (z.day == rotation.rotation) {
+		const today = DateTime.utc();
+		const start = DateTime.fromFormat(rotation.rotationDay, ROT_FORMAT).set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)})
 		const end = start.plus({hours: z.duration});
 		return (today >= start && today < end);
 	}
 	return false;
 }
 
-function find_by_day(day) {
+function find_by_day(rotation) {
 	return dailies
-		.filter(z => running(day, z))
+		.filter(z => running(rotation, z))
 		.map(z => {
-			z.end = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setLocale('en').plus({hours: z.duration});
+			z.end = endTime(rotation, z)
 			return z;
 		})
 
@@ -60,9 +62,9 @@ function find_by_name(rotation, name) {
 
 function find_next(rotation) {
 	const current = parseInt(DateTime.utc().toFormat('HHmm'));
-	var ls = dailies.filter(z => rotation == z.day && parseInt(z.start) > current)
+	var ls = dailies.filter(z => rotation.rotation == z.day && parseInt(z.start) > current)
 	if (!ls) {
-		const r = doRotate(rotation);
+		const r = doRotate(rotation.rotation);
 		ls = dailies.filter(z => r == z.day && z.start == dailiesPart[0])
 	}
 	return ls.map(z => {
@@ -77,17 +79,21 @@ function doRotate(value) {
 	return ++value;
 }
 
+function endTime(rotation, zone) {
+	return DateTime.utc().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).setLocale('en').plus({hours: zone.duration})
+}
+
 async function notify(connection, section, client, rotate) {
 	const config = new db.ConfigDb(connection);
 	config.getCommon("general").then(general => {
 		if (!general) {
-			general = {rotation: 1};
+			general = {rotation: 1, rotationDay: DateTime.utc().toFormat(ROT_FORMAT)};
 		}
 		config.findBy({uuid: cs.DAILY_CHANNEL}).then(guilds => {
-			if (rotate) general.rotation = doRotate(general.rotation);
+			if (rotate) rotateInPlace(general);
 			dailies.filter(z => z.day == general.rotation && z.start == section)
 				.forEach((z) => {
-					const end = DateTime.utc().set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setLocale('en').plus({hours: z.duration});
+					const end = endTime(general, z)
 					guilds.forEach((guild) => {
 						const channel = client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
 						const msgEmbed = new Discord.MessageEmbed()
@@ -106,16 +112,17 @@ async function notify(connection, section, client, rotate) {
 	})
 }
 
+function rotateInPlace(general) {
+	general.rotation = doRotate(general.rotation);
+	general.rotationDay = DateTime.utc().toFormat(ROT_FORMAT);
+}
+
 async function rotate(connection) {
     const config = new db.ConfigDb(connection);
     var general = await config.getCommon("general") || {'rotation': 1};
-    if (general.rotation == dailiesMax) {
-        general.rotation = 1;
-    } else {
-        general.rotation++;
-    }
+	rotateInPlace(general);
     config.pushCommon("general", general);
-    return general.rotation;
+    return general;
 }
 
 module.exports = {
@@ -130,7 +137,7 @@ module.exports = {
     async execute(client, message, args) {
 		const config = new db.ConfigDb(this.conn);
 
-		const rotation = (await config.getCommon("general") || {rotation: 1}).rotation;
+		const rotation = (await config.getCommon("general")) || {rotation: 1, rotationDay: DateTime.utc().toFormat(ROT_FORMAT)};
 
 		if (args.length) {
 			var list;
@@ -171,7 +178,7 @@ module.exports = {
 			.setColor('#0099ff')
 			.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
 			.setTitle('Current Events')
-			.setFooter(`(${rotation})`)
+			.setFooter(`(${rotation.rotation})`)
 			.setTimestamp();
 		
 			list.sort((a,b) => a.next - b.next).forEach(z => {
