@@ -8,8 +8,9 @@ validateHookUrl = (url) => {
     return (ma = url.match(HOOK_REX)) != undefined;
 }
 
-sendMessage = async (message, target) => {
+relayMessage = async (message, target) => {
 
+    /*
     const embed = new Discord.MessageEmbed()
         .setColor('#f31515')
         .setURL(`https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`)
@@ -29,7 +30,20 @@ sendMessage = async (message, target) => {
             })            
         }
     });
+    */
+
+    target.forEach(url => {
+        const ma = url.match(HOOK_REX);
+        if (ma) {
+            const client = new Discord.WebhookClient(ma.groups.ID, ma.groups.TOKEN);
+            client.send(message.content, {
+                username: message.author.username,
+                avatarURL: message.channel.guild.iconURL()
+                //avatarURL: message.author.displayAvatarURL()
+            })        
+        }
+    });
 
 }
 
-module.exports = { sendMessage, validateHookUrl };
+module.exports = { relayMessage, validateHookUrl };

@@ -65,7 +65,8 @@ module.exports = {
             events.forEach(e => {
                 config.findOne(e.guild, e.type).then(cfg => {
                     if (cfg) {
-                        const channel = client.guilds.cache.get(e.guild).channels.cache.get(cfg.channel);
+                        console.log(cfg);
+                        const channel = client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
                         if (channel) sendMessage(cfg.mention || [], channel, createMessage(e));
                     }
                 })

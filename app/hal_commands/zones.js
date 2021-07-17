@@ -181,16 +181,19 @@ async function list_events(conn, message, zone) {
 	});
 	
 	zevents.then(ze => {
-		if (ze && ze.events) {
+		if ((ze && ze.events.length) || calevents.length) {
 
 			const msgEmbed = new Discord.MessageEmbed()
 			.setColor('#e1dad8')
 			.setThumbnail(message.channel.guild ? message.channel.guild.iconURL() : client.user.avatarURL())
 			.setTitle("Events for " + zone.zone)
-			.addFields({
-				name: 'Scheduled Events', value: ze.events.map(ev => 'ID: `' + ev.id + '`     Title: `' + ev.title + '`\n')
-			})
 			.setTimestamp();
+
+			if (ze && ze.events.length) {
+				msgEmbed.addFields({
+					name: 'Scheduled Events', value: ze.events.map(ev => 'ID: `' + ev.id + '`     Title: `' + ev.title + '`\n')
+				})
+			}
 
 			var caevents = [];
 			groupBy(calevents, u => u.uid).forEach(values => {
@@ -216,7 +219,9 @@ module.exports = {
 	man_usage: [
 		'* *<zonename>* :: `List details for specific zone`',
 		'* particle *<particle_name>* :: `List zones with specific particle`',
-		'* *<zonename>* tag :: `Create an event reminder for this zone`'],
+		'* *<zonename>* tag :: `Create an event`',
+		'* *<zonename>* -tag :: `Remove an event`',
+		'* *<zonename>* events :: `List events`'],
 	args: true,
 	dm: false,
     async execute(client, message, args) {

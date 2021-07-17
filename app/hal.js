@@ -54,7 +54,7 @@ handleNonCommand = async (message) => {
 
 	const cfg = await configDb.findOneBy({guild: message.guild.id, uuid: cs.WEEBHOOK, channel: message.channel.id});
 	if (cfg && cfg.url) {
-		return hook.sendMessage(message, cfg.url);
+		return hook.relayMessage(message, cfg.url);
 	}
 }
 
