@@ -228,7 +228,7 @@ module.exports = {
 		const cmd = safeLower(args.shift());
 		const param = safeLower(args.shift());
 		var zones = []
-
+		
 		if ('particles' == cmd || 'particle' == cmd) {
 			if (!param) {
 				return message.reply('Please, specify particle name (quantum, surax, phatom)');
@@ -242,18 +242,27 @@ module.exports = {
 		} else {
 			zones = find_by_name(cmd);
 			if ('tag' == param) {
+				if (!this.isAdmin) {
+					return message.reply("Sorry, you don't have enough permissions to execute this command.");	
+				}
 				if (zones.length > 1) {
 					message.reply('Sorry, too many zones matching ' + cmd + '. Narrow your search.');		
 				} else if (zones.length == 1) {
 					return handle_tag(this.conn, message, zones[0]);
 				}
 			} else if ('-tag' == param) {
+				if (!this.isAdmin) {
+					return message.reply("Sorry, you don't have enough permissions to execute this command.");	
+				}				
 				if (zones.length > 1) {
 					message.reply('Sorry, too many zones matching ' + cmd + '. Narrow your search.');		
 				} else if (zones.length == 1) {
 					return handle_deltag(this.conn, message, zones[0]);
 				}
 			} else if ('events' == param) {
+				if (!this.isAdmin) {
+					return message.reply("Sorry, you don't have enough permissions to execute this command.");	
+				}				
 				if (zones.length > 1) {
 					message.reply('Sorry, too many zones matching ' + cmd + '. Narrow your search.');		
 				} else if (zones.length == 1) {

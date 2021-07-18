@@ -48,21 +48,26 @@ client.on('message', message => {
 	
 		if (!command) return;
 	
+		const isAdmin = message.member.hasPermission(['ADMINISTRATOR','MANAGE_GUILD'])
+
 		if (message.channel.type == "dm" && command.dm === false) {
 			return message.reply("Sorry, can't process in DM");
 		}
 	
-		if (command.permission && !message.member.hasPermission(command.permission)) {
+		if (command.permission && !isAdmin && !message.member.hasPermission(command.permission)) {
 			return message.reply("Sorry, you don't have enough permissions to execute this command.");	
 		}
-	
-		if (command.private) {
-			const roles = await configDb.findOne(message.channel.guild.id, "roles") || [];
-			if (!message.member.roles.cache.some( r => roles)) {
-				return message.reply("Sorry, you don't have enough permissions to execute this command.");	
-			}
+
+		if (command.admin && !isAdmin) {
+			return message.reply("Sorry, you don't have enough permissions to execute this command.");	
 		}
-	
+
+		const roles = (await configDb.findOne(message.channel.guild.id, "roles", "roles")) || [];
+		const isManag = message.member.roles.cache.some( r => roles.includes(r) )
+		if (command.private && !isAdmin && !isManag) {
+			return message.reply("Sorry, you don't have enough permissions to execute this command.");	
+		}
+
 		if (command.args && !args.length) {
 			let reply = `Please specify, `;
 			if (command.usage) {
@@ -72,12 +77,13 @@ client.on('message', message => {
 		}
 		
 		try {
+			command.isAdmin = isAdmin || isManag;
 			return command.execute(client, message, args);
 			//message.delete();
 		} catch (error) {
 			console.error(error);
 			message.reply('There was an error trying to execute the command!');
-		}		
+		}
 	})().catch(console.error);
 });
 /* not working :/ maybe server issue?
