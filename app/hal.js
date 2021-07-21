@@ -12,8 +12,6 @@ const membersOnline = require('./functions/online');
 const hook = require('./functions/hooksender');
 const cs = require('./values')
 
-var cron = require('node-cron');
-
 const client = new Client({ ws: { intents: Intents.ALL } });
 client.commands = new Discord.Collection();
 
@@ -23,7 +21,15 @@ const { MembersDb, ConfigDb, connectionManager } = require('./db/db');
 
 var ready = false;
 
-client.once('ready', () => {
+const getApp = (guildId) => {
+	const app = client.api.applications(client.user.id)
+	if (guildId) {
+		app.guilds(guildId)
+	}
+	return app;
+}
+
+client.once('ready', async () => {
 	client.user.setActivity(`you` , { type: `WATCHING` });
 
 	var data = [];
@@ -31,12 +37,7 @@ client.once('ready', () => {
 		data.push({name: cmd.name, description: cmd.description});
 	})
 	
-	if (client.application) {
-		client.application.commands.set(data).then(cmds => console.log(cmds));
-	}
-
 	ready = true;
-	
 	console.log('HAL online!');
 });
 
@@ -102,8 +103,8 @@ client.on('message', message => {
 		
 		try {
 			command.isAdmin = isAdmin || isManag;
-			return command.execute(client, message, args);
-			//message.delete();
+			const r = command.execute(client, message, args);
+			if (!message.channel.type == "dm") message.delete();
 		} catch (error) {
 			console.error(error);
 			message.reply('There was an error trying to execute the command!');
@@ -113,30 +114,6 @@ client.on('message', message => {
 		console.error(error);
 	});
 });
-
-scheduleTasks = async (client, connection) => {
-	const props = {timezone: "UTC"};
-	/*cron.schedule('0 4 * * *', () => {
-		console.log('rotate daily calendar');
-		dailies.rotate(connection);
-	}, props);
-	cron.schedule('50 3 * * *', () => {
-		console.log('dailes reset');
-		dailies.notify(connection, "0400", client);
-	}, props);
-	cron.schedule('50 9 * * *', () => {
-		console.log('dailes 1st mid');
-		dailies.notify(connection, "1000", client);
-	}, props);
-	cron.schedule('50 15 * * *', () => {
-		console.log('dailes mid reset');
-		dailies.notify(connection, "1600", client);
-	}, props);	
-	cron.schedule('50 21 * * *', () => {
-		console.log('dailes 2nd mid');
-		dailies.notify(connection, "2200", client);
-	}, props);	*/
-}
 
 var connection;
 module.exports = {
@@ -153,8 +130,6 @@ module.exports = {
 		configDb = new ConfigDb(connectionManager);
 		
 		client.login(process.env.HAL_TOKEN);
-
-		scheduleTasks(client, connection);
 	},
 	async announce(num) {
 		if (!ready) {
