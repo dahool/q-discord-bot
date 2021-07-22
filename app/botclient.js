@@ -198,7 +198,7 @@ class BotCommander {
 	invokeCommand = async (interaction, message, commandName, args, member, guild, channel) => {
 
 		const command = this.client.commands.get(commandName) 
-			|| this.client.commands.find(cmd => cmd.slashName == commandName || (cmd.aliases && cmd.aliases.includes(commandName)));
+			|| this.client.commands.find(cmd => (interaction && cmd.slashName == commandName) || (cmd.aliases && cmd.aliases.includes(commandName)));
 
 		if (!command) return;
 
