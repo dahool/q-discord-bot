@@ -126,30 +126,57 @@ async function rotate(connection) {
 }
 
 module.exports = {
+	rotate,
+	notify,
 	name: 'dailies',
 	aliases: ['daily'],
     description: 'Show current and future dailies',
 	usage: '<name>',
 	man_description: 'Use without arguments to get a list of current dailies.',
 	dm: true,
-	rotate,
-	notify,
-    async execute(client, message, args) {
-		const config = new db.ConfigDb(this.conn);
+    slash: true,
+    options: [{
+		name: 'command',
+		description: 'Command',
+		type: 3,
+		choices: [
+			{
+				name: 'Next event in rotation',
+				value: 'next',
+			},
+			{
+				name: 'Find by name',
+				value: 'find',
+			}
+		]
+	},{
+		name: 'event',
+		description: 'Event name',
+		type: 3
+	}],	
+	async execute(client, args) {
+		const config = new db.ConfigDb(client.connection);
 
 		const rotation = (await config.getCommon("general")) || {rotation: 1, rotationDay: DateTime.utc().toFormat(ROT_FORMAT)};
 
-		if (args.length) {
-			var list;
-			if ('next' == safeLower(args[0])) {
+		if (args.command) {
+			if ('next' == args.command.toLowerCase()) {
 				list = find_next(rotation);
 			} else {
-				const name = args.join(' ').toLowerCase();
+				let name = null;
+				if ('find' == args.command.toLowerCase()) {
+					name = args.event?.toLowerCase();
+					if (!name) {
+						return client.reply('Missing event name')
+					}
+				} else {
+					name = args.command.toLowerCase();
+				}
 				list = find_by_name(rotation, name);
 			}
 
 			if (list.length == 0) {
-				return message.reply('No matching dailies found');
+				return client.reply('No matching dailies found');
 			}
 
 			const msgEmbed = new Discord.MessageEmbed()
@@ -169,7 +196,7 @@ module.exports = {
 				msgEmbed.addField(z.event + ' Event (' + suffix + ")", z.description)
 			})
 
-			message.channel.send(msgEmbed);
+			client.sendMessage(msgEmbed);
 
 		} else {
 			const list = find_by_day(rotation);
@@ -185,7 +212,7 @@ module.exports = {
 				msgEmbed.addField(z.event + ' Event (ends ' + z.end.toRelative() + ')', z.description)
 			})
 
-			message.channel.send(msgEmbed);
+			client.sendMessage(msgEmbed);
 		}
     },
 };

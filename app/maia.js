@@ -1,134 +1,37 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const fs = require('fs');
-const Discord = require('discord.js');
 const { prefix } = require('./config.json');
 const { Client, Intents } = require('discord.js');
-
-const client = new Client({ ws: { intents: Intents.ALL } });
-client.commands = new Discord.Collection();
+const { BotCommander } = require('./botclient');
 
 var dailies = require('./maia_commands/dailies');
-var cron = require('node-cron');
 
-const commandFiles = fs.readdirSync('./maia_commands').filter(file => file.endsWith('.js'));
+const { connectionManager } = require('./db/db');
 
-const { ConfigDb } = require('./db/db');
-const { rotate } = require('./maia_commands/dailies');
-const { events } = require('./hal');
-
-client.once('ready', () => {
-	client.user.setActivity(`and serving the alliance` , { type: `WATCHING` });
-
-	var data = [];
-	client.commands.each((cmd) => {
-		data.push({name: cmd.name, description: cmd.description});
-	})
-	
-	if (client.application) {
-		client.application.commands.set(data).then(cmds => console.log(cmds));
+//const client = new Client({ ws: { intents: Intents.ALL } });
+const client = new Client();
+const botclient = new BotCommander(client, connectionManager, 
+	{name: 'Maia', 
+	commandsDir: './maia_commands', 
+	prefix: prefix,
+	activity: {
+		message: 'and serving the alliance`',
+		type: 'WATCHING'
 	}
+})
 
-	console.log('Maia online!');
-});
-
-var configDb;
-client.on('message', message => {
-
-	;(async () => {
-
-		if (!message.content.startsWith(prefix) || message.author.bot || message.mentions.everyone) return;
-
-		const args = message.content.slice(prefix.length).split(/ +/);
-		
-		const commandName = args.shift().toLowerCase();
-		const command = client.commands.get(commandName)
-			|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-	
-		if (!command) return;
-	
-		const isAdmin = message.member.hasPermission(['ADMINISTRATOR','MANAGE_GUILD'])
-
-		if (message.channel.type == "dm" && command.dm === false) {
-			return message.reply("Sorry, can't process in DM");
-		}
-	
-		if (command.permission && !isAdmin && !message.member.hasPermission(command.permission)) {
-			return message.reply("Sorry, you don't have enough permissions to execute this command.");	
-		}
-
-		if (command.admin && !isAdmin) {
-			return message.reply("Sorry, you don't have enough permissions to execute this command.");	
-		}
-
-		const roles = (await configDb.findOne(message.channel.guild.id, "roles", "roles")) || [];
-		const isManag = message.member.roles.cache.some( r => roles.includes(r) )
-		if (command.private && !isAdmin && !isManag) {
-			return message.reply("Sorry, you don't have enough permissions to execute this command.");	
-		}
-
-		if (command.args && !args.length) {
-			let reply = `Please specify, `;
-			if (command.usage) {
-				reply += `\`${prefix}${command.name} ${command.usage}\``;
-			}
-			return message.reply(reply);
-		}
-		
-		try {
-			command.isAdmin = isAdmin || isManag;
-			return command.execute(client, message, args);
-			//message.delete();
-		} catch (error) {
-			console.error(error);
-			message.reply('There was an error trying to execute the command!');
-		}
-	})().catch(console.error);
-});
-/* not working :/ maybe server issue?
-scheduleTasks = async (client, connection) => {
-	const props = {timezone: "UTC"};
-	cron.schedule('5 3 * * *', () => {
-		console.log('dailes reset');
-		dailies.notify(connection, "0400", client);
-	}, props);
-	cron.schedule('5 9 * * *', () => {
-		console.log('dailes 1st mid');
-		dailies.notify(connection, "1000", client);
-	}, props);
-	cron.schedule('5 15 * * *', () => {
-		console.log('dailes mid reset');
-		dailies.notify(connection, "1600", client);
-	}, props);	
-	cron.schedule('5 21 * * *', () => {
-		console.log('dailes 2nd mid');
-		dailies.notify(connection, "2200", client);
-	}, props);	
-}
-*/
-var connection;
 module.exports = {
 	async rotate() {
 		console.log('rotate daily calendar');
-		return dailies.rotate(connection);
+		return dailies.rotate(connectionManager);
 	},
 	async events(part) {
 		const parts = ["0400","1000","1600","2200"]
 		console.log('dailies part ' + parts[part]);
-		return dailies.notify(connection, parts[part], client, part == 0);
+		return dailies.notify(connectionManager, parts[part], client, part == 0);
 	},
 	async start(connectionManager) {
-		connection = connectionManager;
-		for (const file of commandFiles) {
-			const command = require(`./maia_commands/${file}`);
-			command.conn = connectionManager;
-			client.commands.set(command.name, command);
-		}
-
-		configDb = new ConfigDb(connectionManager);
-		client.login(process.env.MAIA_TOKEN);
-
-		//scheduleTasks(client, connectionManager);
+		botclient.login(process.env.MAIA_TOKEN);
 	}
 };
