@@ -1,45 +1,90 @@
 const cs = require('../../values')
 const { validateHookUrl } = require('../../functions/hooksender');
 
-const CHANNEL_ID = /<#(\d+)+>/;
-
-function extract_id(regex, str) {
-	const m = regex.exec(str);
-	if (m) {
-		return m[++m.index];
-	}
-	return null;
-}
-
 module.exports = {
 	name: 'relay',
 	aliases: ['broadcast'],
-    description: 'Add Webhook broadcast',
-	usage: '#channel_name webhook_url',
-    async execute(configDb, cmd, message, params) {
-		const guild = message.guild.id;
+	description: 'Webhook Channel Broadcast',
+	options: [
+		{
+			name: 'add',
+			description: 'Add Broadcast',
+			type: 1,
+			options: [
+				{
+					name: 'channel',
+					description: 'Channel',
+					type: 7,
+					required: true
+				},
+				{
+					name: 'url',
+					description: 'Discord Webhook URL',
+					type: 3,
+					required: true
+				}				
+			]
+		},
+		{
+			name: 'get',
+			description: 'List Channel Broadcast',
+			type: 1,
+			options: [
+				{
+					name: 'channel',
+					description: 'Channel',
+					type: 7,
+					required: true
+				}
+			]			
+		},
+		{
+			name: 'clear',
+			description: 'Clear Channel Broadcast',
+			type: 1,
+			options: [
+				{
+					name: 'channel',
+					description: 'Channel',
+					type: 7,
+					required: true
+				}
+			]			
+		},		
+	],
+	usage: '<option> <argument>',
+    async execute(configDb, client, args) {
+		const guild = client.guild.id;
 
-		const channel = params.shift();
-		const url = params.shift();
+		if ('add' in args) {
+			const channelId = args.add.channel;
+			const url = args.add.url;
 
-		if (channel && url) {
-			const channelId = extract_id(CHANNEL_ID, channel);
-			if (channelId == null) {
-				return message.reply(`Invalid argument \`${channel}\`. Specify a valid channel.`);
-			}
-			
 			if (!validateHookUrl(url)) {
-				return message.reply(`Invalid discord weebhook url \`${url}\`.`);
+				return client.reply(`Invalid discord weebhook url \`${url}\`.`);
 			}
 
 			const hooks = (await configDb.findOneBy({guild: guild, uuid: cs.WEEBHOOK, channel: channelId})) || { url: []};
 			hooks.url.push(url);
 			configDb.pushBy({guild: guild, uuid: cs.WEEBHOOK, channel: channelId}, hooks);
 
-			return {message: this.description, log: true, fields: [{ name: 'Channel', value : '<#' + channelId + '>'}, { name: 'URL', value : url}]}
+			return {message: this.description, log: true, fields: [{ name: 'Add Channel', value : '<#' + channelId + '>'}, { name: 'URL', value : url}]}
+		} else if ('get' in args) {
+			const channelId = args.get.channel;
+			const hooks = (await configDb.findOneBy({guild: guild, uuid: cs.WEEBHOOK, channel: channelId})) || { url: []};
+
+			if (hooks?.url.length > 0) {
+				return {message: this.description, log: false, fields: [{ name: 'Channel', value : '<#' + channelId + '>'}, { name: 'URL', value : hooks.url.join('\n')}]}
+			} else {
+				return {message: this.description, log: false, fields: [{ name: 'Channel', value : '<#' + channelId + '>'}, { name: 'URL', value : '`<< None defined >>`'}]}
+			}
+		} else if ('clear' in args) {
+			const channelId = args.clear.channel;
+			configDb.deleteBy({guild: guild, uuid: cs.WEEBHOOK, channel: channelId});
+			return {message: this.description, log: true, fields: [{ name: 'Channel', value : '<#' + channelId + '>'}, { name: 'URL', value : '`<< Cleared >>`'}]}
 		}
 
-		return message.reply('Missing required arguments');	
+		return client.reply('Unknown command');	
     },
 };
 

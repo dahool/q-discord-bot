@@ -1,50 +1,69 @@
-const ROLE_ID = /<@&(\d+)+>/;
-
-function extract_id(regex, str) {
-	const m = regex.exec(str);
-	if (m) {
-		return m[++m.index];
-	}
-	return null;
-}
 
 module.exports = {
 	name: 'role',
-	aliases: ['+role','-role'],
     description: 'Add/Remove privileged roles (access to my protected commands)',
-	usage: '<@rolename>',
-    async execute(configDb, cmd, message, params) {
-		const guild = message.guild.id;
-		const op = cmd.substring(0,1);
+	options: [
+		{
+			name: 'add',
+			description: 'Add Role',
+			type: 1,
+			options: [
+				{
+					name: 'role',
+					description: 'Role',
+					type: 8,
+					required: true
+				}
+			]
+		},
+		{
+			name: 'del',
+			description: 'Remove Role',
+			type: 1,
+			options: [
+				{
+					name: 'role',
+					description: 'Role',
+					type: 8,
+					required: true
+				}
+			]
+		},
+		{
+			name: 'get',
+			description: 'List Roles',
+			type: 1
+		},
+	],
+	usage: '<option> <argument>',
+	async execute(configDb, client, args) {
+		const guild = client.guild.id;
+		const key = 'roles';
 
-		if (op == '+' || op == '-') {
-
-			const id = extract_id(ROLE_ID, params);
+		if ('add' in args || 'del' in args) {
+			const id = args.add?.role || args.del?.role
 			if (id == null) {
-				return message.reply(`Invalid argument \`${params}\`. Specify a valid role.`);
+				return client.reply(`Missing argument. Specify a valid role.`);
 			}
-
+			const configRole = Object.assign({mention: []}, await configDb.findOne(guild, key))
 			const response = {message: 'Privileged roles', log: true}
 
-			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, "roles"))
-
-			if (op == '+') {
+			if ('add' in args) {
 				// prevent duplicates
-				configRole.roles = configRole.roles.filter(r => r != id)
-				configRole.roles.push(id);
+				configRole.mention = configRole.mention.filter(r => r != id)
+				configRole.mention.push(id);
 				response.fields = [{ name: 'Add', value : '<@&' + id + '>'}]
 			} else {
-				configRole.roles = configRole.roles.filter(r => r != id)
+				configRole.mention = configRole.mention.filter(r => r != id)
 				response.fields = [{ name: 'Remove', value : '<@&' + id + '>'}]
 			}
 
-			configDb.push(guild, "roles", configRole);
+			configDb.push(guild, key, configRole);
 
 			return response;
-
 		} else {
-			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, "roles"))
-			const roles = configRole.roles.map(rid => '<@&' + rid + '>');
+			const configRole = Object.assign({mention: []}, await configDb.findOne(guild, key))
+			const roles = configRole.mention.map(rid => '<@&' + rid + '>');
 
 			if (roles.length) {
 				return {message: 'Privileged roles', fields: [{ name: 'Roles', value : roles.join("\n")}]};

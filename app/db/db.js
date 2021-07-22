@@ -86,6 +86,9 @@ class DbHelper {
         await this.db.deleteOne({ guild: guild, uuid: uuid });
     }
 
+    async deleteBy(query) {
+        await this.db.deleteOne(query);
+    }
 }
 
 class UserDb extends DbHelper {
@@ -158,7 +161,7 @@ class MembersDb extends DbHelper {
 
     async updateOnline(member) {
         const query = { gid: member.user.id, guild: member.guild.id }
-        const data = { $set: { gid: member.user.id, lastOnline: DateTime.utc().toJSDate(), userName: member.user.username, guild: member.guild.id } }
+        const data = { $set: { gid: member.user.id, lastOnline: DateTime.utc().toJSDate(), displayName: member.displayName || member.user.username, userName: member.user.username, guild: member.guild.id } }
         //console.log("Saved " + member.user.username);
         return this.db.updateOne(query, data, { upsert: true});
     }

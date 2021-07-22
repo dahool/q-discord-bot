@@ -5,9 +5,10 @@ module.exports = {
 	name: 'load',
 	description: 'Reload events calendar',
 	dm: false,
+	slash: false,
 	admin: true,
-	async execute(client, message, args) {
-		message.channel.send('On it');
-		return calendar.execute(this.conn);
+	async execute(client, args) {
+		client.reply('On it');
+		return calendar.execute(client.connection);
 	}
 };

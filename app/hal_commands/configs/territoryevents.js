@@ -3,24 +3,35 @@ const ical = require('node-ical');
 module.exports = {
 	name: 'territory_events',
     description: 'Set Territory Events Calendar',
-	usage: 'calendar_ical_url',
-    async execute(configDb, cmd, message, params) {
-		const guild = message.guild.id;
+	type: 1,
+	options: [
+		{
+			name: 'url',
+			description: 'Calendar ICAL URL',
+			type: 3,
+			required: true
+		},
+	],
+	usage: '<url>',
+    async execute(configDb, client, args) {
+		const guild = client.guild.id;
 
-		if (!params) {
-			return message.reply(`Missing required arguments. Specify a valid ical url`);
+		if (!args.url) {
+			return client.reply(`Missing required arguments. Specify a valid ICAL url`);
 		}
+
+		const url = args.url;
 
 		try {
-			await ical.async.fromURL(params);
+			await ical.async.fromURL(url);
 		} catch (error) {
 			console.error(error);
-			return message.reply(`Sorry, I'm unable to validate URL \`${params}\``);
+			return client.reply(`Sorry, I'm unable to validate URL \`${url}\``);
 		}
 		
-		configDb.push(guild, "territory_events", {'url': params});
+		configDb.push(guild, "territory_events", {'url': url});
 
-		return {message: this.description, fields: [{ name: 'URL', value : '`'+params+'`'}], log: true}
+		return {message: this.description, fields: [{ name: 'URL', value : '`'+url+'`'}], log: true}
 
     },
 };
