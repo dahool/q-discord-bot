@@ -12,17 +12,19 @@ class AllianceStatus {
 		this.cmd = cmd;
 	}
 
-	execute(client, message, args) {
-		const guild = message.channel.guild.id;
+	execute(client, args) {
+		const guild = client.guild.id;
 
-		const alliance = args[0].toUpperCase().slice(0, 4);
-		const reason = args.slice(1).join(" ");
-		if (!reason) {
-			return message.reply(`Please specify, identify an alliance and a reason \`!${this.cmd} <XXXX> <reason>\``);
+		const alliance = args.tag.toUpperCase().slice(0, 4);
+		const reason = args.reason;
+
+		if (!reason && (this.status == statusKey.ENEMY || this.status == statusKey.HOSTILE) ) {
+			return client.reply(`Please specify, missing <reason>`);
 		}
+
 		const status = this.status.name;
 		const eventID = "AL" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-		const event = {uuid: eventID, reason: reason, status: status, officer: message.author.id, time: DateTime.utc().toJSDate() };
+		const event = {uuid: eventID, reason: reason, status: status, officer: client.member.user.id, time: DateTime.utc().toJSDate() };
 
 		this.allianceDB.findOne(guild, alliance).then(ob => {
 			const newOb = Object.assign({events: []}, ob, {status: status})
@@ -40,17 +42,17 @@ class AllianceStatus {
 				{ name: `Status`, value: `${status}`, inline: true },
 			)
 			.setTimestamp()
-			.setFooter(`!${this.cmd} • Executed by ${message.author.username}`, `${message.author.displayAvatarURL()}`);
+			.setFooter(`!${this.cmd} • Executed by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`);
 
-		if (this.status == statusKey.ENEMY) {
+		if (this.status == statusKey.ENEMY || this.status == statusKey.HOSTILE) {
 			confirm.addField('Reason', reason);
 		}
 
-		message.channel.send(confirm);
+		client.sendMessage(confirm);
 
 		this.config.findOne(guild, 'announce').then(cfg => {
 			if (cfg) {
-				const announcement = message.guild.channels.cache.get(cfg.channel);
+				const announcement = client.guild.channels.cache.get(cfg.channel);
 				if (announcement) announcement.send(confirm);
 			}
 		})
@@ -65,11 +67,16 @@ module.exports = {
 	name: 'allied',
 	description: 'Set an alliance to "allied"',
 	dm: false,
-    args: true,
 	private: true,
-    usage: '<TAG> <reason>',	
-	async execute(client, message, args) {
-		const as = new AllianceStatus(this.conn, statusKey.ALLIED, this.name);
-		as.execute(client, message, args);
+    slash: true,
+    options: [{
+		name: 'tag',
+		description: 'Alliance Tag',
+		type: 3,
+		required: true
+	}],
+	async execute(client, args) {
+		const as = new AllianceStatus(client.connection, statusKey.ALLIED, this.name);
+		as.execute(client, args);
 	}
 };

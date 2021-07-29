@@ -5,11 +5,12 @@ module.exports = {
 	name: 'online',
 	description: 'List last online date for each member',
 	dm: false,
+	slash: false,
 	private: true,
-	async execute(client, message, args) {
-		const memberDb = new db.MembersDb(this.conn);
+	async execute(client, args) {
+		const memberDb = new db.MembersDb(client.connection);
 		let content = [];
-		var list = await memberDb.findBy({ guild: message.channel.guild.id })
+		var list = await memberDb.findBy({ guild: client.guild.id })
 		list.sort((a, b) => b.lastOnline - a.lastOnline).forEach((member) => {
 			const time = DateTime.fromJSDate(member.lastOnline).setLocale('en').toRelative();
 			content.push("> " + member.displayName + " \u0009 `" + time + "`");
@@ -29,9 +30,9 @@ module.exports = {
 		groups.forEach((m, index) => {
 		  let msg = '';
 		  if (index == 0) {
-			msg = 'Commander, information as requested...\n';
+			msg = 'Commander, information as requested...';
 		  }
-		  message.channel.send({content: msg + m});
+		  client.sendMessage({content: msg + m});
 		})
 		
 	}

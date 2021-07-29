@@ -2,19 +2,25 @@ const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 const { statusKey } = require('../config.json');
 const db = require('../db/db');
+const { StringBuilder } = require('../utils');
 
 module.exports = {
 	name: `alliance`,
 	description: `Alliance information`,
 	aliases: ['status'],
-    args: true,
     dm: false,
-    usage: '<TAG>',
-	async execute(client, message, args) {
-        const allianceDB = new db.AllianceDb(this.conn);
+    slash: true,
+    options: [{
+		name: 'tag',
+		description: 'Alliance Tag',
+		type: 3,
+		required: true
+	}],
+	async execute(client, args) {
+        const allianceDB = new db.AllianceDb(client.connection);
         try {
-            var tag = args[0].toUpperCase().slice(0, 4);
-            var allianceInfo = await allianceDB.findOne(message.channel.guild.id, tag);
+            var tag = args.tag.toUpperCase().slice(0, 4);
+            var allianceInfo = await allianceDB.findOne(client.guild.id, tag);
             var status = statusKey.NEUTRAL;
             var allowance = "";
             var eventEmbed = [];
@@ -40,9 +46,14 @@ module.exports = {
                 var eventList = allianceInfo.events;
                 if (eventList !== undefined) {
                     eventList.sort((a,b) => b.time - a.time).forEach((eventInfo) => {
+                        const b = new StringBuilder();
+                        b.append('Recorded by: <@' + eventInfo.officer + '> | Status: *' + eventInfo.status + '*' + '\n')
+                        b.append(DateTime.fromJSDate(eventInfo.time).toFormat("LLL d, yyyy @ h:mm a ZZZZ"))
+                        if (eventInfo.reason) b.append('\nReason: ' + eventInfo.reason)
+
                         eventEmbed.push({ 
                             name: `Event: *${eventInfo.status}*`, 
-                            value: 'Recorded by: <@' + eventInfo.officer + '> | Status: *' + eventInfo.status + '*' + '\n' + DateTime.fromJSDate(eventInfo.time).toFormat("LLL d, yyyy @ h:mm a ZZZZ") + '\nReason: ' + eventInfo.reason
+                            value: b.toString()
                         });
                     })
                 } else {
@@ -73,8 +84,8 @@ module.exports = {
                     eventEmbed
                 )
                 .setTimestamp()
-                .setFooter(`!alliance ${args[0]} • Requested by ${message.author.username}`, `${message.author.displayAvatarURL()}`);
-            message.channel.send(msgEmbed);
+                .setFooter(`!alliance ${tag} • Requested by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`);
+            client.sendMessage(msgEmbed);
         }
         catch (err) {
             console.log(err);

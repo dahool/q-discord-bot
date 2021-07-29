@@ -57,7 +57,7 @@ module.exports = {
 
         const configs = await config.findBy({uuid: 'territory_events'});
         configs.forEach(ev => {
-                loadEvents(ev.guild, ev.url, cs.TERRITORY_CHANNEL, connection);
+            loadEvents(ev.guild, ev.url, cs.TERRITORY_CHANNEL, connection);
         });
 
         console.log("Processed " + configs.length);

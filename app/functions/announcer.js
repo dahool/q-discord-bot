@@ -59,7 +59,7 @@ module.exports = {
 	async execute(client, connection, number) {
         const config = new ConfigDb(connection);
         const calendar = new CalendarDb(connection);
-
+        
         calendar.readEvents({minutes: number}, true).then(events => {
             console.log(events);
             events.forEach(e => {

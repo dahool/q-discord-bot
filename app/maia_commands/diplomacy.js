@@ -7,17 +7,18 @@ module.exports = {
 	name: 'diplomacy',
 	description: 'List alliance diplomacy status',
 	dm: false,
-	async execute(client, message, args) {
-		const al = new db.AllianceDb(this.conn);
-		var list = await al.findBy({guild: message.channel.guild.id, status: {$ne: statusKey.NEUTRAL.name}});
+	slash: true,
+	async execute(client, args) {
+		const al = new db.AllianceDb(client.connection);
+		var list = await al.findBy({guild: client.guild.id, status: {$ne: statusKey.NEUTRAL.name}});
 		if (list.length == 0) {
-			return message.reply(`${message.channel.guild.name} don't have diplomatic relationships with any alliance`)
+			return message.reply(`${client.guild.name} doesn't have diplomatic relationships with any alliance`)
 		}
 
 		const confirm = new Discord.MessageEmbed()
 			.setColor('#24ce4d')
 			.setTitle('Diplomacy Status')
-			.setThumbnail(message.channel.guild.iconURL())
+			.setThumbnail(client.guild.iconURL())
 			.setTimestamp();
 			//.setFooter(`!${this.name} • Executed by ${message.author.username}`, `${message.author.displayAvatarURL()}`);
 
@@ -36,9 +37,7 @@ module.exports = {
 			confirm.addField('<:enemy:754785979210137721> Enemies (KOS)', groups.get(statusKey.ENEMY.name).map(a => a.uuid).join('\n'))
 		}
 
-		message.delete();
-
-		return message.channel.send(confirm);
+		return client.sendMessage(confirm);
 
 	}
 };

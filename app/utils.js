@@ -31,8 +31,28 @@ function groupBy(list, keyGetter) {
     return map;
 }
 
+capitalize = (string) => {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function StringBuilder() {
+    this.__strings__ = new Array;
+}
+ 
+StringBuilder.prototype.append = function (str) {
+    this.__strings__.push(str);
+	return this;
+};
+ 
+StringBuilder.prototype.toString = function () {
+    return this.__strings__.join("");
+};
+
+
 module.exports = {
 	groupBy,
 	randomColor,
-    safeLower
+    safeLower,
+    capitalize,
+    StringBuilder
 };

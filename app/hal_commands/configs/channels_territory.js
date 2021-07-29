@@ -1,39 +1,46 @@
 const cs = require('../../values')
-const { safeLower } = require('../../utils');
-
-const CHANNEL_ID = /<#(\d+)+>/;
-
-function extract_id(regex, str) {
-	const m = regex.exec(str);
-	if (m) {
-		return m[++m.index];
-	}
-	return null;
-}
 
 module.exports = {
 	name: cs.TERRITORY_CHANNEL,
     description: 'Territory Announcement Channel',
-	usage: 'set #channel_name',
-    async execute(configDb, cmd, message, params) {
-		const key = cs.TERRITORY_CHANNEL;
-		const guild = message.guild.id;
-		const op = safeLower(params.shift());
+	options: [
+		{
+			name: 'set',
+			description: 'Set Territory Announcement Channel',
+			type: 1,
+			options: [
+				{
+					name: 'channel',
+					description: 'Channel',
+					type: 7,
+					required: true
+				}
+			]
+		},
+		{
+			name: 'get',
+			description: 'Get Territory Announcement Channel',
+			type: 1
+		}
+	],
+	usage: '<option> <argument>',
+    async execute(configDb, client, args) {
+		const key = this.name;
+		const guild = client.guild.id;
 
-		if (op == 'set') {
-			const args = params.join(" ")
-			const id = extract_id(CHANNEL_ID, args);
+		if ('set' in args) {
+			const id = args['set']['channel']
 			if (id == null) {
-				return message.reply(`Invalid argument \`${args}\`. Specify a valid channel.`);
+				return client.reply(`Missing argument. Specify a valid channel.`);
 			}
 			configDb.push(guild, key, {'channel': id});
-			return {message: this.description, fields: [{ name: 'Channel', value : '<#' + id + '>'}], log: true};
+			return {message: 'Updated ' + this.description, fields: [{ name: 'Channel', value : '<#' + id + '>'}], log: true};
 		} else {
 			const value = await configDb.findOne(guild, key, 'channel');
 			if (value) {
 				return {message: this.description, fields: [{ name: 'Channel', value : '<#' + value + '>'}]}
 			} else {
-				return message.reply(`No config defined for **${this.description}**`);
+				return client.reply(`No config defined for **${this.description}**`);
 			}
 		}
     },
