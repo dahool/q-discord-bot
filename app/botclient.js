@@ -4,7 +4,7 @@ dotenv.config();
 const fs = require('fs');
 const Discord = require('discord.js');
 
-const { ConfigDb } = require('./db/db');
+const { ConfigDb, LoggerDb } = require('./db/db');
 
 const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
@@ -231,7 +231,13 @@ class BotCommander {
 
 		console.debug(args);
 		
-		return command.execute(bc, args);
+		try {
+			return command.execute(bc, args);
+		} catch (error) {
+			console.error(error);
+			this.loggerDb.error(error);
+		}
+		
 	}
 
 	_prepareCommands = () => {
@@ -260,6 +266,7 @@ class BotCommander {
 	
 	login = (tokenId) => {
 		this.configDb = new ConfigDb(this.connectionManager);
+		this.loggerDb = new LoggerDb(this.connectionManager);
 		return this.client.login(tokenId);
 	}
 

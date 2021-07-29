@@ -115,6 +115,17 @@ class ZoneEventsDb extends DbHelper {
     }
 }
 
+class LoggerDb {
+    
+    constructor(connection) {
+        this.db = connection.getConnection().collection("logging");
+    }
+
+    error(message) {
+        this.db.insertOne({datetime: DateTime.utc().setZone(process.env.ZONE).toJSDate(), type: 'error', message: message})
+    }
+
+}
 class CalendarDb {
 
     constructor(connection) {
@@ -179,4 +190,4 @@ class MembersDb extends DbHelper {
 
 const connectionManager = new ConnectionManager();
 
-module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb }
+module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb, LoggerDb }
