@@ -13,7 +13,7 @@ module.exports = {
 		var list = await memberDb.findBy({ guild: client.guild.id })
 		list.sort((a, b) => b.lastOnline - a.lastOnline).forEach((member) => {
 			const time = DateTime.fromJSDate(member.lastOnline).setLocale('en').toRelative();
-			content.push("> " + member.displayName + " \u0009 `" + time + "`");
+			content.push("> " + member.displayName || member.userName + " \u0009 `" + time + "`");
 		});
 
 		let groups = [''];
