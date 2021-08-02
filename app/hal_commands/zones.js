@@ -8,7 +8,6 @@ const zones = require('./zones.json');
 
 const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup','make it so','y']
 const NEGATIVE = ['no','n']
-const DAYS = ['*mon','*tue','*wed','*thu','*fri','*sat','*sun']
 
 function get_next_execution(zone) {
 	const today = DateTime.utc();
@@ -217,19 +216,16 @@ module.exports = {
     description: 'Show territory details',
 	slash: true,
 	options: [{
+			name: 'argument',
+			description: 'Zone or particle name',
+			type: 3,
+			required: true
+		},{
 		name: 'command',
 		description: 'Command',
 		type: 3,
-		required: true,
+		required: false,
 		choices: [
-			{
-				name: 'Find by zone name',
-				value: 'find',
-			},
-			{
-				name: 'Find by particle',
-				value: 'particle',
-			},
 			{
 				name: 'Create event',
 				value: 'tag'
@@ -243,29 +239,22 @@ module.exports = {
 				value: 'events'
 			}
 		]
-	},{
-		name: 'argument',
-		description: 'Zone or particle name',
-		type: 3,
-		required: true
 	}],
 	singleOptions: [{
-		name: 'command',
-		description: 'command or zone name',
+		name: 'argument',
+		description: 'Zone or particle name',
 		required: true,
 	},{
-		name: 'argument',
+		name: 'command',
 		required: false
 	}],
 	dm: false,
     async execute(client, args) {
-		const cmd = args.command.toLowerCase();
+		const cmd = safeLower(args.command);
 		const argument = safeLower(args.argument);
 		let zones = [];
 
-		if ('particle' == cmd) {
-			zones = list_by_particle(argument);
-		} else if (['tag','-tag','events'].includes(cmd)) {
+		if (['tag','-tag','events'].includes(cmd)) {
 
 			if (!client.isManager) {
 				return client.reply("Sorry, you don't have enough permissions to execute this command.");	
@@ -284,11 +273,15 @@ module.exports = {
 			} else if ('events' == cmd) {
 				return list_events(client, zones[0]);
 			}
-		} else if ('find' == cmd || !argument) {
-			zones = find_by_name(argument || cmd);
+
+		} else {
+			zones = find_by_name(argument);
+			if (!zones.length) {
+				zones = list_by_particle(argument);
+			}
 		}
 
-		if (zones.length == 0) {
+		if (!zones.length) {
 			return client.reply('No zones found matching criteria');
 		}
 
@@ -303,7 +296,6 @@ module.exports = {
 
 		const today = DateTime.utc();
 		zones.sort((a,b) => a.next - b.next).forEach(z => {
-			const next = z.next.hasSame(today, "day") ? z.next.toRelative() : z.next.toFormat('LLL, dd') + ' ' +z.next.toRelative();
 			const estTime = z.next.setZone('America/New_York').toFormat('ccc, h:mma ZZZZ');
 			const cstTime = z.next.setZone('America/Chicago').toFormat('ccc, h:mma ZZZZ');
 			const pstTime = z.next.setZone('America/Los_Angeles').toFormat('ccc, h:mma ZZZZ');
@@ -312,7 +304,7 @@ module.exports = {
 			var content = "`Particle:` " + z.particle + "\n";
 			content+= "`Type:` " + z.type + "\n";
 			content+= "`Takeover Time:` " + z.next.toFormat('ccc, h:mma ZZZZ') + " `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
-			content+= "`Next:` " + next;
+			content+= "`Next:` " + z.next.toRelative();
 			msgEmbed.addField(z.zone, content);
 		})	
 

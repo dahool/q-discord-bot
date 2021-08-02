@@ -9,7 +9,7 @@ const { BotCommander } = require('./botclient');
 const client = new Client();
 
 connectionManager.connect().then(() => {
-	const bot = new BotCommander(client, connectionManager, {commandsDir: './cmds'})
+	const bot = new BotCommander(client, connectionManager, {commandsDir: './hal_commands'})
 	bot.login(process.env.HAL_TOKEN)
 })
 
