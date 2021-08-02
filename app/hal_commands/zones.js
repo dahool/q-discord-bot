@@ -5,6 +5,12 @@ const db = require('../db/db');
 const cs = require('../values')
 
 const zones = require('./zones.json');
+const rss = require('./rss.json');
+
+const rssMap = new Map();
+rss.forEach(item => {
+	rssMap.set(item.id, item.icon)
+})
 
 const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup','make it so','y']
 const NEGATIVE = ['no','n']
@@ -301,10 +307,13 @@ module.exports = {
 			const pstTime = z.next.setZone('America/Los_Angeles').toFormat('ccc, h:mma ZZZZ');
 			const mstTime = z.next.setZone('America/Denver').toFormat('ccc, h:mma ZZZZ');
 
-			var content = "`Particle:` " + z.particle + "\n";
+			var content = "`Particle:` " + rssMap.get(z.particle) + " " + z.particle + "\n";
 			content+= "`Type:` " + z.type + "\n";
+			content+= "`Resources:` " + z.rss.map(i => rssMap.get(i)).join(' ') + "\n";
+			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
 			content+= "`Takeover Time:` " + z.next.toFormat('ccc, h:mma ZZZZ') + " `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
-			content+= "`Next:` " + z.next.toRelative();
+			content+= "`Next:` **" + z.next.toRelative() + "**";
+			
 			msgEmbed.addField(z.zone, content);
 		})	
 
