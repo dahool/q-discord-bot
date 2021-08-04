@@ -76,7 +76,7 @@
 		"type": 2,
 		"weekday": 1,
 		"time": "1800",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso3", "gas3"],
 		"paths": ["Tefkari","Helvi","Triss","Mak'ala"]
 	},	
@@ -94,7 +94,7 @@
 		"type": 1,
 		"weekday": 4,
 		"time": "0100",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso1", "iso2"],
 		"paths": ["Helvi","Triss","Abilakk"]
 	},	
@@ -103,7 +103,7 @@
 		"type": 2,
 		"weekday": 4,
 		"time": "2000",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso3", "gas3"],
 		"paths": ["Zhian","Lenara","Tigan","Mak'ala"]
 	},
@@ -112,7 +112,7 @@
 		"type": 3,
 		"weekday": 6,
 		"time": "2000",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["gas3", "gas4"],
 		"paths": ["Triss","Zhian","Hoobishan"]		
 	},	
@@ -121,7 +121,7 @@
 		"type": 1,
 		"weekday": 7,
 		"time": "1900",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso1", "iso2"],
 		"paths": ["Tigan","Tezera","Hoobishan"]		
 	},
@@ -130,7 +130,7 @@
 		"type": 2,
 		"weekday": 1,
 		"time": "1700",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso3", "gas3"],
 		"paths": ["Mak'ala","Vemira","Ezla"]				
 	},
@@ -139,7 +139,7 @@
 		"type": 1,
 		"weekday": 3,
 		"time": "1800",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso2", "parsteel"],
 		"paths": ["Hoobishan","Temeri","Ezla"]
 	},	
@@ -148,7 +148,7 @@
 		"type": 1,
 		"weekday": 5,
 		"time": "2000",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso2", "tritanium"],
 		"paths": ["Hoobishan","Temeri","Perim"]
 	},	
@@ -175,7 +175,7 @@
 		"type": 1,
 		"weekday": 6,
 		"time": "0100",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso2", "dilithium"],
 		"paths": ["Tezera","Vemira","Triss"]		
 	},
@@ -283,7 +283,7 @@
 		"type": 1,
 		"weekday": 1,
 		"time": "0000",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso1", "iso2"],
 		"paths": ["Anzat","Bolari","Asiti"]		
 	},	
@@ -292,7 +292,7 @@
 		"type": 1,
 		"weekday": 3,
 		"time": "2000",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso2", "dilithium"],
 		"paths": ["Parturi","Kolava","Qeyma"]				
 	},	
@@ -301,7 +301,7 @@
 		"type": 1,
 		"weekday": 7,
 		"time": "1600",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso2", "tritanium"],
 		"paths": ["Asiti","Kolava","Crios"]						
 	},
@@ -328,7 +328,7 @@
 		"type": 1,
 		"weekday": 7,
 		"time": "2300",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso1", "iso2"],
 		"paths": ["Crios","Roshar","Burran"]		
 	},	
@@ -337,7 +337,7 @@
 		"type": 1,
 		"weekday": 5,
 		"time": "2100",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso2", "parsteel"],
 		"paths": ["Bolari","Qeyma","Asiti"]				
 	},
@@ -346,7 +346,7 @@
 		"type": 2,
 		"weekday": 1,
 		"time": "2000",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso3", "ore3"],
 		"paths": ["Parturi","Kolava","Brijac","Barasa"]						
 	},	
@@ -391,7 +391,7 @@
 		"type": 2,
 		"weekday": 4,
 		"time": "2100",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso3", "ore3"],
 		"paths": ["Beku","Saldeti","Bolari","Barasa"]		
 	},	
@@ -400,7 +400,7 @@
 		"type": 3,
 		"weekday": 6,
 		"time": "2300",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["ore3", "ore4"],
 		"paths": ["Brijac","Bolari","Burran"]		
 	},	
@@ -409,7 +409,7 @@
 		"type": 2,
 		"weekday": 4,
 		"time": "1900",
-		"particle": "Surex",
+		"particle": "Surax",
 		"rss": ["iso3", "ore3"],
 		"paths": ["Barasa","Stilhe","Thaylen","Comst"]				
 	},	
