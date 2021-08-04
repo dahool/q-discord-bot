@@ -317,6 +317,9 @@ module.exports = {
 			msgEmbed.addField(z.zone, content);
 		})	
 
+		if (client.interaction) {
+			client.sendMessage("Commander, information as requested...");
+		}
 		return client.sendMessage(msgEmbed);
     },
 };
