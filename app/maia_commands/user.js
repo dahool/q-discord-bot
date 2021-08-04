@@ -25,12 +25,14 @@ module.exports = {
 		const memberDb = new db.MembersDb(client.connection);
 		const member = await memberDb.findOneBy({ gid: args.user, guild: client.guild.id })
 
+		const user = client.guild.members.cache.get(args.user);
+
 		if (member) {
 			const msgEmbed = new Discord.MessageEmbed()
 			.setColor(utils.randomColor())
 			.setTitle(`${member.displayName || member.userName}`)
 			.setDescription('User Profile')
-			.setThumbnail(client.guild.iconURL())
+			.setThumbnail(user.user.displayAvatarURL())
 			.addFields({
 				name: ':hourglass_flowing_sand: Last online', value: DateTime.fromJSDate(member.lastOnline).setLocale('en').toRelative()
 			})
@@ -43,8 +45,7 @@ module.exports = {
 			client.member.send(msgEmbed);
 			client.reply('Commander, the information has been sent to your inbox');
 		} else {
-			const u = client.guild.members.cache.get(args.user);
-			client.reply("Sorry Commander, I don't have information for the user " + displayName(u));
+			client.reply("Sorry Commander, I don't have information for the user " + displayName(user));
 		}
 	},
 };
