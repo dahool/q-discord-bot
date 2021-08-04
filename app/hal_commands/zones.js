@@ -72,9 +72,9 @@ async function add_event(connection, guild, time, title, location, recurrent) {
 async function create_event(client, zone, title, recurrent) {
 	var content;
 	if (recurrent) {
-		content = "Ok, created a recurrent reminder for every " + zone.next.toFormat("ccc 'at' h:mma ZZZZ")
+		content = "Created a recurrent reminder for every " + zone.next.toFormat("ccc 'at' h:mma ZZZZ")
 	} else {
-		content = "Ok, created a one time reminder on " + zone.next.toFormat("LLL d 'at' h:mma ZZZZ")
+		content = "Created a one time reminder on " + zone.next.toFormat("LLL d 'at' h:mma ZZZZ")
 	}
 	content += ' with the title `' + title + '`';
 	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent).then(() => {
@@ -307,9 +307,9 @@ module.exports = {
 			const pstTime = z.next.setZone('America/Los_Angeles').toFormat('ccc, h:mma ZZZZ');
 			const mstTime = z.next.setZone('America/Denver').toFormat('ccc, h:mma ZZZZ');
 
-			var content = "`Particle:` " + rssMap.get(z.particle) + " " + z.particle + "\n";
+			var content = "`Particle:` " + z.particle + "\n";
 			content+= "`Type:` " + z.type + "\n";
-			content+= "`Resources:` " + z.rss.map(i => rssMap.get(i)).join(' ') + "\n";
+			content+= "`Resources:` " + z.rss.map(i => client.client.emojis.cache.get(rssMap.get(i))).join(' ') + "\n";
 			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
 			content+= "`Takeover Time:` " + z.next.toFormat('ccc, h:mma ZZZZ') + " `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
 			content+= "`Next:` **" + z.next.toRelative() + "**";
