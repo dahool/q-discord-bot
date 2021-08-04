@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
-const { safeLower, groupBy } = require('../utils');
+const { safeLower, groupBy, toRelative } = require('../utils');
 const db = require('../db/db');
 const cs = require('../values')
 
@@ -312,7 +312,7 @@ module.exports = {
 			content+= "`Resources:` " + z.rss.map(i => client.client.emojis.cache.get(rssMap.get(i))).join(' ') + "\n";
 			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
 			content+= "`Takeover Time:` " + z.next.toFormat('ccc, h:mma ZZZZ') + " `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
-			content+= "`Next:` **" + z.next.toRelative() + "**";
+			content+= "`Next:` **" + toRelative(z.next) + "**";
 			
 			msgEmbed.addField(z.zone, content);
 		})	

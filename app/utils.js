@@ -1,3 +1,5 @@
+const { DateTime } = require('luxon');
+
 const COLORS = [
     '#ff00ff',
     '#0099ff',
@@ -6,6 +8,16 @@ const COLORS = [
     '#ff6600',
     '#6600ff',
     '#cc99ff'
+];
+
+const units = [
+    'year',
+    'month',
+    'week',
+    'day',
+    'hour',
+    'minute',
+    'second',
 ];
 
 function randomColor() {
@@ -48,11 +60,34 @@ StringBuilder.prototype.toString = function () {
     return this.__strings__.join("");
 };
 
+toRelative = (dateTime) => {
+    const diff = dateTime.diffNow().shiftTo(...units);
+    const udf = units.filter((unit) => diff.get(unit) !== 0)
+    const now = DateTime.now();
+  
+    const s = new StringBuilder();
+    if (dateTime > now) {
+      s.append("in ")
+    }
+    for (i = 0; i < udf.length && i < 2; i++) {
+      const v = Math.abs(diff.get(udf[i]));
+      s.append(v).append(" ").append(udf[i]);
+      if (v > 1) {
+        s.append("s");
+      }
+      s.append(" ")
+    }
+    if (dateTime < now) {
+      s.append("ago");
+    }
+    return s.toString()
+}
 
 module.exports = {
 	groupBy,
 	randomColor,
     safeLower,
     capitalize,
-    StringBuilder
+    StringBuilder,
+    toRelative
 };
