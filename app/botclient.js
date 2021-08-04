@@ -211,7 +211,9 @@ class BotCommander {
 
 		const roles = (await this.configDb.findOne(guild.id, "roles", "roles")) || [];
 		const isAdmin = member.hasPermission(['ADMINISTRATOR','MANAGE_GUILD','MANAGE_ROLES']);
-		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r) );
+		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r.id) );
+
+    	console.debug("Command: " + commandName +  " - IsManager: " + isManager);
 
 		const bc = new BotClient(this.client, message, member, guild, channel, this.connectionManager, isAdmin, isManager, interaction);
 
