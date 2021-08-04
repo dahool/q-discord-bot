@@ -170,6 +170,12 @@ class MembersDb extends DbHelper {
         super(connection, "members");
     }
 
+    async update(guild, memberId, data) {
+        const query = { gid: memberId, guild: guild }
+        const toSave = Object.assign(data, query);
+        return this.db.updateOne(query, { $set: toSave }, { upsert: true})
+    }
+
     async updateOnline(member) {
         const query = { gid: member.user.id, guild: member.guild.id }
         const data = { $set: { gid: member.user.id, lastOnline: DateTime.utc().toJSDate(), displayName: member.displayName || member.user.username, userName: member.user.username, guild: member.guild.id } }

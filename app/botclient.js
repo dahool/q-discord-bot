@@ -8,6 +8,7 @@ const { ConfigDb, LoggerDb } = require('./db/db');
 
 const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
+const USER_ID = /<@!(\d+)+>/;
 
 function extract_id(regex, str) {
 	const m = regex.exec(str);
@@ -68,7 +69,9 @@ class BotClient {
 				this._reply(response);
 			}
 		} else {
-			this.message.reply(response);
+			this.message.reply(response).then(() => {
+				if (this.channel.type != "dm") this.message.delete()
+			});
 		}
 	}
 
@@ -132,7 +135,7 @@ class BotCommander {
 
 			const args = this._recurseOptions(options);
 
-			console.log(JSON.stringify(args));
+			//console.log(JSON.stringify(args));
 
 			const channel = guild?.channels.cache.get(channel_id);
 			this.invokeCommand(interaction, null, command, args, new Discord.GuildMember(this.client, member, guild), guild, channel);
@@ -183,6 +186,10 @@ class BotCommander {
 					} else if (option.type == 8) {
 						const id = extract_id(ROLE_ID, value);
 						if (!id) throw 'Invalid role ' + value
+						value = id;
+					} else if (option.type == 6) {
+						const id = extract_id(USER_ID, value);
+						if (!id) throw 'Invalid user ' + value
 						value = id;
 					}
 					parsed[option.name] = value;
