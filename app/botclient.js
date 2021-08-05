@@ -45,7 +45,7 @@ class BotClient {
 			data = await this._createAPIMessage(response);
 		}
 
-		this.client.api.interactions(this.interaction.id, this.interaction.token).callback.post({
+		return this.client.api.interactions(this.interaction.id, this.interaction.token).callback.post({
 			data: {
 				type: 4, 
 				data
@@ -61,36 +61,36 @@ class BotClient {
 		return {...data, files}
 	}
 
-	reply = (response) => {
+	reply = async (response) => {
 		if (this.interaction) {
 			if (this._replyOnce) {
-				this._replyChannel(response);
+				return this._replyChannel(response);
 			} else {
-				this._reply(response);
+				return this._reply(response);
 			}
 		} else {
-			this.message.reply(response).then(() => {
-				if (this.channel.type != "dm") this.message.delete()
-			});
+			return this.message.reply(response);
 		}
 	}
 
-	sendMessage = (response) => {
+	sendMessage = async (response) => {
 		if (this.interaction) {
 			if (this._replyOnce) {
-				this._replyChannel(response);
+				return this._replyChannel(response);
 			} else {
-				this._reply(response);
+				return this._reply(response);
 			}
 		} else {
-			this._replyChannel(response).then(() => {
-				if (this.channel.type != "dm") this.message.delete()	
-			});
+			return this._replyChannel(response);
 		}
 	}
 
 	_replyChannel = async (response) => {
 		return this.channel.send(response);
+	}
+
+	clear = () => {
+		if (this.channel.type != "dm" && !this.interaction) this.message.delete().catch((e) => true );
 	}
 
 }
@@ -134,8 +134,6 @@ class BotCommander {
 			const guild = this.client.guilds.cache.get(guild_id);
 
 			const args = this._recurseOptions(options);
-
-			//console.log(JSON.stringify(args));
 
 			const channel = guild?.channels.cache.get(channel_id);
 			this.invokeCommand(interaction, null, command, args, new Discord.GuildMember(this.client, member, guild), guild, channel);
@@ -241,7 +239,8 @@ class BotCommander {
 		console.debug(args);
 		
 		try {
-			return command.execute(bc, args);
+			command.execute(bc, args);
+			bc.clear();
 		} catch (error) {
 			console.error(error);
 			this.loggerDb.error(error);
