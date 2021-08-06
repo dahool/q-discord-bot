@@ -3,6 +3,8 @@ const { DateTime } = require("luxon");
 const { ConfigDb, CalendarDb } = require("../db/db");
 const ical = require('node-ical');
 const cs = require('../values');
+const generator = require('ical-generator');
+const { start } = require("../maia");
 
 processRecurrentEvent = (ev) => {
     let events = [];
@@ -51,7 +53,32 @@ loadEvents = async (guild, url, type, connection) => {
 
 }
 
+serveCalendar = async (connection, guild, res) => {
+    const cal = generator({name: 'Territory Events'});
+    const db = new CalendarDb(connection);
+
+    const query = {
+        start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({days: 30}).toJSDate()},
+        src: { $ne: 'calendar'},
+        notified: false
+    }
+
+    const events = await db.findBy(query);
+
+    events.forEach(event => {
+        cal.createEvent({
+            start: event.start,
+            end: DateTime.fromJSDate(event.start).plus({minutes: 30}),
+            summary: event.summary,
+            location: event.location
+        });
+    })
+
+    cal.serve(res);
+}
+
 module.exports = {
+    serveCalendar,
 	async execute(connection) {
         const config = new ConfigDb(connection);
 

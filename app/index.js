@@ -63,8 +63,15 @@ app.get('/events', function(req, resp) {
     });
 });
 
-let loggerDb;
+app.get('/calendar', function(req ,resp) {
+    if (process.env.SECRET == req.query.TOKEN) {
+        serveCalendar(connectionManager, req.query.ID, resp);
+    } else {
+        resp.status(404).send('Not found');
+    }
+});
 
+let loggerDb;
 connectionManager.connect().then(() => {
     hal.start(connectionManager);
     maia.start(connectionManager);
