@@ -6,6 +6,7 @@ const cs = require('../values')
 
 const zones = require('./zones.json');
 const rss = require('./rss.json');
+const { get } = require('node:https');
 
 const rssMap = new Map();
 rss.forEach(item => {
@@ -14,6 +15,10 @@ rss.forEach(item => {
 
 const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup','make it so','y']
 const NEGATIVE = ['no','n']
+
+function get_link(title, time) {
+	return 'https://www.timeanddate.com/worldclock/fixedtime.html?msg=' + encodeURIComponent(title) + '&p1=1440&iso=' + time.toFormat("yyyyMMdd'T'Hmm");	
+}
 
 function get_next_execution(zone) {
 	const today = DateTime.utc();
@@ -198,8 +203,7 @@ async function list_all_events(client) {
 		msgEmbed.addField(key, values.map(ev => {
 			const start = DateTime.fromJSDate(ev.start).setZone('UTC');
 			const flag = ev.src == 'calendar' ? ':calendar_spiral:' : '';
-			const link = 'https://zoner.netlify.app/?t=' + start.toFormat('Hmm');
-			const ob = '`' + ev.summary + '` on [`' + start.toFormat("LLL d 'at' h:mma ZZZZ") +'`](' + link + ')' + flag;
+			const ob = '`' + ev.summary + '` on [`' + start.toFormat("LLL d 'at' h:mma ZZZZ") +'`](' + get_link(ev.summary, start) + ')' + flag;
 			return ob;
 		}).join('\n'))
 	})
@@ -358,7 +362,7 @@ module.exports = {
 			content+= "`Type:` " + z.type + "\n";
 			content+= "`Resources:` " + z.rss.map(i => client.client.emojis.cache.get(rssMap.get(i))).join(' ') + "\n";
 			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
-			content+= "`Takeover Time:` " + z.next.toFormat('ccc, h:mma ZZZZ') + " `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
+			content+= "`Takeover Time:` [" + z.next.toFormat('ccc, h:mma ZZZZ') + "]("+ get_link(z.zone, z.next) + ") `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
 			content+= "`Next:` **" + toRelative(z.next) + "**";
 			
 			msgEmbed.addField(z.zone, content);
