@@ -17,7 +17,7 @@ const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup','make it so','y']
 const NEGATIVE = ['no','n']
 
 function get_link(title, time) {
-	return 'https://www.timeanddate.com/worldclock/fixedtime.html?msg=' + encodeURIComponent(title) + '&p1=1440&iso=' + time.toFormat("yyyyMMdd'T'Hmm");	
+	return 'https://www.timeanddate.com/worldclock/fixedtime.html?msg=' + encodeURIComponent(title) + '&p1=1440&iso=' + time.set({second: 0}).toISO();	
 }
 
 function get_next_execution(zone) {
