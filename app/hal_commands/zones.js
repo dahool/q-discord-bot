@@ -72,13 +72,13 @@ async function add_event(connection, guild, time, title, location, recurrent) {
 async function create_event(client, zone, title, recurrent) {
 	var content;
 	if (recurrent) {
-		content = "Created a recurrent reminder for every " + zone.next.toFormat("ccc 'at' h:mma ZZZZ")
+		content = "Created a recurrent reminder for zone `" + zone.zone + "` every `" + zone.next.toFormat("ccc 'at' h:mma ZZZZ") + "`";
 	} else {
-		content = "Created a one time reminder on " + zone.next.toFormat("LLL d 'at' h:mma ZZZZ")
+		content = "Created a one time reminder for zone `" + zone.zone + "` on `" + zone.next.toFormat("LLL d 'at' h:mma ZZZZ") + "`";
 	}
-	content += ' with the title `' + title + '`';
+	content += ' with title `' + title + '`';
 	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent).then(() => {
-		client.reply(content);
+		client.edit(content, true);
 	});
 }
 
@@ -89,15 +89,18 @@ async function handle_tag(client, zone) {
 	var title;
 	var recurrent;
 
-	const collector = client.channel.createMessageCollector(m => m.author.id == client.member.user.id, {time: 60000});
+	const messages = [];
+
+	const collector = client.channel.createMessageCollector(m => m.author.id == client.member.user.id, {time: 30000});
 	collector.on('collect', m => {
+		messages.push(m);
 		if ('cancel' == m.content.toLowerCase()) {
-			client.reply("Cancelled.");
+			client.reply("Cancelled.").then(m => messages.push(m));
 			title = "canceled"; // to prevent end message
 			collector.stop();
 		} else if (title == undefined) {
 			title = m.content;
-			client.reply("Do you want to schedule a recurrent event?");
+			client.reply("Do you want to schedule a recurrent event?").then(m => messages.push(m));;
 		} else if (recurrent == undefined) {
 			if (POSITIVE.some(v => v == m.content.toLowerCase())) {
 				recurrent = true;
@@ -108,13 +111,14 @@ async function handle_tag(client, zone) {
 				collector.stop();
 				return create_event(client, zone, title, false);
 			} else {
-				client.reply("Sorry, I don't understand, try again. Do you want a recurrent reminder?");
+				client.reply("Sorry, I don't understand, try again. Do you want a recurrent reminder?").then(m => messages.push(m));;
 			}
 		}
 	})
 	collector.on('end', m => {
+		messages.forEach(m => {if (m) m.delete() });
 		if (title == undefined || recurrent == undefined) {
-			return client.reply("Sorry, I'm done waiting. Start again");
+			return client.edit("Sorry, I'm done waiting. Start again");
 		}
 	})
 
@@ -131,8 +135,8 @@ async function handle_deltag(client, zone) {
 	});
 	if (ze && ze.events) {
 		var handled = false;
-		client.sendMessage("Enter the ID of the event you want to delete (or type cancel):\n>>> " + ze.events.map((ev, index) => 'ID: `' + index + '`     Title: `' + ev.title + '`\n'));
-		const collector = client.channel.createMessageCollector(m => m.author.id == client.member.user.id, {time: 60000});
+		client.sendMessage("Enter the ID of the event you want to delete (or type cancel):\n>>> " + ze.events.map((ev, index) => 'ID: `' + index + '`     Title: `' + ev.title + '`').join('\n'));
+		const collector = client.channel.createMessageCollector(m => m.author.id == client.member.user.id, {time: 30000});
 		collector.on('collect', m => {
 			if ('cancel' == m.content.toLowerCase()) {
 				client.reply("Cancelled.");
@@ -166,6 +170,40 @@ async function handle_deltag(client, zone) {
 
 }
 
+async function list_all_events(client) {
+	const zevent = new db.ZoneEventsDb(client.connection);
+	const calendar = new db.CalendarDb(client.connection);
+
+	const fromDate = DateTime.utc().toJSDate();
+	const toDate = DateTime.utc().plus({days: 7}).toJSDate();
+
+	const calevents = await calendar.findBy({
+		guild: client.guild.id,
+		type: cs.TERRITORY_CHANNEL,
+		notified: false,
+		start: { $gte: fromDate, $lte: toDate }
+	});
+	
+	const msgEmbed = new Discord.MessageEmbed()
+	.setColor('#e1dad8')
+	.setThumbnail(client.guild ? client.guild.iconURL() : client.client.user.avatarURL())
+	.setTitle("Territory Events")
+	.setFooter("* calendar events can't be removed by me")
+	.setTimestamp();
+
+	groupBy(calevents, u => u.location).forEach((values, key) => {
+		
+		msgEmbed.addField(key, values.map(ev => {
+			const flag = ev.src == 'calendar' ? ':calendar_spiral:' : '';
+			const ob = '`' + ev.summary + '` on `' + DateTime.fromJSDate(ev.start).toFormat("LLL d 'at' h:mma ZZZZ") +'`' + flag;
+			return ob;
+		}).join('\n'))
+	})
+
+	client.sendMessage(msgEmbed);
+
+}
+
 async function list_events(client, zone) {
 	const zevent = new db.ZoneEventsDb(client.connection);
 	const calendar = new db.CalendarDb(client.connection);
@@ -192,6 +230,7 @@ async function list_events(client, zone) {
 			.setColor('#e1dad8')
 			.setThumbnail(client.guild ? client.guild.iconURL() : client.client.user.avatarURL())
 			.setTitle("Events for " + zone.zone)
+			.setDescription(zone.next.toFormat("ccc 'at' h:mma ZZZZ"))
 			.setTimestamp();
 
 			if (ze && ze.events.length) {
@@ -281,6 +320,10 @@ module.exports = {
 			}
 
 		} else {
+			if ('events' == argument) {
+				return list_all_events(client);
+			}
+
 			zones = find_by_name(argument);
 			if (!zones.length) {
 				zones = list_by_particle(argument);
@@ -288,7 +331,7 @@ module.exports = {
 		}
 
 		if (!zones.length) {
-			return client.reply('No zones found matching criteria');
+			return client.reply(`No zones found matching ${argument}`);
 		}
 
 		const icon = client.guild ? client.guild.iconURL() : client.client.user.avatarURL();

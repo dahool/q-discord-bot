@@ -4,6 +4,8 @@ dotenv.config();
 const fs = require('fs');
 const Discord = require('discord.js');
 
+const axios = require('axios')
+
 const { ConfigDb, LoggerDb } = require('./db/db');
 
 const CHANNEL_ID = /<#(\d+)+>/;
@@ -30,6 +32,7 @@ class BotClient {
 		this.message = message;
 		this.isAdmin = isAdmin;
 		this.isManager = isManager;
+		this._firstReplyMsg = false;
 		this._replyOnce = false;
 	}
 
@@ -61,6 +64,30 @@ class BotClient {
 		return {...data, files}
 	}
 
+	_editInteraction = async (response) => {
+		let data = {
+			content: response
+		}
+
+		data = typeof response === 'object' ? { embeds: [ response ] } : { content: response };
+
+		return axios.patch(`https://discord.com/api/v8/webhooks/${this.client.user.id}/${this.interaction.token}/messages/@original`, data);
+	}
+
+	edit = async(response, reply = false) => {
+		if (this.interaction) {
+			return this._editInteraction(response);
+		} else {
+			if (this._firstReplyMsg) {
+				this._firstReplyMsg.delete().catch((e) => console.error(e));
+				if (reply) {
+					return this.reply(response);
+				}
+				return this.sendMessage(response);
+			}
+		}
+	}
+
 	reply = async (response) => {
 		if (this.interaction) {
 			if (this._replyOnce) {
@@ -69,7 +96,11 @@ class BotClient {
 				return this._reply(response);
 			}
 		} else {
-			return this.message.reply(response);
+			const r = this.message.reply(response);
+			r.then(m => {
+				if (!this._firstReplyMsg) this._firstReplyMsg = m; 
+			});
+			return r;
 		}
 	}
 
@@ -86,7 +117,11 @@ class BotClient {
 	}
 
 	_replyChannel = async (response) => {
-		return this.channel.send(response);
+		const r = this.channel.send(response);
+		r.then(m => {
+			if (!this._firstReplyMsg) this._firstReplyMsg = m; 
+		});
+		return r;
 	}
 
 	clear = () => {

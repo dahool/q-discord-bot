@@ -9,7 +9,8 @@ const { BotCommander } = require('./botclient');
 const client = new Client();
 
 connectionManager.connect().then(() => {
-	const bot = new BotCommander(client, connectionManager, {commandsDir: './maia_commands'})
+	
+	const bot = new BotCommander(client, connectionManager, {commandsDir: './' + process.argv[2] + '_commands', name: process.argv[2]})
 	bot.login(process.env.HAL_TOKEN)
 })
 
