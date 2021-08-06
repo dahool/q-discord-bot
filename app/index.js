@@ -64,9 +64,11 @@ app.get('/events', function(req, resp) {
 });
 
 app.get('/calendar', function(req ,resp) {
+    console.log("Calendar " + req.get('Referrer'));
     if (process.env.SECRET == req.query.TOKEN) {
         serveCalendar(connectionManager, req.query.ID, resp);
     } else {
+        console.error("Calendar 404");
         resp.status(404).send('Not found');
     }
 });
