@@ -150,7 +150,7 @@ async function handle_deltag(client, zone) {
 					handled = true;
 
 					ze.events = ze.events.filter(e => ev.id != e.id);
-					calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: m.content});
+					calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: ev.id});
 					zevent.push(client.guild.id, zone.zone, ze);
 					client.reply(`Event ${ev.title} deleted`);
 					
@@ -171,7 +171,6 @@ async function handle_deltag(client, zone) {
 }
 
 async function list_all_events(client) {
-	const zevent = new db.ZoneEventsDb(client.connection);
 	const calendar = new db.CalendarDb(client.connection);
 
 	const fromDate = DateTime.utc().toJSDate();
@@ -183,6 +182,8 @@ async function list_all_events(client) {
 		notified: false,
 		start: { $gte: fromDate, $lte: toDate }
 	});
+
+	calevents.sort((a,b) => a.start - b.start);
 	
 	const msgEmbed = new Discord.MessageEmbed()
 	.setColor('#e1dad8')
@@ -192,7 +193,7 @@ async function list_all_events(client) {
 	.setTimestamp();
 
 	groupBy(calevents, u => u.location).forEach((values, key) => {
-		
+		values.sort((a,b) => a.start - b.start);
 		msgEmbed.addField(key, values.map(ev => {
 			const flag = ev.src == 'calendar' ? ':calendar_spiral:' : '';
 			const ob = '`' + ev.summary + '` on `' + DateTime.fromJSDate(ev.start).toFormat("LLL d 'at' h:mma ZZZZ") +'`' + flag;
