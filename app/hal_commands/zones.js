@@ -195,8 +195,10 @@ async function list_all_events(client) {
 	groupBy(calevents, u => u.location).forEach((values, key) => {
 		values.sort((a,b) => a.start - b.start);
 		msgEmbed.addField(key, values.map(ev => {
+			const start = DateTime.fromJSDate(ev.start).setZone('UTC');
 			const flag = ev.src == 'calendar' ? ':calendar_spiral:' : '';
-			const ob = '`' + ev.summary + '` on `' + DateTime.fromJSDate(ev.start).toFormat("LLL d 'at' h:mma ZZZZ") +'`' + flag;
+			const link = 'https://zoner.netlify.app/?t=' + start.toFormat('Hmm');
+			const ob = '`' + ev.summary + '` on [`' + start.toFormat("LLL d 'at' h:mma ZZZZ") +'`](' + link + ')' + flag;
 			return ob;
 		}).join('\n'))
 	})
