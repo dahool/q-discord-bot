@@ -53,8 +53,9 @@ async function add_event(connection, guild, time, title, location, recurrent) {
 	var times = [time.toJSDate()];
 	if (recurrent) {
 		do {
-			times.push(time.plus({days: 7}).toJSDate());
-		} while (times.length < 12)
+			time = time.plus({days: 7});
+			times.push(time.toJSDate());
+		} while (times.length < 24)
 	}
 	const calendar = new db.CalendarDb(connection);
 	const zevent = new db.ZoneEventsDb(connection);
