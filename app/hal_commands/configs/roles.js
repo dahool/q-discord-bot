@@ -45,16 +45,16 @@ module.exports = {
 			if (id == null) {
 				return client.reply(`Missing argument. Specify a valid role.`);
 			}
-			const configRole = Object.assign({mention: []}, await configDb.findOne(guild, key))
+			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, key))
 			const response = {message: 'Privileged roles', log: true}
 
 			if ('add' in args) {
 				// prevent duplicates
-				configRole.mention = configRole.mention.filter(r => r != id)
-				configRole.mention.push(id);
+				configRole.roles = configRole.roles.filter(r => r != id)
+				configRole.roles.push(id);
 				response.fields = [{ name: 'Add', value : '<@&' + id + '>'}]
 			} else {
-				configRole.mention = configRole.mention.filter(r => r != id)
+				configRole.roles = configRole.roles.filter(r => r != id)
 				response.fields = [{ name: 'Remove', value : '<@&' + id + '>'}]
 			}
 
@@ -62,8 +62,8 @@ module.exports = {
 
 			return response;
 		} else {
-			const configRole = Object.assign({mention: []}, await configDb.findOne(guild, key))
-			const roles = configRole.mention.map(rid => '<@&' + rid + '>');
+			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, key))
+			const roles = configRole.roles.map(rid => '<@&' + rid + '>');
 
 			if (roles.length) {
 				return {message: 'Privileged roles', fields: [{ name: 'Roles', value : roles.join("\n")}]};
