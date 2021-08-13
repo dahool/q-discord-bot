@@ -3,7 +3,7 @@ dotenv.config();
 
 const fs = require('fs');
 const Discord = require('discord.js');
-const { Client, Intents } = require('discord.js');
+const { Client, Intents, Permissions } = require('discord.js');
 
 const { ConfigDb, LoggerDb } = require('./db/db');
 
@@ -221,7 +221,7 @@ class BotCommander {
 			const channel = interaction.channel;
 			const guild = interaction.guild;
 
-			this.invokeCommand(interaction, null, command, {}, new Discord.GuildMember(this.client, member, guild), guild, channel);
+			this.invokeCommand(interaction, null, command, {}, member, guild, channel);
 		});
 
 		this._prepareCommands();
@@ -312,9 +312,9 @@ class BotCommander {
 		if (!command) return;
 
 		const roles = (await this.configDb.findOne(guild.id, "roles", "roles")) || [];
-		const isAdmin = member.permissions.has(['ADMINISTRATOR','MANAGE_GUILD','MANAGE_ROLES']);
+		const isAdmin = member.permissions.has([Permissions.FLAGS.ADMINISTRATOR,Permissions.FLAGS.MANAGE_GUILD,Permissions.FLAGS.MANAGE_ROLES]);
 		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r.id) );
-
+		
     	console.debug("Command: " + commandName +  " - IsManager: " + isManager);
 
 		const bc = new BotClient(this.client, message, member, guild, channel, this.connectionManager, isAdmin, isManager, interaction);
