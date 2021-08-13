@@ -39,7 +39,7 @@ module.exports = {
 				const aliases = c.aliases ? '/' + c.aliases.join('/') : ''
 				msgEmbed.addField(c.description, '`' + `!${this.name} ${c.name}${aliases} ${c.usage}` + '`')
 			})
-			return client.sendMessage(msgEmbed);
+			return client.reply(msgEmbed);
 		} else {
 			// la primera clave es el 'comando'
 			const commandName = Object.keys(args)[0].toLowerCase();
@@ -60,10 +60,10 @@ module.exports = {
 				if (response.fields) msgEmbed.addFields(response.fields);
 				if (response.log && response.log === true) {
 					configDb.findOne(client.guild.id, cs.LOG_CHANNEL).then(cfg => {
-						if (cfg) client.guild.channels.cache.get(cfg.channel).send(msgEmbed);
+						if (cfg) client.sendTo(client.guild.channels.cache.get(cfg.channel), msgEmbed);
 					});
 				}
-				return client.sendMessage(msgEmbed);
+				return client.reply(msgEmbed);
 			}
 
 		}

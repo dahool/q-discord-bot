@@ -1,7 +1,6 @@
 const express = require('express')
 const favicon = require('serve-favicon');
-const maia = require('./maia')
-const hal = require('./hal')
+const bot = require('./bot')
 
 const app = express()
 app.use(express.json());
@@ -19,7 +18,7 @@ app.get('/', function(req, resp) {
 app.get('/notify', function(req, resp) {
     console.log("notify")
     const num = req.query.number || 30;
-    hal.announce(num).then(() => resp.send("OK"))
+    bot.announce(num).then(() => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
         loggerDb.error(error);
@@ -27,8 +26,7 @@ app.get('/notify', function(req, resp) {
 });
 
 app.get('/load', function(req, resp) {
-    //console.log("load")
-    hal.events().then(() => resp.send("OK"))
+    bot.loadEvents().then(() => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
         loggerDb.error(error);
@@ -36,8 +34,7 @@ app.get('/load', function(req, resp) {
 });
 
 app.get('/online', function(req, resp) {
-    //console.log("online")
-    hal.online().then(() => resp.send("OK"))
+    bot.online().then(() => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
         loggerDb.error(error);
@@ -45,8 +42,7 @@ app.get('/online', function(req, resp) {
 });
 
 app.get('/rotate', function(req, resp) {
-    //console.log("rotate")
-    maia.rotate().then((r) => resp.send("OK " + r))
+    bot.rotate().then((r) => resp.send("OK " + r))
     .catch((error) => {
         resp.send(error);
         loggerDb.error(error);
@@ -54,9 +50,8 @@ app.get('/rotate', function(req, resp) {
 });
 
 app.get('/events', function(req, resp) {
-    //console.log("rotate")
     const num = req.query.number || 0;
-    maia.events(num).then((r) => resp.send("OK"))
+    bot.events(num).then((r) => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
         loggerDb.error(error);
@@ -75,8 +70,7 @@ app.get('/calendar', function(req ,resp) {
 
 let loggerDb;
 connectionManager.connect().then(() => {
-    hal.start(connectionManager);
-    maia.start(connectionManager);
+    bot.start(connectionManager);
     loggerDb = new LoggerDb(connectionManager);
 
     app.listen(port, () => {

@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 const { statusKey } = require('../config.json');
+const { build_diplomacy } = require('./diplomacy');
+const cs = require('../values')
 const db = require('../db/db');
 
 class AllianceStatus {
@@ -12,7 +14,7 @@ class AllianceStatus {
 		this.cmd = cmd;
 	}
 
-	execute(client, args) {
+	async execute(client, args) {
 		const guild = client.guild.id;
 
 		const alliance = args.tag.toUpperCase().slice(0, 4);
@@ -48,14 +50,26 @@ class AllianceStatus {
 			confirm.addField('Reason', reason);
 		}
 
-		client.sendMessage(confirm);
-
-		this.config.findOne(guild, 'announce').then(cfg => {
+		this.config.findOne(guild, cs.ANNOUNCE_CHANNEL).then(cfg => {
 			if (cfg) {
 				const announcement = client.guild.channels.cache.get(cfg.channel);
-				if (announcement) announcement.send(confirm);
+				if (announcement) client.sendTo(announcement, confirm);
 			}
 		})
+
+		this.config.findOne(guild, cs.DIPLOMACY_CHANNEL).then(cfg => {
+			if (cfg) {
+				const channel = client.guild.channels.cache.get(cfg.channel);
+				if (channel) {
+					channel.messages.fetch({limit: 100}).then((fm) => {
+						if (fm) channel.bulkDelete(fm).catch((e) => console.error(e));
+						build_diplomacy(client).then(msg => client.sendTo(channel, msg))
+					});
+				}
+			}
+		});
+
+		client.reply(confirm);
 
 	}
 
@@ -77,6 +91,6 @@ module.exports = {
 	}],
 	async execute(client, args) {
 		const as = new AllianceStatus(client.connection, statusKey.ALLIED, this.name);
-		as.execute(client, args);
+		return as.execute(client, args);
 	}
 };

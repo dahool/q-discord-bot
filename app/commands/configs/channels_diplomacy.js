@@ -1,12 +1,12 @@
 const cs = require('../../values')
 
 module.exports = {
-	name: cs.DAILY_CHANNEL,
-    description: 'Dailies Announcement Channel',
+	name: cs.DIPLOMACY_CHANNEL,
+    description: 'Diplomacy Channel',
 	options: [
 		{
 			name: 'set',
-			description: 'Set Dailies Announcement Channel',
+			description: 'Set Diplomacy Channel',
 			type: 1,
 			options: [
 				{
@@ -19,11 +19,11 @@ module.exports = {
 		},
 		{
 			name: 'get',
-			description: 'Get Dailies Announcement Channel',
+			description: 'Get Diplomacy Channel',
 			type: 1
 		}
 	],
-	usage: '<option> <argument>',
+	usage: '<set/get> <channel>',
     async execute(configDb, client, args) {
 		const key = this.name;
 		const guild = client.guild.id;

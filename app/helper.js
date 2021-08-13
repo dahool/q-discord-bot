@@ -55,7 +55,7 @@ helper = (name, client, args) => {
             }
         })
         help.addField('Commands', commands.join('\n'));
-        return client.sendMessage(help);
+        return client.reply(help);
     }
 
     const cmdName = args.command.toLowerCase();
@@ -89,7 +89,7 @@ helper = (name, client, args) => {
         })
     }
 
-    return client.sendMessage(help);
+    return client.reply(help);
 }
 
 module.exports = {

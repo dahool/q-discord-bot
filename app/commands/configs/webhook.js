@@ -3,7 +3,6 @@ const { validateHookUrl } = require('../../functions/hooksender');
 
 module.exports = {
 	name: 'relay',
-	aliases: ['broadcast'],
 	description: 'Webhook Channel Broadcast',
 	options: [
 		{
@@ -52,7 +51,7 @@ module.exports = {
 			]			
 		},		
 	],
-	usage: '<option> <argument>',
+	usage: '<add/get/clear> <channel>',
     async execute(configDb, client, args) {
 		const guild = client.guild.id;
 

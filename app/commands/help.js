@@ -1,7 +1,7 @@
 const { helper } = require('../helper');
 
 module.exports = {
-	name: 'maia',
+	name: 'q',
 	slashName: 'help',
 	description: 'Help',
 	dm: true,

@@ -4,7 +4,6 @@ const { ConfigDb, CalendarDb } = require("../db/db");
 const ical = require('node-ical');
 const cs = require('../values');
 const generator = require('ical-generator');
-const { start } = require("../maia");
 
 processRecurrentEvent = (ev) => {
     let events = [];
@@ -87,7 +86,6 @@ module.exports = {
             loadEvents(ev.guild, ev.url, cs.TERRITORY_CHANNEL, connection);
         });
 
-        console.log("Processed " + configs.length);
-
+        return "Processed calendars: " + configs.length;
 	},
 };

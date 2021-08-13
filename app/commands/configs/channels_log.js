@@ -23,7 +23,7 @@ module.exports = {
 			type: 1
 		}
 	],
-	usage: '<option> <argument>',
+	usage: '<set/get> <channel>',
     async execute(configDb, client, args) {
 		const key = this.name;
 		const guild = client.guild.id;

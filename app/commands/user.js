@@ -42,10 +42,11 @@ module.exports = {
 				msgEmbed.addField(":telephone: Contact number", member.phone);
 			}
 
-			client.member.send(msgEmbed);
-			client.reply('Commander, the information has been sent to your inbox');
+			client.reply(msgEmbed, true);
 		} else {
-			client.reply("Sorry Commander, I don't have information for the user " + displayName(user));
+			client.reply("Sorry Commander, I don't have information for the user " + displayName(user), true);
 		}
+
+		client.clear();
 	},
 };

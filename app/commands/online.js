@@ -27,12 +27,9 @@ module.exports = {
 			return key;
 		}, 0)  
 
-		groups.forEach((m, index) => {
-		  let msg = '';
-		  if (index == 0) {
-			msg = 'Commander, information as requested...';
-		  }
-		  client.sendMessage({content: msg + m});
+		await client.reply('Commander, information as requested...' + groups[0]);
+		groups.slice(1).forEach((m) => {
+			client.reply(m);
 		})
 		
 	}

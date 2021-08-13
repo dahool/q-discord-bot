@@ -78,11 +78,10 @@ async function add_event(connection, guild, time, title, location, recurrent) {
 async function create_event(client, zone, title, recurrent) {
 	var content;
 	if (recurrent) {
-		content = "Created a recurrent reminder for zone `" + zone.zone + "` every `" + zone.next.toFormat("ccc 'at' h:mma ZZZZ") + "`";
+		content = "Created a recurrent reminder `" + title + "` for zone `" + zone.zone + "` every `" + zone.next.toFormat("ccc 'at' h:mma ZZZZ") + "`";
 	} else {
-		content = "Created a one time reminder for zone `" + zone.zone + "` on `" + zone.next.toFormat("LLL d 'at' h:mma ZZZZ") + "`";
+		content = "Created a one time reminder `" + title + "` for zone `" + zone.zone + "` on `" + zone.next.toFormat("LLL d 'at' h:mma ZZZZ") + "`";
 	}
-	content += ' with title `' + title + '`';
 	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent).then(() => {
 		client.edit(content, true);
 	});
@@ -97,16 +96,18 @@ async function handle_tag(client, zone) {
 
 	const messages = [];
 
-	const collector = client.channel.createMessageCollector(m => m.author.id == client.member.user.id, {time: 30000});
+	const filter = m => m.author.id == client.member.user.id;
+	const collector = client.channel.createMessageCollector({ filter, time: 30000 } );
+	
 	collector.on('collect', m => {
 		messages.push(m);
 		if ('cancel' == m.content.toLowerCase()) {
-			client.reply("Cancelled.").then(m => messages.push(m));
-			title = "canceled"; // to prevent end message
+			client.edit("Cancelled.", true)
+			title = "cancel"; // to prevent end message
 			collector.stop();
 		} else if (title == undefined) {
 			title = m.content;
-			client.reply("Do you want to schedule a recurrent event?").then(m => messages.push(m));;
+			m.reply("Do you want to schedule a recurrent event?").then(m => messages.push(m) );
 		} else if (recurrent == undefined) {
 			if (POSITIVE.some(v => v == m.content.toLowerCase())) {
 				recurrent = true;
@@ -117,14 +118,14 @@ async function handle_tag(client, zone) {
 				collector.stop();
 				return create_event(client, zone, title, false);
 			} else {
-				client.reply("Sorry, I don't understand, try again. Do you want a recurrent reminder?").then(m => messages.push(m));;
+				m.reply("Sorry, I don't understand, try again. Do you want a recurrent reminder?").then(m => messages.push(m));;
 			}
 		}
 	})
 	collector.on('end', m => {
 		messages.forEach(m => {if (m) m.delete() });
-		if (title == undefined || recurrent == undefined) {
-			return client.edit("Sorry, I'm done waiting. Start again");
+		if (title != 'cancel' && recurrent == undefined) {
+			return client.edit("Sorry, I'm done waiting. Start again", true);
 		}
 	})
 
@@ -139,34 +140,39 @@ async function handle_deltag(client, zone) {
 		uuid: zone.zone,
 		events: { $elemMatch: {last: { $gte: DateTime.utc().toJSDate() }} }
 	});
+
 	if (ze && ze.events) {
 		var handled = false;
-		client.sendMessage("Enter the ID of the event you want to delete (or type cancel):\n>>> " + ze.events.map((ev, index) => 'ID: `' + index + '`     Title: `' + ev.title + '`').join('\n'));
-		const collector = client.channel.createMessageCollector(m => m.author.id == client.member.user.id, {time: 30000});
+		client.reply("Enter the ID of the event you want to delete (or type cancel):\n>>> " + ze.events.map((ev, index) => 'ID: `' + index + '`     Title: `' + ev.title + '`').join('\n'));
+
+		const messages = [];
+
+		const filter = m => m.author.id == client.member.user.id;
+		const collector = client.channel.createMessageCollector({ filter, time: 30000});
 		collector.on('collect', m => {
+			messages.push(m);
 			if ('cancel' == m.content.toLowerCase()) {
-				client.reply("Cancelled.");
+				client.edit("Cancelled.", true)
 				handled = true;
 				collector.stop();
 			} else {
 				const ev = ze.events[m.content];
 				if (!ev) {
-					client.reply("Sorry, can't find event `" + m.content + "`. Try again.")
+					m.reply("Sorry, can't find event `" + m.content + "`. Try again.").then(m => messages.push(m) );
 				} else {
 					handled = true;
-
 					ze.events = ze.events.filter(e => ev.id != e.id);
 					calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: ev.id});
 					zevent.push(client.guild.id, zone.zone, ze);
-					client.reply(`Event ${ev.title} deleted`);
-					
+					client.edit(`Event \`${ev.title}\` deleted`, true);
 					collector.stop();
 				}
 			}
 		})
 		collector.on('end', m => {
+			messages.forEach(m => {if (m) m.delete() });
 			if (!handled) {
-				return client.reply("Sorry, I'm done waiting. Good bye.");
+				return client.edit("Sorry, I'm done waiting. Good bye.", true);
 			}
 		})
 
@@ -208,7 +214,7 @@ async function list_all_events(client) {
 		}).join('\n'))
 	})
 
-	client.sendMessage(msgEmbed);
+	client.reply(msgEmbed);
 
 }
 
@@ -243,7 +249,7 @@ async function list_events(client, zone) {
 
 			if (ze && ze.events.length) {
 				msgEmbed.addFields({
-					name: 'Scheduled Events', value: ze.events.map(ev => '`' + ev.title + '`\n')
+					name: 'Scheduled Events', value: ze.events.map(ev => '`' + ev.title + '`').join('\n')
 				})
 			}
 
@@ -254,7 +260,7 @@ async function list_events(client, zone) {
 			if (caevents.length > 0) {
 				msgEmbed.addField('Calendar Events', caevents.join('\n'))
 			}
-			client.sendMessage(msgEmbed);
+			client.reply(msgEmbed);
 
 		} else {
 			client.reply("No events scheduled for " + zone.zone);
@@ -368,9 +374,6 @@ module.exports = {
 			msgEmbed.addField(z.zone, content);
 		})	
 
-		if (client.interaction) {
-			client.sendMessage("Commander, information as requested...");
-		}
-		return client.sendMessage(msgEmbed);
+		return client.reply(msgEmbed);
     },
 };

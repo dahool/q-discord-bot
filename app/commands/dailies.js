@@ -196,7 +196,7 @@ module.exports = {
 				msgEmbed.addField(z.event + ' Event (' + suffix + ")", z.description)
 			})
 
-			client.sendMessage(msgEmbed);
+			client.reply(msgEmbed);
 
 		} else {
 			const list = find_by_day(rotation);
@@ -212,7 +212,7 @@ module.exports = {
 				msgEmbed.addField(z.event + ' Event (ends ' + z.end.toRelative() + ')', z.description)
 			})
 
-			client.sendMessage(msgEmbed);
+			client.reply(msgEmbed);
 		}
     },
 };

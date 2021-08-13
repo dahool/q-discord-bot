@@ -10,9 +10,10 @@ module.exports = {
 		required: true
 	}],
 	description: 'Update contact info',
-	execute(client, args) {
+	async execute(client, args) {
 		const memberDb = new db.MembersDb(client.connection);
 		memberDb.update(client.guild.id, client.member.id, {phone: args.argument})
-		client.reply('Thank you commander, your contact information has been updated.');
+		await client.reply('Thank you commander, your contact information has been updated.', true);
+		client.clear();
 	},
 };

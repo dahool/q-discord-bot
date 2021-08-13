@@ -11,13 +11,22 @@ const membersOnline = require('./functions/online');
 const hook = require('./functions/hooksender');
 const cs = require('./values')
 
+var dailies = require('./commands/dailies');
+
 const { MembersDb, ConfigDb, connectionManager } = require('./db/db');
 
-//const client = new Client({ ws: { intents: Intents.ALL } });
-const client = new Client();
+const client = new Client({ intents: [
+	Intents.FLAGS.GUILD_PRESENCES,
+	Intents.FLAGS.GUILD_MEMBERS,
+	Intents.FLAGS.GUILDS,
+	Intents.FLAGS.GUILD_MESSAGES,
+	Intents.FLAGS.GUILD_WEBHOOKS,
+	Intents.FLAGS.DIRECT_MESSAGES
+], partials: ['CHANNEL']});
+
 const botclient = new BotCommander(client, connectionManager, 
-	{name: 'HAL', 
-	commandsDir: './hal_commands', 
+	{name: 'Q', 
+	commandsDir: './commands',
 	prefix: prefix,
 	activity: {
 		message: 'you',
@@ -33,7 +42,7 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 })
 
 var configDb;
-client.on('message', message => {
+client.on('messageCreate', message => {
 	;(async () => {
 		if (!message.author.bot && !message.content.startsWith(prefix)) {
 			const cfg = await configDb.findOneBy({guild: message.guild.id, uuid: cs.WEEBHOOK, channel: message.channel.id});
@@ -48,7 +57,16 @@ module.exports = {
 	async start(connectionManager) {
 		memberDb = new MembersDb(connectionManager);
 		configDb = new ConfigDb(connectionManager);
-		botclient.login(process.env.HAL_TOKEN);
+		botclient.login(process.env.MAIA_TOKEN);
+	},
+	async rotate() {
+		console.log('rotate daily calendar');
+		return dailies.rotate(connectionManager);
+	},
+	async events(part) {
+		const parts = ["0400","1000","1600","2200"]
+		console.log('dailies part ' + parts[part]);
+		return dailies.notify(connectionManager, parts[part], client, part == 0);
 	},
 	async announce(num) {
 		if (!botclient.ready) {
@@ -57,7 +75,7 @@ module.exports = {
 		}
 		return announcer.execute(client, connectionManager, num);
 	},
-	async events() {
+	async loadEvents() {
 		return calendar.execute(connectionManager);
 	},
 	async online() {

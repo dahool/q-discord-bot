@@ -8,7 +8,8 @@ module.exports = {
 	slash: false,
 	admin: true,
 	async execute(client, args) {
-		client.reply('On it');
-		return calendar.execute(client.connection);
+		client.clear();
+		const r = calendar.execute(client.connection).then(r => client.reply(r, true));
+		return r;
 	}
 };

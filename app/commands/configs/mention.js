@@ -1,7 +1,8 @@
+const cs = require('../../values')
 
 module.exports = {
-	name: 'role',
-    description: 'Add/Remove privileged roles (access to my protected commands)',
+	name: 'mention',
+	description: 'Territory/Events roles mention',
 	options: [
 		{
 			name: 'add',
@@ -35,38 +36,37 @@ module.exports = {
 			type: 1
 		},
 	],
-	usage: '<option> <argument>',
-	async execute(configDb, client, args) {
+	usage: '<add/del/get> <role>',
+    async execute(configDb, client, args) {
 		const guild = client.guild.id;
-		const key = 'roles';
 
 		if ('add' in args || 'del' in args) {
 			const id = args.add?.role || args.del?.role
 			if (id == null) {
 				return client.reply(`Missing argument. Specify a valid role.`);
 			}
-			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, key))
-			const response = {message: 'Privileged roles', log: true}
+			const configRole = Object.assign({mention: []}, await configDb.findOne(guild, cs.TERRITORY_CHANNEL))
+			const response = {message: this.description, log: true}
 
 			if ('add' in args) {
 				// prevent duplicates
-				configRole.roles = configRole.roles.filter(r => r != id)
-				configRole.roles.push(id);
+				configRole.mention = configRole.mention.filter(r => r != id)
+				configRole.mention.push(id);
 				response.fields = [{ name: 'Add', value : '<@&' + id + '>'}]
 			} else {
-				configRole.roles = configRole.roles.filter(r => r != id)
+				configRole.mention = configRole.mention.filter(r => r != id)
 				response.fields = [{ name: 'Remove', value : '<@&' + id + '>'}]
 			}
 
-			configDb.push(guild, key, configRole);
+			configDb.push(guild, cs.TERRITORY_CHANNEL, configRole);
 
 			return response;
 		} else {
-			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, key))
-			const roles = configRole.roles.map(rid => '<@&' + rid + '>');
+			const configRole = Object.assign({mention: []}, await configDb.findOne(guild, cs.TERRITORY_CHANNEL))
+			const roles = configRole.mention.map(rid => '<@&' + rid + '>');
 
 			if (roles.length) {
-				return {message: 'Privileged roles', fields: [{ name: 'Roles', value : roles.join("\n")}]};
+				return {message: this.description, fields: [{ name: 'Roles', value : roles.join("\n")}]};
 			}
 			
 			return {message: 'No roles defined'};
