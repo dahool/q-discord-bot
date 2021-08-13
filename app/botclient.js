@@ -3,12 +3,24 @@ dotenv.config();
 
 const fs = require('fs');
 const Discord = require('discord.js');
+const { Client, Intents } = require('discord.js');
 
 const { ConfigDb, LoggerDb } = require('./db/db');
+
+const { safeTrim } = require('./utils');
 
 const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
 const USER_ID = /<@!(\d+)+>/;
+
+const INTENTS = [
+	Intents.FLAGS.GUILDS,
+	Intents.FLAGS.GUILD_PRESENCES,
+	Intents.FLAGS.GUILD_MEMBERS,
+	Intents.FLAGS.GUILD_MESSAGES,
+	Intents.FLAGS.GUILD_WEBHOOKS,
+	Intents.FLAGS.DIRECT_MESSAGES
+]
 
 function extract_id(regex, str) {
 	const m = regex.exec(str);
@@ -171,9 +183,10 @@ class BotClient {
 
 class BotCommander {
 	
-	constructor(client, connectionManager, options) {
+	constructor(connectionManager, options) {
+		this.client = new Client({ intents: INTENTS, partials: ['CHANNEL']});
+
 		this.connectionManager = connectionManager;
-		this.client = client;
 		this.client.commands = new Discord.Collection();
 		this.options = Object.assign({commandsDir: null, prefix: '!'}, options)
 		this._initialize();
@@ -237,7 +250,7 @@ class BotCommander {
 					}
 				}
 			} else {
-				parsed[option.name] = args.get(option.name, option.required)?.value
+				parsed[option.name] = safeTrim(args.get(option.name, option.required)?.value)
 			}
 		})
 		return parsed;
@@ -264,7 +277,7 @@ class BotCommander {
 					if (argIndex == options.length-1) {
 						value = args.slice(argIndex).join(' ');
 					} else {
-						value = args[argIndex];
+						value = safeTrim(args[argIndex]);
 					}
 					if (option.type == 7) {
 						const id = extract_id(CHANNEL_ID, value);

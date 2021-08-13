@@ -35,11 +35,12 @@ relayMessage = async (message, target) => {
     target.forEach(url => {
         const ma = url.match(HOOK_REX);
         if (ma) {
-            const client = new Discord.WebhookClient(ma.groups.ID, ma.groups.TOKEN);
-            client.send(message.content, {
+            const client = new Discord.WebhookClient({url: url});
+            client.send({
+                content: message.content || ' ',
+                files: message.attachments,
                 username: message.author.username,
                 avatarURL: message.channel.guild.iconURL()
-                //avatarURL: message.author.displayAvatarURL()
             })        
         }
     });

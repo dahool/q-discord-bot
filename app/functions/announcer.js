@@ -51,7 +51,7 @@ getRoles = (channel, message) => {
 }
 
 sendMessage = async (mention, channel, message) => {
-    return channel.send({ embed: message, content: '@here ' + mention.map(r => '<@&' + r + '>').join(' ') + getRoles(channel, message) });
+    return channel.send({ embeds: [ message ], content: '@here ' + mention.map(r => '<@&' + r + '>').join(' ') + getRoles(channel, message) });
 }
 
 
@@ -66,7 +66,7 @@ module.exports = {
                 config.findOne(e.guild, e.type).then(cfg => {
                     if (cfg) {
                         console.log(cfg);
-                        const channel = client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
+                        const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
                         if (channel) sendMessage(cfg.mention || [], channel, createMessage(e));
                     }
                 })

@@ -95,7 +95,7 @@ async function notify(connection, section, client, rotate) {
 				.forEach((z) => {
 					const end = endTime(general, z)
 					guilds.forEach((guild) => {
-						const channel = client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
+						const channel = client.client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
 						const msgEmbed = new Discord.MessageEmbed()
 						.setColor(z.color)
 						.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
@@ -105,7 +105,7 @@ async function notify(connection, section, client, rotate) {
 						.setFooter(z.description)
 						.addFields({name: "Ends", value: end.toRelative(), inline: true})
 						.setTimestamp();
-						channel.send(msgEmbed);
+						channel.send({ embeds: [msgEmbed]});
 					})
 				})
 		});

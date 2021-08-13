@@ -29,6 +29,11 @@ function safeLower(value) {
     return value;
 }
 
+function safeTrim(value) {
+    if (value != undefined) return value.trim();
+    return value;
+}
+
 function groupBy(list, keyGetter) {
     const map = new Map();
     list.forEach((item) => {
@@ -87,6 +92,7 @@ module.exports = {
 	groupBy,
 	randomColor,
     safeLower,
+    safeTrim,
     capitalize,
     StringBuilder,
     toRelative

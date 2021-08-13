@@ -59,7 +59,7 @@ app.get('/events', function(req, resp) {
 });
 
 app.get('/calendar', function(req ,resp) {
-    console.log("Calendar " + req.get('Referrer'));
+    console.log("Calendar get");
     if (process.env.SECRET == req.query.TOKEN) {
         serveCalendar(connectionManager, req.query.ID, resp);
     } else {
