@@ -12,7 +12,7 @@ const cs = require('./values')
 
 var dailies = require('./commands/dailies');
 
-const { MembersDb, ConfigDb, connectionManager } = require('./db/db');
+const { MembersDb, ConfigDb, BotDb, connectionManager } = require('./db/db');
 
 const botclient = new BotCommander(connectionManager, 
 	{name: 'Q', 
@@ -24,8 +24,42 @@ const botclient = new BotCommander(connectionManager,
 	}
 })
 
+var botDb;
+botclient.once('ready', async () => {
+	const botguilds = botclient.client.guilds.cache;
+	const savedguilds = await botDb.fetchGuilds();
+	const filtered = botguilds.filter(guild => !savedguilds.some(s => s.id == guild.id)).map(g => { return {id: g.id, name: g.name} })
+	if (filtered.length) botDb.addGuilds(filtered);
+	botguilds.forEach(async (guild) => {
+		const guildchannels = guild.channels.cache;
+		const savedchannels = await botDb.fetchChannels(guild.id);
+		const filteredchannels = guildchannels.filter(ch => !ch.deleted && ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name} });
+		if (filteredchannels.length) botDb.addChannels(guild.id, filteredchannels);
+	})
+});
+
+botclient.on("guildCreate", guild => {
+    console.log("Joined: " + guild.name);
+	botDb.addGuild(guild.id, guild.name);
+})
+
+botclient.on("guildDelete", guild => {
+    console.log("Left: " + guild.name);
+	botDb.removeGuild(guild.id);
+})
+
+botclient.on("channelCreate", channel => {
+    console.debug("Created Channel: " + channel.name);
+	if (channel.type == 'GUILD_TEXT') botDb.addChannel(channel.guild.id, channel.id, channel.name);
+})
+
+botclient.on("channelDelete", channel => {
+    console.debug("Deleted Channel: " + channel.name);
+	botDb.removeChannel(channel.guild.id, channel.id);
+})
+
 var memberDb;
-botclient.on('presenceUpdate', (oldMember, newMember) => {
+botclient.on('presenceUpdate', async (oldMember, newMember) => {
 	if (!newMember.user.bot && newMember.status != 'offline') {
 		memberDb.updateOnline(newMember.guild.members.cache.get(newMember.user.id));
 	}
@@ -45,6 +79,7 @@ module.exports = {
 	async start(connectionManager) {
 		memberDb = new MembersDb(connectionManager);
 		configDb = new ConfigDb(connectionManager);
+		botDb = new BotDb(connectionManager);
 		botclient.login(process.env.MAIA_TOKEN);
 	},
 	async rotate() {

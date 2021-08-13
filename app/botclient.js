@@ -390,6 +390,9 @@ class BotCommander {
 		this.client.on(event, callback);
 	}
 
+	once = (event, callback) => {
+		this.client.once(event, callback);
+	}
 }
 
 module.exports = {

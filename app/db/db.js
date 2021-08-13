@@ -115,6 +115,46 @@ class ZoneEventsDb extends DbHelper {
     }
 }
 
+class BotDb extends DbHelper {
+
+    constructor(connection) {
+        super(connection, "bot");
+    }
+
+    async addGuild(id, name) {
+        return this.db.insertOne({type: 'guild', id: id, name: name});
+    }
+
+    async addGuilds(guilds) {
+        return this.db.insertMany(guilds.map(g => Object.assign({type: 'guild'}, g)));
+    }
+
+    async removeGuild(id) {
+        return this.deleteBy({type: 'guild', id: id});
+    }
+
+    async fetchGuilds() {
+        return this.findBy({type: 'guild'});
+    }
+
+    async addChannel(guild, id, name) {
+        return this.db.insertOne({guild: guild, id: id, name: name, type: 'channel'});
+    }
+
+    async removeChannel(guild, id) {
+        return this.deleteBy({type: 'channel', id: id, guild: guild});
+    }
+
+    async addChannels(guild, channels) {
+        return this.db.insertMany(channels.map(ch => Object.assign({guild: guild, type: 'channel'}, ch)));
+    }
+
+    async fetchChannels(guild) {
+        return this.findBy({type: 'channel', guild: guild});
+    }
+
+}
+
 class LoggerDb {
     
     constructor(connection) {
@@ -196,4 +236,4 @@ class MembersDb extends DbHelper {
 
 const connectionManager = new ConnectionManager();
 
-module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb, LoggerDb }
+module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb, LoggerDb, BotDb }
