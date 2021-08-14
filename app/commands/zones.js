@@ -89,7 +89,7 @@ async function create_event(client, zone, title, recurrent) {
 
 async function handle_tag(client, zone) {
 	
-	client.reply(`Ok, I'm creating a reminder for ${zone.zone}. What's the title?`)
+	client.reply(`Ok mon capitaine, I'm creating a reminder for ${zone.zone}. What's the title?`)
 
 	var title;
 	var recurrent;
@@ -316,13 +316,13 @@ module.exports = {
 		if (['tag','-tag','events'].includes(cmd)) {
 
 			if (!client.isManager) {
-				return client.reply("Sorry, you don't have enough permissions to execute this command.");	
+				return client.reply("Pardon mon capitaine, you don't have enough permissions to request that.");	
 			}
 
 			zones = find_by_name(argument);
 
 			if (zones.length > 1) {
-				return client.reply('Sorry, too many zones matching ' + argument + '. Narrow your search.');		
+				return client.reply(`Pardon mon capitaine, too many zones matching \`${argument}\`. Narrow your search.`);		
 			}
 
 			if ('tag' == cmd) {
@@ -345,7 +345,7 @@ module.exports = {
 		}
 
 		if (!zones.length) {
-			return client.reply(`No zones found matching ${argument}`);
+			return client.reply(`No zones found matching \`${argument}\``);
 		}
 
 		const icon = client.guild ? client.guild.iconURL() : client.client.user.avatarURL();

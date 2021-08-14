@@ -44,7 +44,7 @@ module.exports = {
 
 			client.reply(msgEmbed, true);
 		} else {
-			client.reply("Sorry Commander, I don't have information for the user " + displayName(user), true);
+			client.reply("Pardon mon capitaine, I don't have information for the user " + displayName(user), true);
 		}
 
 		client.clear();

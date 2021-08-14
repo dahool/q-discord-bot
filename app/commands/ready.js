@@ -2,8 +2,8 @@ module.exports = {
 	name: 'ready',
 	aliases: ['help'],
 	slash: true,
-	description: 'My status',
+	description: 'About me',
 	execute(client, args) {
-		return client.reply('Ready. Type !q for help');
+		return client.reply("I'm ready mon capitaine. Type !q for help");
 	},
 };

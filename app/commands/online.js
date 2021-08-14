@@ -27,7 +27,7 @@ module.exports = {
 			return key;
 		}, 0)  
 
-		await client.reply('Commander, information as requested...' + groups[0]);
+		await client.reply('Mon capitaine, information as requested...' + groups[0]);
 		groups.slice(1).forEach((m) => {
 			client.reply(m);
 		})

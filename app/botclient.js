@@ -8,6 +8,7 @@ const { Client, Intents, Permissions } = require('discord.js');
 const { ConfigDb, LoggerDb } = require('./db/db');
 
 const { safeTrim } = require('./utils');
+const { MESSAGES } = require('./messages');
 
 const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
@@ -131,7 +132,7 @@ class BotClient {
 
 	dm = async(response) => {
 		const r = this.member.send(response);
-		r.catch(() => this._reply("Sorry Commander, you have to allow me to send you PMs"))
+		r.catch(() => this._reply(MESSAGES.permission_dm))
 		return r;
 	}
 
@@ -312,7 +313,7 @@ class BotCommander {
 		if (!command) return;
 
 		const roles = (await this.configDb.findOne(guild.id, "roles", "roles")) || [];
-		const isAdmin = member.permissions.has([Permissions.FLAGS.ADMINISTRATOR,Permissions.FLAGS.MANAGE_GUILD,Permissions.FLAGS.MANAGE_ROLES]);
+		const isAdmin = member.permissions.has([Permissions.FLAGS.ADMINISTRATOR,Permissions.FLAGS.MANAGE_GUILD]);
 		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r.id) );
 		
     	console.debug("Command: " + commandName +  " - IsManager: " + isManager);
@@ -320,15 +321,15 @@ class BotCommander {
 		const bc = new BotClient(this.client, message, member, guild, channel, this.connectionManager, isAdmin, isManager, interaction);
 
 		if (channel.type == "DM" && command.dm === false) {
-			return bc.reply("Sorry, can't process in DM");
+			return bc.reply(MESSAGES.denied_dm);
 		}
 		
-		if ((command.admin || command.permission) && !(isAdmin || member.permissions.has(command.permission || []))) {
-			return bc.reply("Sorry, you don't have enough permissions to execute this command.");
+		if ((command.admin && !isAdmin) || (command.permission && !member.permissions.has(command.permission || []))) {
+			return bc.reply(MESSAGES.denied);
 		}
 	
 		if (command.private && !isManager) {
-			return bc.reply("Sorry, you don't have enough permissions to execute this command.");	
+			return bc.reply(MESSAGES.denied);	
 		}
 	
 		if (command.options) {
@@ -338,7 +339,7 @@ class BotCommander {
 				try {
 					args = this._parseArguments(args, command.singleOptions || command.options);
 				} catch (e) {
-					let reply = `Error, ${e}`;
+					let reply = MESSAGES.invalid + e;
 					return bc.reply(reply);
 				}
 			}
@@ -350,6 +351,7 @@ class BotCommander {
 			command.execute(bc, args);
 			//bc.clear();
 		} catch (error) {
+			bc.reply(MESSAGES.error);
 			console.error(error);
 			this.loggerDb.error(error);
 		}

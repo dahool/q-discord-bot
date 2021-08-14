@@ -29,7 +29,7 @@ module.exports = {
 		const msgEmbed = new Discord.MessageEmbed()
 			.setColor('#e1dad8')
 			.setThumbnail(client.client.user.avatarURL())
-			.setTitle('My Settings')
+			.setTitle('Settings of the Continuum')
 			.setFooter(`!config | Requested by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`)
 			.setTimestamp();
 
