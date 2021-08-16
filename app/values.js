@@ -3,6 +3,6 @@ module.exports = {
 	LOG_CHANNEL: "log",
 	TERRITORY_CHANNEL: "territory",
 	DAILY_CHANNEL: "daily",
-	WEEBHOOK: "weebhook",
+	WEBHOOK: "webhook",
 	DIPLOMACY_CHANNEL: "diplomacy"
 };

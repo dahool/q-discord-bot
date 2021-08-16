@@ -32,10 +32,10 @@ relayMessage = async (message, target) => {
     });
     */
 
-    target.forEach(url => {
-        const ma = url.match(HOOK_REX);
+    target.forEach(hook => {
+        const ma = hook.url.match(HOOK_REX);
         if (ma) {
-            const client = new Discord.WebhookClient({url: url});
+            const client = new Discord.WebhookClient({url: hook.url});
             client.send({
                 content: message.content || ' ',
                 files: message.attachments,

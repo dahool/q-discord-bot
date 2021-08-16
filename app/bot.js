@@ -68,9 +68,9 @@ botclient.on('presenceUpdate', async (oldMember, newMember) => {
 var configDb;
 botclient.client.on('messageCreate', async (message) => {
 	if (!message.author.bot && !message.content.startsWith(prefix)) {
-		const cfg = await configDb.findOneBy({guild: message.guild.id, uuid: cs.WEEBHOOK, channel: message.channel.id});
-		if (cfg && cfg.url) {
-			return hook.relayMessage(message, cfg.url);
+		const cfg = await configDb.findBy({guild: message.guild.id, uuid: cs.WEBHOOK, channel: message.channel.id});
+		if (cfg?.length > 0) {
+			return hook.relayMessage(message, cfg);
 		}		
 	}
 });
