@@ -31,10 +31,19 @@ botclient.once('ready', async () => {
 	const filtered = botguilds.filter(guild => !savedguilds.some(s => s.id == guild.id)).map(g => { return {id: g.id, name: g.name} })
 	if (filtered.length) botDb.addGuilds(filtered);
 	botguilds.forEach(async (guild) => {
+
+		// channels
 		const guildchannels = guild.channels.cache;
 		const savedchannels = await botDb.fetchChannels(guild.id);
 		const filteredchannels = guildchannels.filter(ch => !ch.deleted && ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name} });
 		if (filteredchannels.length) botDb.addChannels(guild.id, filteredchannels);
+
+		// roles
+		const guildroles = guild.roles.cache;
+		const savedroles = await botDb.fetchRoles(guild.id);
+		const filteredroles = guildroles.filter(r => !savedroles.some(s => s.id == r.id)).map(r => { return {id: r.id, name: r.name}});
+		if (filteredroles.length) botDb.addRoles(guild.id, filteredroles);
+
 	})
 });
 
@@ -56,6 +65,32 @@ botclient.on("channelCreate", channel => {
 botclient.on("channelDelete", channel => {
     console.debug("Deleted Channel: " + channel.name);
 	botDb.removeChannel(channel.guild.id, channel.id);
+})
+
+botclient.on("channelUpdate", async (oldchannel, channel) => {
+    console.debug("Updated Channel: " + channel.name);
+	if (oldchannel.type == 'GUILD_TEXT') {
+		await botDb.removeChannel(oldchannel.guild.id, oldchannel.id);
+	}
+	if (channel.type == 'GUILD_TEXT') {
+		botDb.addChannel(channel.guild.id, channel.id, channel.name);
+	}
+})
+
+botclient.on("roleCreate", role => {
+    console.debug("Created role: " + role.name);
+	botDb.addRole(role.guild.id, role.id, role.name);
+})
+
+botclient.on("roleDelete", role => {
+    console.debug("Deleted Role: " + role.name);
+	botDb.removeRole(role.guild.id, role.id);
+})
+
+botclient.on("roleUpdate", async (oldrole, newrole) => {
+    console.debug("Updated Role: " + newrole.name);
+	await botDb.removeRole(oldrole.guild.id, oldrole.id);
+	botDb.addRole(newrole.guild.id, newrole.id, newrole.name);
 })
 
 var memberDb;

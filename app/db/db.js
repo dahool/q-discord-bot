@@ -153,6 +153,22 @@ class BotDb extends DbHelper {
         return this.findBy({type: 'channel', guild: guild});
     }
 
+    async addRole(guild, id, name) {
+        return this.db.insertOne({guild: guild, id: id, name: name, type: 'role'});
+    }
+
+    async removeRole(guild, id) {
+        return this.deleteBy({type: 'role', id: id, guild: guild});
+    }
+
+    async addRoles(guild, roles) {
+        return this.db.insertMany(roles.map(ch => Object.assign({guild: guild, type: 'role'}, ch)));
+    }
+
+    async fetchRoles(guild) {
+        return this.findBy({type: 'role', guild: guild});
+    }
+
 }
 
 class LoggerDb {
