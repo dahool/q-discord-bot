@@ -144,6 +144,15 @@
 		"paths": ["Hoobishan","Temeri","Ezla"]
 	},	
 	{
+		"zone": "Temeri",
+		"type": 1,
+		"weekday": 7,
+		"time": "2200",
+		"particle": "Phantom",
+		"rss": ["iso2", "dilithium"],
+		"paths": ["Adia","Perim","Ezla"]
+	},		
+	{
 		"zone": "Ezla",
 		"type": 1,
 		"weekday": 5,
