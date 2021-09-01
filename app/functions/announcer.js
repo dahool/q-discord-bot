@@ -50,8 +50,8 @@ getRoles = (channel, message) => {
     return roles.join(' ');
 }
 
-sendMessage = async (mention, channel, message) => {
-    return channel.send({ embeds: [ message ], content: '@here ' + mention.map(r => '<@&' + r + '>').join(' ') + getRoles(channel, message) });
+sendMessage = async (text, mention, channel, message) => {
+    return channel.send({ embeds: [ message ], content: text + ' @here ' + mention.map(r => '<@&' + r + '>').join(' ') + getRoles(channel, message) });
 }
 
 
@@ -67,7 +67,7 @@ module.exports = {
                     if (cfg) {
                         console.log(cfg);
                         const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
-                        if (channel) sendMessage(cfg.mention || [], channel, createMessage(e));
+                        if (channel) sendMessage(e.summary, cfg.mention || [], channel, createMessage(e));
                     }
                 })
             });

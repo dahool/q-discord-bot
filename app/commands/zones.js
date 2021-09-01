@@ -323,6 +323,8 @@ module.exports = {
 
 			if (zones.length > 1) {
 				return client.reply(`Pardon mon capitaine, too many zones matching \`${argument}\`. Narrow your search.`);		
+			} else if (zones.length == 0) {
+				return client.reply(`No zones found matching \`${argument}\``);
 			}
 
 			if ('tag' == cmd) {
