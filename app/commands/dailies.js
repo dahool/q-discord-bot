@@ -105,7 +105,7 @@ async function notify(connection, section, client, rotate) {
 						.setFooter(z.description)
 						.addFields({name: "Ends", value: end.toRelative(), inline: true})
 						.setTimestamp();
-						channel.send({ embeds: [msgEmbed]});
+						channel.send({ embeds: [msgEmbed]}).catch((e) => console.error(e));
 					})
 				})
 		});

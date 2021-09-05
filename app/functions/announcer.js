@@ -51,7 +51,7 @@ getRoles = (channel, message) => {
 }
 
 sendMessage = async (text, mention, channel, message) => {
-    return channel.send({ embeds: [ message ], content: text + ' @here ' + mention.map(r => '<@&' + r + '>').join(' ') + getRoles(channel, message) });
+    return channel.send({ embeds: [ message ], content: text + ' @here ' + mention.map(r => '<@&' + r + '>').join(' ') + getRoles(channel, message) }).catch((e) => console.error(e));
 }
 
 

@@ -113,6 +113,7 @@ class BotClient {
 		r.then(m => {
 			if (!this._firstReplyMsg) this._firstReplyMsg = m; 
 		});
+		r.catch((e) => console.error(e));
 		return r;
 	}
 
@@ -173,7 +174,7 @@ class BotClient {
 	}
 
 	sendTo = async(channel, response) => {
-		return Promise.all(this._createMessage(response).map(r => channel.send(r)));
+		return Promise.all(this._createMessage(response).map(r => channel.send(r).catch((e) => console.error(e))));
 	}
 
 	clear = () => {
