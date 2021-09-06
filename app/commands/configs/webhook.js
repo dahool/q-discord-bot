@@ -94,6 +94,11 @@ module.exports = {
 				return client.reply(`Invalid discord WEBHOOK url \`${url}\`.`);
 			}
 
+			const r = await client.testChannel(client.guild.channels.cache.get(channelId));
+			if (!r) {
+				return client.reply(`I require permissions to read/write/manage in <#${channelId}>`);
+			}
+
 			configDb.pushBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId, name: name}, {url: url});
 
 			return {message: this.description, log: true, fields: [{ name: 'Add Channel', value : '<#' + channelId + '>'}, { name: 'Name', value : name}, { name: 'URL', value : url}]}

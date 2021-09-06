@@ -9,6 +9,7 @@ const { ConfigDb, LoggerDb } = require('./db/db');
 
 const { safeTrim } = require('./utils');
 const { MESSAGES } = require('./messages');
+const { async } = require('node-ical');
 
 const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
@@ -177,6 +178,10 @@ class BotClient {
 		return Promise.all(this._createMessage(response).map(r => channel.send(r).catch((e) => console.error(e))));
 	}
 
+	testChannel = async(channel) => {
+		return this.guild.me.permissionsIn(channel).has([Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.MANAGE_MESSAGES])
+	}
+	
 	clear = () => {
 		if (this.channel.type != "DM" && !this.interaction) this.message.delete().catch((e) => true );
 	}

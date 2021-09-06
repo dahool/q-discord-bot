@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const { safeLower } = require('../utils');
 const fs = require('fs');
 const path = require('path');
 const db = require('../db/db');

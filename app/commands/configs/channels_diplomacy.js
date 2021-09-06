@@ -33,6 +33,10 @@ module.exports = {
 			if (id == null) {
 				return client.reply(`Missing argument. Specify a valid channel.`);
 			}
+			const r = await client.testChannel(client.guild.channels.cache.get(id));
+			if (!r) {
+				return client.reply(`I require permissions to read/write/manage in <#${id}>`);
+			}
 			configDb.push(guild, key, {'channel': id});
 			return {message: 'Updated ' + this.description, fields: [{ name: 'Channel', value : '<#' + id + '>'}], log: true};
 		} else {
