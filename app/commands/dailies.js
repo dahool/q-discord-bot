@@ -102,9 +102,13 @@ async function notify(connection, section, client, rotate) {
 						.setDescription("Coming up next")
 						.setTitle(z.event + ' Event')
 						.setImage(z.image)
-						.setFooter(z.description)
 						.addFields({name: "Ends", value: end.toRelative(), inline: true})
 						.setTimestamp();
+
+						if (z.description) {
+							msgEmbed.setFooter(z.description);
+						}
+						
 						channel.send({ embeds: [msgEmbed]}).catch((e) => console.error(e));
 					})
 				})
