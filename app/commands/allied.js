@@ -17,7 +17,7 @@ class AllianceStatus {
 	async execute(client, args) {
 		const guild = client.guild.id;
 
-		const alliance = args.tag.toUpperCase().slice(0, 4);
+		const alliance = args.tag.toUpperCase();
 		const reason = args.reason;
 
 		if (!reason && (this.status == statusKey.ENEMY || this.status == statusKey.HOSTILE) ) {
