@@ -1,21 +1,22 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 
-const { groupBy, safeLower, randomColor } = require('../utils')
+const { groupBy } = require('../utils')
 
 const cs = require('../values')
 
 const db = require('../db/db');
 
 const dailies = require('./dailies.json');
+const dayRotation = require('./dailiesrotation.json');
 
 const ROT_FORMAT = 'yyyy-MM-dd';
 
 const { dailiesMax, dailiesPart } = require('../config.json');
 
-function get_next_execution(rotation, zone) {
-	var start = DateTime.utc().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).setLocale('en');
-	if (rotation.rotation == zone.day) {
+function get_next_execution(rotation, daily) {
+	var start = DateTime.utc().set({hour: daily.start.substr(0,2), minute: daily.start.substr(2,2)}).setLocale('en');
+	if (rotation.rotation == daily.day) {
 		const today = DateTime.utc();
 		if (today > start) {
 			start = start.plus({days: dailiesMax});
@@ -25,7 +26,7 @@ function get_next_execution(rotation, zone) {
 		do {
 			r = doRotate(r);
 			start = start.plus({days: 1});
-		} while (r != zone.day);
+		} while (r != daily.day);
 	}
 	return start;
 }
@@ -85,35 +86,31 @@ function endTime(rotation, zone) {
 
 async function notify(connection, section, client, rotate) {
 	const config = new db.ConfigDb(connection);
-	config.getCommon("general").then(general => {
-		if (!general) {
-			general = {rotation: 1, rotationDay: DateTime.utc().toFormat(ROT_FORMAT)};
-		}
-		config.findBy({uuid: cs.DAILY_CHANNEL}).then(guilds => {
-			if (rotate) rotateInPlace(general);
-			dailies.filter(z => z.day == general.rotation && z.start == section)
-				.forEach((z) => {
-					const end = endTime(general, z)
-					guilds.forEach((guild) => {
-						const channel = client.client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
-						const msgEmbed = new Discord.MessageEmbed()
-						.setColor(z.color)
-						.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
-						.setDescription("Coming up next")
-						.setTitle(z.event + ' Event')
-						.setImage(z.image)
-						.addFields({name: "Ends", value: end.toRelative(), inline: true})
-						.setTimestamp();
+	general = getCurrentRotation();
+	config.findBy({uuid: cs.DAILY_CHANNEL}).then(guilds => {
+		if (rotate) rotateInPlace(general);
+		dailies.filter(z => z.day == general.rotation && z.start == section)
+			.forEach((z) => {
+				const end = endTime(general, z)
+				guilds.forEach((guild) => {
+					const channel = client.client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
+					const msgEmbed = new Discord.MessageEmbed()
+					.setColor(z.color)
+					.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
+					.setDescription("Coming up next")
+					.setTitle(z.event + ' Event')
+					.setImage(z.image)
+					.addFields({name: "Ends", value: end.toRelative(), inline: true})
+					.setTimestamp();
 
-						if (z.description) {
-							msgEmbed.setFooter(z.description);
-						}
-						
-						channel.send({ embeds: [msgEmbed]}).catch((e) => console.error(e));
-					})
+					if (z.description) {
+						msgEmbed.setFooter(z.description);
+					}
+					
+					channel.send({ embeds: [msgEmbed]}).catch((e) => console.error(e));
 				})
-		});
-	})
+			})
+	});
 }
 
 function rotateInPlace(general) {
@@ -127,6 +124,11 @@ async function rotate(connection) {
 	rotateInPlace(general);
     config.pushCommon("general", general);
     return general;
+}
+
+function getCurrentRotation() {
+	const currentDay = DateTime.utc().toFormat(ROT_FORMAT);
+	return dayRotation.find(v => v.rotationDay == currentDay);
 }
 
 module.exports = {
@@ -159,9 +161,7 @@ module.exports = {
 		type: 3
 	}],	
 	async execute(client, args) {
-		const config = new db.ConfigDb(client.connection);
-
-		const rotation = (await config.getCommon("general")) || {rotation: 1, rotationDay: DateTime.utc().toFormat(ROT_FORMAT)};
+		const rotation = getCurrentRotation();
 
 		if (args.command) {
 			if ('next' == args.command.toLowerCase()) {

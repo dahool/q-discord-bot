@@ -119,7 +119,8 @@ module.exports = {
 	},
 	async rotate() {
 		console.log('rotate daily calendar');
-		return dailies.rotate(connectionManager);
+		return true; //disable
+		//return dailies.rotate(connectionManager);
 	},
 	async events(part) {
 		const parts = ["0400","1000","1600","2200"]
