@@ -7,13 +7,8 @@ const { Client, Intents, Permissions } = require('discord.js');
 
 const { ConfigDb, LoggerDb } = require('./db/db');
 
-const { safeTrim } = require('./utils');
+const { safeTrim, extract_channel, extract_role, extract_user } = require('./utils');
 const { MESSAGES } = require('./messages');
-const { async } = require('node-ical');
-
-const CHANNEL_ID = /<#(\d+)+>/;
-const ROLE_ID = /<@&(\d+)+>/;
-const USER_ID = /<@!(\d+)+>/;
 
 const INTENTS = [
 	Intents.FLAGS.GUILDS,
@@ -23,14 +18,6 @@ const INTENTS = [
 	Intents.FLAGS.GUILD_WEBHOOKS,
 	Intents.FLAGS.DIRECT_MESSAGES
 ]
-
-function extract_id(regex, str) {
-	const m = regex.exec(str);
-	if (m) {
-		return m[++m.index];
-	}
-	return null;
-}
 
 class BotClient {
 	
@@ -287,15 +274,15 @@ class BotCommander {
 						value = safeTrim(args[argIndex]);
 					}
 					if (option.type == 7) {
-						const id = extract_id(CHANNEL_ID, value);
+						const id = extract_channel(value);
 						if (!id) throw 'Invalid channel ' + value
 						value = id;
 					} else if (option.type == 8) {
-						const id = extract_id(ROLE_ID, value);
+						const id = extract_role(value);
 						if (!id) throw 'Invalid role ' + value
 						value = id;
 					} else if (option.type == 6) {
-						const id = extract_id(USER_ID, value);
+						const id = extract_user(value);
 						if (!id) throw 'Invalid user ' + value
 						value = id;
 					}

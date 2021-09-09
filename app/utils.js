@@ -20,6 +20,30 @@ const units = [
     'second',
 ];
 
+const CHANNEL_ID = /<#(\d+)+>/;
+const ROLE_ID = /<@&(\d+)+>/;
+const USER_ID = /<@!(\d+)+>/;
+
+function extract_id(regex, str) {
+	const m = regex.exec(str);
+	if (m) {
+		return m[++m.index];
+	}
+	return null;
+}
+
+function extract_role(str) {
+    return extract_id(ROLE_ID, str);
+}
+
+function extract_user(str) {
+    return extract_id(USER_ID, str);
+}
+
+function extract_channel(str) {
+    return extract_id(CHANNEL_ID, str);
+}
+
 function randomColor() {
 	return COLORS[Math.floor(Math.random() * COLORS.length)]
 }
@@ -95,5 +119,8 @@ module.exports = {
     safeTrim,
     capitalize,
     StringBuilder,
-    toRelative
+    toRelative,
+    extract_channel,
+    extract_role,
+    extract_user
 };

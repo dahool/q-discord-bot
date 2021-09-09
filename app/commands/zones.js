@@ -6,7 +6,8 @@ const cs = require('../values')
 
 const zones = require('./zones.json');
 const rss = require('./rss.json');
-const { get } = require('node:https');
+
+const { extract_role } = require('../utils');
 
 const rssMap = new Map();
 rss.forEach(item => {
@@ -47,13 +48,7 @@ function find_by_name(name) {
 		.map(z => Object.assign({next: get_next_execution(z)}, z));
 }
 
-function find_by_weekday(weekday) {
-	return zones
-		.filter(z => z.weekday == weekday)
-		.map(z => Object.assign({next: get_next_execution(z)}, z));
-}
-
-async function add_event(connection, guild, time, title, location, recurrent) {
+async function add_event(connection, guild, time, title, location, recurrent, mentions) {
 	const eventID = "Z" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
 	var times = [time.toJSDate()];
 	if (recurrent) {
@@ -66,7 +61,7 @@ async function add_event(connection, guild, time, title, location, recurrent) {
 	const zevent = new db.ZoneEventsDb(connection);
 
 	times.forEach((tm, index) => {
-		calendar.insert([{guild: guild, type: cs.TERRITORY_CHANNEL, uid: eventID, recurrence: index, summary: title, location: location, start: tm, description: '', notified: false}]);
+		calendar.insert([{guild: guild, type: cs.TERRITORY_CHANNEL, uid: eventID, recurrence: index, summary: title, location: location, start: tm, description: '', notified: false, mentions: mentions}]);
 	})
 
 	var zoneevent = await zevent.findOne(guild, location) || {events: []};
@@ -75,14 +70,14 @@ async function add_event(connection, guild, time, title, location, recurrent) {
 	return zevent.push(guild, location, zoneevent);
 }
 
-async function create_event(client, zone, title, recurrent) {
+async function create_event(client, zone, title, recurrent, mentions) {
 	var content;
 	if (recurrent) {
 		content = "Created a recurrent reminder `" + title + "` for zone `" + zone.zone + "` every `" + zone.next.toFormat("ccc 'at' h:mma ZZZZ") + "`";
 	} else {
 		content = "Created a one time reminder `" + title + "` for zone `" + zone.zone + "` on `" + zone.next.toFormat("LLL d 'at' h:mma ZZZZ") + "`";
 	}
-	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent).then(() => {
+	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent, mentions).then(() => {
 		client.edit(content, true);
 	});
 }
@@ -93,6 +88,7 @@ async function handle_tag(client, zone) {
 
 	var title;
 	var recurrent;
+	var mentions;
 
 	const messages = [];
 
@@ -103,28 +99,38 @@ async function handle_tag(client, zone) {
 		messages.push(m);
 		if ('cancel' == m.content.toLowerCase()) {
 			client.edit("Cancelled.", true)
-			title = "cancel"; // to prevent end message
 			collector.stop();
 		} else if (title == undefined) {
 			title = m.content;
-			m.reply("Do you want to schedule a recurrent event?").then(m => messages.push(m) );
+			m.reply("What roles should I ping? Type `no` for none").then(m => messages.push(m));
+		} else if (mentions == undefined || mentions.length == 0) {
+			if (NEGATIVE.some(v => v == m.content.toLowerCase())) {
+				mentions = false;
+			} else {
+				mentions = m.content.split(' ').map(v => extract_role(v)).filter(v => v != null);
+			}
+			if (mentions === false || mentions.length > 0) {
+				m.reply("Do you want to schedule a recurrent event?").then(m => messages.push(m));
+			} else {
+				m.reply("You did not enter any valid role. Try again").then(m => messages.push(m));
+			}
 		} else if (recurrent == undefined) {
 			if (POSITIVE.some(v => v == m.content.toLowerCase())) {
 				recurrent = true;
-				collector.stop();
-				return create_event(client, zone, title, true);
+				collector.stop('done');
 			} else if (NEGATIVE.some(v => v == m.content.toLowerCase())) {
 				recurrent = false;
-				collector.stop();
-				return create_event(client, zone, title, false);
+				collector.stop('done');
 			} else {
-				m.reply("Sorry, I don't understand, try again. Do you want a recurrent reminder?").then(m => messages.push(m));;
+				m.reply("Sorry, I don't understand, try again. Do you want a recurrent reminder? `(y/n)`").then(m => messages.push(m));
 			}
 		}
 	})
-	collector.on('end', m => {
+	collector.on('end', (collected, reason) => {
 		messages.forEach(m => {if (m) m.delete() });
-		if (title != 'cancel' && recurrent == undefined) {
+		if (reason == 'done') {
+			return create_event(client, zone, title, recurrent, mentions ? mentions : []);
+		} else if (reason != 'user') {
 			return client.edit("Sorry, I'm done waiting. Start again", true);
 		}
 	})
