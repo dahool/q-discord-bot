@@ -527,7 +527,8 @@
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Complete Researches"
 	},
 	{
 		"day": 10,
@@ -562,7 +563,8 @@
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
-		"color": "#f07d0a"
+		"color": "#f07d0a",
+		"description": "Complete Researches"
 	},
 	{
 		"day": 11,

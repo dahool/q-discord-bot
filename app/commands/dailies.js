@@ -213,7 +213,7 @@ module.exports = {
 			.setTimestamp();
 		
 			list.sort((a,b) => a.next - b.next).forEach(z => {
-				msgEmbed.addField(z.event + ' Event (ends ' + z.end.toRelative() + ')', z.description)
+				msgEmbed.addField(z.event + ' Event (ends ' + z.end.toRelative() + ')', z.description || z.event)
 			})
 
 			client.reply(msgEmbed);
