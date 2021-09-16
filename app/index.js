@@ -1,6 +1,7 @@
 const express = require('express')
 const favicon = require('serve-favicon');
 const bot = require('./bot')
+const halbot = require('./halbot');
 
 const app = express()
 app.use(express.json());
@@ -71,6 +72,7 @@ app.get('/calendar', function(req ,resp) {
 let loggerDb;
 connectionManager.connect().then(() => {
     bot.start(connectionManager);
+    halbot.start(connectionManager);
     loggerDb = new LoggerDb(connectionManager);
 
     app.listen(port, () => {

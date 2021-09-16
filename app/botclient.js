@@ -16,7 +16,8 @@ const INTENTS = [
 	Intents.FLAGS.GUILD_MEMBERS,
 	Intents.FLAGS.GUILD_MESSAGES,
 	Intents.FLAGS.GUILD_WEBHOOKS,
-	Intents.FLAGS.DIRECT_MESSAGES
+	Intents.FLAGS.DIRECT_MESSAGES,
+	Intents.FLAGS.GUILD_VOICE_STATES
 ]
 
 class BotClient {
@@ -359,9 +360,11 @@ class BotCommander {
 			this.commandsData = [];
 			for (const file of commandFiles) {
 				const command = require(`${cmdDir}/${file}`);
-				this.client.commands.set(command.name, command);
-				if (command.slash === true) {
-					this.commandsData.push({name: command.slashName || command.name, description: command.description, options: command.options || []});
+				if (command.name) {
+					this.client.commands.set(command.name, command);
+					if (command.slash === true) {
+						this.commandsData.push({name: command.slashName || command.name, description: command.description, options: command.options || []});
+					}
 				}
 			}
 		}

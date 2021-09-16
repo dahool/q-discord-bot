@@ -4,7 +4,7 @@
   "description": "GUNZ Discord Bot",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js > console.log"
   },
   "engines": {
     "node": ">14.x",
@@ -13,16 +13,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/voice": "^0.6.0",
     "axios": "^0.21.1",
+    "discord-youtube-api": "^0.1.0",
     "discord.js": "^13.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "ffmpeg": "^0.0.4",
+    "ffmpeg-static": "^4.4.0",
+    "fluent-ffmpeg": "^2.1.2",
     "ical-generator": "^3.0.0",
     "luxon": "^2.0.1",
     "mongodb": "^3.6.9",
     "node-cron": "^3.0.0",
     "node-ical": "^0.13.0",
-    "serve-favicon": "^2.5.0"
+    "opusscript": "^0.0.8",
+    "serve-favicon": "^2.5.0",
+    "tweetnacl": "^1.0.3",
+    "ytdl-core": "^4.9.1"
   },
   "devDependencies": {
     "node": "~16.3.0"
