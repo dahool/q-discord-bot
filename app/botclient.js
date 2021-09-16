@@ -69,13 +69,13 @@ class BotClient {
 		return response;
 	}
 
-	_createMessage(response, hidden = false) {
+	_createMessage(response, hidden = false, components = []) {
 		if (response instanceof Discord.MessageEmbed) {
 			// check size and split if necessary
 			// even with multiple embeds, limit is still 6000 for the whole
 			return this._splitEmbed(response).map((r) => { return {embeds: [ r ], ephemeral: hidden} });
 		}
-		return [{content: response, ephemeral: hidden}];
+		return [{content: response, ephemeral: hidden, components: components}];
 	}
 
 	_reply_interaction = async (response) => {
@@ -138,8 +138,8 @@ class BotClient {
 		return Promise.all(r);
 	}
 
-	reply = async (response, hidden = false) => {
-		const r = this._createMessage(response, hidden)
+	reply = async (response, hidden = false, components = []) => {
+		const r = this._createMessage(response, hidden, components)
 			.map((msg) => {
 				if (this.interaction) {
 					return this._reply_interaction(msg);
