@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const { playerQueue, MusicSubscription, MusicTrack, connectToChannel } = require('./player')
 const { Permissions } = require('discord.js');
 
@@ -26,7 +29,7 @@ module.exports = {
 			return client.reply(`I don't have permissions to speak in <#${voiceChannel.id}>`);
 		}
 
-		const youtube = new YouTube('AIzaSyAKgVqkEmMkVyiutio1F0inKq87Id3qq2g');
+		const youtube = new YouTube(process.env.YOUTUBE_API);
 
 		client.reply(":mag: searching `" + args.song + "`");
 
