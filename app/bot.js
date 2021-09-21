@@ -3,6 +3,7 @@ dotenv.config();
 
 const { prefix } = require('./config.json');
 const { BotCommander } = require('./botclient');
+const { Intents } = require('discord.js');
 
 const announcer = require('./functions/announcer');
 const calendar = require('./functions/calendar');
@@ -14,7 +15,17 @@ var dailies = require('./commands/dailies');
 
 const { MembersDb, ConfigDb, BotDb, connectionManager } = require('./db/db');
 
+const INTENTS = [
+	Intents.FLAGS.GUILDS,
+	Intents.FLAGS.GUILD_PRESENCES,
+	Intents.FLAGS.GUILD_MEMBERS,
+	Intents.FLAGS.GUILD_MESSAGES,
+	Intents.FLAGS.GUILD_WEBHOOKS,
+	Intents.FLAGS.DIRECT_MESSAGES
+]
+
 const botclient = new BotCommander(connectionManager, 
+	INTENTS,
 	{name: 'Q', 
 	commandsDir: './commands',
 	prefix: prefix,

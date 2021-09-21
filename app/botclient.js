@@ -3,22 +3,12 @@ dotenv.config();
 
 const fs = require('fs');
 const Discord = require('discord.js');
-const { Client, Intents, Permissions } = require('discord.js');
+const { Client, Permissions } = require('discord.js');
 
 const { ConfigDb, LoggerDb } = require('./db/db');
 
 const { safeTrim, extract_channel, extract_role, extract_user } = require('./utils');
 const { MESSAGES } = require('./messages');
-
-const INTENTS = [
-	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.GUILD_PRESENCES,
-	Intents.FLAGS.GUILD_MEMBERS,
-	Intents.FLAGS.GUILD_MESSAGES,
-	Intents.FLAGS.GUILD_WEBHOOKS,
-	Intents.FLAGS.DIRECT_MESSAGES,
-	Intents.FLAGS.GUILD_VOICE_STATES
-]
 
 class BotClient {
 	
@@ -178,8 +168,8 @@ class BotClient {
 
 class BotCommander {
 	
-	constructor(connectionManager, options) {
-		this.client = new Client({ intents: INTENTS, partials: ['CHANNEL']});
+	constructor(connectionManager, intents, options) {
+		this.client = new Client({ intents: intents, partials: ['CHANNEL']});
 
 		this.connectionManager = connectionManager;
 		this.client.commands = new Discord.Collection();
