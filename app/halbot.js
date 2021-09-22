@@ -20,8 +20,8 @@ const botclient = new BotCommander(connectionManager,
 	commandsDir: './hal_commands',
 	prefix: prefix,
 	activity: {
-		message: 'and ready to rock your world',
-		type: 'LISTENING'
+		message: 'Ready to rock your world',
+		type: 4
 	}
 })
 

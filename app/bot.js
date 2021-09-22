@@ -31,7 +31,8 @@ const botclient = new BotCommander(connectionManager,
 	prefix: prefix,
 	activity: {
 		message: 'you',
-		type: 'WATCHING'
+		type: 'WATCHING',
+		url: 'https://dashqb.herokuapp.com'
 	}
 })
 
