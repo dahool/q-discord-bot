@@ -67,7 +67,7 @@ module.exports = {
                     if (cfg) {
                         console.log(cfg);
                         const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
-                        if (channel) sendMessage(e.summary, (e.mentions ? e.mentions : cfg.mention) || [], channel, createMessage(e));
+                        if (channel) sendMessage(e.summary, (e.mentions && e.mentions.length > 0 ? e.mentions : cfg.mention) || [], channel, createMessage(e));
                     }
                 })
             });
