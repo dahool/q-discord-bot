@@ -3,6 +3,10 @@ dotenv.config();
 
 const fs = require('fs');
 const Discord = require('discord.js');
+
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
+
 const { Client, Permissions } = require('discord.js');
 
 const { ConfigDb, LoggerDb } = require('./db/db');
@@ -177,16 +181,38 @@ class BotCommander {
 		this._initialize();
 	}
 
+	_registerAppCommands() {
+		const rest = new REST({ version: '9' }).setToken(this.tokenId);
+	
+		let routes;
+		const clientId = this.client.user.id;
+		if (process.env.TEST_SERVER) {
+			routes = Routes.applicationCommands(clientId, process.env.TEST_SERVER);
+		} else {
+			routes = Routes.applicationCommands(clientId);
+		}
+
+		console.log("Commands for %s: %s", this.options.name, JSON.stringify(this.commandsData));
+
+		rest.put(routes, { body: this.commandsData },
+		).then(() => {
+			console.log("Commands registered")
+		}).catch((e) => {
+			console.error(e);
+		});
+
+	}
+
 	_initialize = () => {
 		this.client.once('ready', async () => {
 			if (this.options.activity) {
 				this.client.user.setActivity(this.options.activity.message, { type: this.options.activity.type });
 			}
-			
-			this.commandsData.forEach(cmd => {
-				this._getApp().commands.post({data: cmd});	
-			})
 
+			this._registerAppCommands();
+			/*this.commandsData.forEach(cmd => {
+				this._getApp().commands.post({data: cmd});	
+			})*/
 			this.ready = true;
 			console.log((this.options.name || 'Bot') + ' online');
 		});
@@ -371,6 +397,7 @@ class BotCommander {
 	login = (tokenId) => {
 		this.configDb = new ConfigDb(this.connectionManager);
 		this.loggerDb = new LoggerDb(this.connectionManager);
+		this.tokenId = tokenId;
 		return this.client.login(tokenId);
 	}
 
