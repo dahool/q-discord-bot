@@ -181,26 +181,45 @@ class BotCommander {
 		this._initialize();
 	}
 
-	_registerAppCommands() {
+	async _cleanUnusedCommands(route) {
+		const cmdList = await this._getApp().commands.get();
+		cmdList.filter((c) => this.commandsData.includes((ca) => ca.name == c.name));
+		
+		if (cmdList.length > 0) {
+			console.log("Remove %s", JSON.stringify(cmdList))
+			const rest = new REST({ version: '9' }).setToken(this.tokenId);
+			cmdList.forEach(c => {
+				rest.delete(route + `/${c.id}`).then(() => console.log(`Removed ${c.id} ${c.name}`))
+				.catch((e) => console.error(e));
+			})
+		}
+		
+	}
+
+	async _registerAppCommands() {
 		const rest = new REST({ version: '9' }).setToken(this.tokenId);
 	
-		let routes;
+		let route;
 		const clientId = this.client.user.id;
 		if (process.env.TEST_SERVER) {
-			routes = Routes.applicationCommands(clientId, process.env.TEST_SERVER);
+			route = Routes.applicationGuildCommands(clientId, process.env.TEST_SERVER);
 		} else {
-			routes = Routes.applicationCommands(clientId);
+			route = Routes.applicationCommands(clientId);
+			this._cleanUnusedCommands(route);
 		}
 
 		console.log("Commands for %s: %s", this.options.name, JSON.stringify(this.commandsData));
 
-		rest.put(routes, { body: this.commandsData },
+		rest.put(route, { body: this.commandsData },
 		).then(() => {
 			console.log("Commands registered")
 		}).catch((e) => {
 			console.error(e);
 		});
 
+		/*this._getApp().commands.get().then((r) => {
+			console.log(r);
+		})*/
 	}
 
 	_initialize = () => {
