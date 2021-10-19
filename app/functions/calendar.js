@@ -12,7 +12,7 @@ processRecurrentEvent = (ev) => {
             return events;
         }
     } else {
-        ev.rrule.options.dtstart = DateTime.local().minus({ days: 1}).toJSDate();
+        //ev.rrule.options.dtstart = DateTime.local().minus({ days: 1}).toJSDate();
         ev.rrule.options.until = DateTime.local().plus({ months: 1}).toJSDate();
     }
     ev.rrule.all((v) => {
@@ -32,8 +32,8 @@ loadEvents = async (guild, url, type, connection) => {
 
     for (let k in data) {
         if (data.hasOwnProperty(k)) {
-            var ev = data[k];
-            if (data[k].type == 'VEVENT') {
+            const ev = data[k];
+            if (ev.type == 'VEVENT') {
                 if (ev.rrule) {
                     const events = processRecurrentEvent(ev);
                     if (events.length > 0) {
