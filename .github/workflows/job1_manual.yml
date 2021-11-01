@@ -4,9 +4,6 @@
 name: Build and Deploy qDiscordBot (on demand)
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 jobs:
