@@ -377,7 +377,8 @@ module.exports = {
 			content+= "`Type:` " + z.type + "\n";
 			content+= "`Resources:` " + z.rss.map(i => '<' + rssMap.get(i) + '>').join(' ') + "\n";
 			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
-			content+= "`Takeover Time:` [" + asTimeFormat(z.next) + "]("+ get_link(z.zone, z.next) + ")\n";
+			//content+= "`Takeover Time:` [" + asTimeFormat(z.next) + "]("+ get_link(z.zone, z.next) + ")\n";
+                        content+= "`Takeover Time:` " + asTimeFormat(z.next) + "\n"; 
 			content+= "`Next:` **" + asTimeRelative(z.next) + "**";
 			
 			msgEmbed.addField(z.zone, content);
