@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 
-const { groupBy } = require('../utils')
+const { groupBy, asTimeRelative } = require('../utils')
 
 const cs = require('../values')
 
@@ -195,7 +195,7 @@ module.exports = {
 				if (z.running) {
 					suffix = "running now";
 				} else {
-					suffix = "next " + z.next.toRelative();
+					suffix = "next " + asTimeRelative(z.next);
 				}
 				msgEmbed.addField(z.event + ' Event (' + suffix + ")", z.description)
 			})

@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
-const { safeLower, groupBy, toRelative } = require('../utils');
+const { safeLower, groupBy, toRelative, asTimeRelative, asTimeFormat } = require('../utils');
 const db = require('../db/db');
 const cs = require('../values')
 
@@ -215,7 +215,7 @@ async function list_all_events(client) {
 		msgEmbed.addField(key, values.map(ev => {
 			const start = DateTime.fromJSDate(ev.start).setZone('UTC');
 			const flag = ev.src == 'calendar' ? ':calendar_spiral:' : '';
-			const ob = '`' + ev.summary + '` on [`' + start.toFormat("LLL d 'at' h:mma ZZZZ") +'`](' + get_link(ev.summary, start) + ')' + flag;
+			const ob = '`' + ev.summary + '` on [`' + asTimeFormat(start) + '`](' + get_link(ev.summary, start) + ')' + flag;
 			return ob;
 		}).join('\n'))
 	})
@@ -250,7 +250,7 @@ async function list_events(client, zone) {
 			.setColor('#e1dad8')
 			.setThumbnail(client.guild ? client.guild.iconURL() : client.client.user.avatarURL())
 			.setTitle("Events for " + zone.zone)
-			.setDescription(zone.next.toFormat("ccc 'at' h:mma ZZZZ"))
+			.setDescription(asTimeFormat(zone.next))
 			.setTimestamp();
 
 			if (ze && ze.events.length) {
@@ -362,22 +362,23 @@ module.exports = {
 			.setColor('#e1dad8')
 			.setThumbnail(icon)
 			.setTitle("Territory")
-			.setDescription("Takeover times are in UTC. Other timezones shown for information only.")
+			//.setDescription("Takeover times are in UTC. Other timezones shown for information only.")
 			.setTimestamp();
 
 		const today = DateTime.utc();
 		zones.sort((a,b) => a.next - b.next).forEach(z => {
+			/*
 			const estTime = z.next.setZone('America/New_York').toFormat('ccc, h:mma ZZZZ');
 			const cstTime = z.next.setZone('America/Chicago').toFormat('ccc, h:mma ZZZZ');
 			const pstTime = z.next.setZone('America/Los_Angeles').toFormat('ccc, h:mma ZZZZ');
 			const mstTime = z.next.setZone('America/Denver').toFormat('ccc, h:mma ZZZZ');
-
-			var content = "`Particle:` " + z.particle + "\n";
+			*/
+			var content = "`Particle:` <" + rssMap.get(z.particle) + "> " + z.particle + "\n";
 			content+= "`Type:` " + z.type + "\n";
-			content+= "`Resources:` " + z.rss.map(i => client.client.emojis.cache.get(rssMap.get(i))).join(' ') + "\n";
+			content+= "`Resources:` " + z.rss.map(i => '<' + rssMap.get(i) + '>').join(' ') + "\n";
 			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
-			content+= "`Takeover Time:` [" + z.next.toFormat('ccc, h:mma ZZZZ') + "]("+ get_link(z.zone, z.next) + ") `(" + pstTime + ' - ' + mstTime + ' - ' + cstTime + ' - ' + estTime + ")`\n";
-			content+= "`Next:` **" + toRelative(z.next) + "**";
+			content+= "`Takeover Time:` [" + asTimeFormat(z.next) + "]("+ get_link(z.zone, z.next) + ")\n";
+			content+= "`Next:` **" + asTimeRelative(z.next) + "**";
 			
 			msgEmbed.addField(z.zone, content);
 		})	

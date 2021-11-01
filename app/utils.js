@@ -24,6 +24,30 @@ const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
 const USER_ID = /<@!(\d+)+>/;
 
+function asTime(dateTime) {
+    return '<t:' + Math.trunc(dateTime.toSeconds()) + '>'
+}
+
+function asTimeRelative(dateTime) {
+    return '<t:' + Math.trunc(dateTime.toSeconds()) + ':R>'
+}
+
+function asTimeFormat(dateTime, format = 'F') {
+    return '<t:' + Math.trunc(dateTime.toSeconds()) + ':' + format + '>'
+}
+
+function asChannel(number) {
+    return '<#' + number + '>'
+}
+
+function asRole(number) {
+    return '<@&' + number + '>'
+}
+
+function asUser(number) {
+    return '<@!' + number + '>'
+}
+
 function extract_id(regex, str) {
 	const m = regex.exec(str);
 	if (m) {
@@ -122,5 +146,11 @@ module.exports = {
     toRelative,
     extract_channel,
     extract_role,
-    extract_user
+    extract_user,
+    asTime,
+    asRole,
+    asChannel,
+    asUser,
+    asTimeRelative,
+    asTimeFormat
 };
