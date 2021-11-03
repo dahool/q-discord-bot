@@ -8,7 +8,7 @@ const cs = require('../values')
 const db = require('../db/db');
 
 const dailies = require('./dailies.json');
-const dayRotation = require('./dailiesrotation.json');
+//const dayRotation = require('./dailiesrotation.json');
 
 const ROT_FORMAT = 'yyyy-MM-dd';
 
@@ -86,7 +86,7 @@ function endTime(rotation, zone) {
 
 async function notify(connection, section, client, rotate) {
 	const config = new db.ConfigDb(connection);
-	general = getCurrentRotation();
+	general = await getCurrentRotation(client);
 	config.findBy({uuid: cs.DAILY_CHANNEL}).then(guilds => {
 		if (rotate) rotateInPlace(general);
 		dailies.filter(z => z.day == general.rotation && z.start == section)
@@ -126,9 +126,11 @@ async function rotate(connection) {
     return general;
 }
 
-function getCurrentRotation() {
+async function getCurrentRotation(client) {
 	const currentDay = DateTime.utc().toFormat(ROT_FORMAT);
-	return dayRotation.find(v => v.rotationDay == currentDay);
+	//return dayRotation.find(v => v.rotationDay == currentDay);
+	const dDb = new db.DailiesDb(client.connection);
+	return await dDb.findByDay(currentDay);
 }
 
 module.exports = {
@@ -161,7 +163,7 @@ module.exports = {
 		type: 3
 	}],	
 	async execute(client, args) {
-		const rotation = getCurrentRotation();
+		const rotation = await getCurrentRotation(client);
 
 		if (args.command) {
 			if ('next' == args.command.toLowerCase()) {

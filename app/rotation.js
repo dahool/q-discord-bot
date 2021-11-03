@@ -2,7 +2,10 @@
 const { DateTime } = require("luxon");
 const fs = require('fs');
 
-const rotationFile = './commands/dailiesrotation.json'
+const connectionManager = require('./db/db').connectionManager;
+const { DailiesDb } = require('./db/db');
+
+//const rotationFile = './commands/dailiesrotation.json'
 
 let start = DateTime.fromObject({ year: 2021, month: 11, day: 1})
 let firstRotation = 6;
@@ -18,5 +21,10 @@ while (start < stop) {
 	firstRotation = 1;
 }
 
-let data = JSON.stringify(days);
-fs.writeFileSync(rotationFile, data);
+//let data = JSON.stringify(days);
+//fs.writeFileSync(rotationFile, data);
+connectionManager.connect().then(() => {
+    dailiesDb = new DailiesDb(connectionManager);
+	console.log("Saving...");
+	dailiesDb.replace(days).then(() => console.log("Done"));
+})

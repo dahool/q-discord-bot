@@ -250,6 +250,24 @@ class MembersDb extends DbHelper {
     
 }
 
+class DailiesDb extends DbHelper {
+    
+    constructor(connection) {
+        super(connection, "dailies_rotation");
+    }
+
+    async findByDay(day) {
+        const query = { rotationDay: day }
+        return this.db.findOne(query);
+    }
+
+    async replace(data) {
+        await this.db.deleteMany({});
+        return this.db.insertMany(data);
+    }
+
+}
+
 const connectionManager = new ConnectionManager();
 
-module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb, LoggerDb, BotDb }
+module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb, LoggerDb, BotDb, DailiesDb }
