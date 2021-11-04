@@ -100,7 +100,7 @@ async function notify(connection, section, client, rotate) {
 					.setDescription("Coming up next")
 					.setTitle(z.event + ' Event')
 					.setImage(z.image)
-					.addFields({name: "Ends", value: end.toRelative(), inline: true})
+					.addFields({name: "Ends", value: asTimeRelative(end), inline: true})
 					.setTimestamp();
 
 					if (z.description) {
@@ -215,7 +215,7 @@ module.exports = {
 			.setTimestamp();
 		
 			list.sort((a,b) => a.next - b.next).forEach(z => {
-				msgEmbed.addField(z.event + ' Event (ends ' + z.end.toRelative() + ')', z.description || z.event)
+				msgEmbed.addField(z.event + ' Event (ends ' + asTimeRelative(z.end) + ')', z.description || z.event)
 			})
 
 			client.reply(msgEmbed);
