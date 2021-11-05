@@ -75,7 +75,7 @@ async function create_event(client, zone, title, recurrent, mentions) {
 	if (recurrent) {
 		content = "Created a recurrent reminder `" + title + "` for zone `" + zone.zone + "` every `" + zone.next.toFormat("ccc 'at' h:mma ZZZZ") + "`";
 	} else {
-		content = "Created a one time reminder `" + title + "` for zone `" + zone.zone + "` on `" + zone.next.toFormat("LLL d 'at' h:mma ZZZZ") + "`";
+		content = "Created a one time reminder `" + title + "` for zone `" + zone.zone + "` on `" + asTimeFormat(zone.next) + "`";
 	}
 	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent, mentions).then(() => {
 		client.edit(content, true);
@@ -215,7 +215,7 @@ async function list_all_events(client) {
 		msgEmbed.addField(key, values.map(ev => {
 			const start = DateTime.fromJSDate(ev.start).setZone('UTC');
 			const flag = ev.src == 'calendar' ? ':calendar_spiral:' : '';
-			const ob = '`' + ev.summary + '` on [`' + asTimeFormat(start) + '`](' + get_link(ev.summary, start) + ')' + flag;
+			const ob = '`' + ev.summary + '` on ' + asTimeFormat(start) + ' ' + flag;
 			return ob;
 		}).join('\n'))
 	})
