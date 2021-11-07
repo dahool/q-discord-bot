@@ -75,7 +75,7 @@ async function create_event(client, zone, title, recurrent, mentions) {
 	if (recurrent) {
 		content = "Created a recurrent reminder `" + title + "` for zone `" + zone.zone + "` every `" + zone.next.toFormat("ccc 'at' h:mma ZZZZ") + "`";
 	} else {
-		content = "Created a one time reminder `" + title + "` for zone `" + zone.zone + "` on `" + asTimeFormat(zone.next) + "`";
+		content = "Created a one time reminder `" + title + "` for zone `" + zone.zone + "` on " + asTimeFormat(zone.next);
 	}
 	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent, mentions).then(() => {
 		client.edit(content, true);
@@ -127,12 +127,13 @@ async function handle_tag(client, zone) {
 		}
 	})
 	collector.on('end', (collected, reason) => {
-		messages.forEach(m => {if (m) m.delete() });
-		if (reason == 'done') {
-			return create_event(client, zone, title, recurrent, mentions ? mentions : []);
-		} else if (reason != 'user') {
-			return client.edit("Sorry, I'm done waiting. Start again", true);
-		}
+		client.channel.bulkDelete(messages).then(() => {
+			if (reason == 'done') {
+				return create_event(client, zone, title, recurrent, mentions ? mentions : []);
+			} else if (reason != 'user') {
+				return client.edit("Sorry, I'm done waiting. Start again", true);
+			}
+		});
 	})
 
 }
@@ -148,38 +149,35 @@ async function handle_deltag(client, zone) {
 	});
 
 	if (ze && ze.events) {
-		var handled = false;
 		client.reply("Enter the ID of the event you want to delete (or type cancel):\n>>> " + ze.events.map((ev, index) => 'ID: `' + index + '`     Title: `' + ev.title + '`').join('\n'));
-
+		
 		const messages = [];
-
 		const filter = m => m.author.id == client.member.user.id;
 		const collector = client.channel.createMessageCollector({ filter, time: 30000});
 		collector.on('collect', m => {
 			messages.push(m);
 			if ('cancel' == m.content.toLowerCase()) {
 				client.edit("Cancelled.", true)
-				handled = true;
-				collector.stop();
+				collector.stop('done');
 			} else {
 				const ev = ze.events[m.content];
 				if (!ev) {
 					m.reply("Sorry, can't find event `" + m.content + "`. Try again.").then(m => messages.push(m) );
 				} else {
-					handled = true;
 					ze.events = ze.events.filter(e => ev.id != e.id);
 					calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: ev.id});
 					zevent.push(client.guild.id, zone.zone, ze);
 					client.edit(`Event \`${ev.title}\` deleted`, true);
-					collector.stop();
+					collector.stop('done');
 				}
 			}
 		})
-		collector.on('end', m => {
-			messages.forEach(m => {if (m) m.delete() });
-			if (!handled) {
-				return client.edit("Sorry, I'm done waiting. Good bye.", true);
-			}
+		collector.on('end', (collected, reason) => {
+			client.channel.bulkDelete(messages).then(() => {
+				if (reason != 'done') {
+					return client.edit("Sorry, I'm done waiting. Good bye.", true);
+				}
+			});
 		})
 
 	} else {
