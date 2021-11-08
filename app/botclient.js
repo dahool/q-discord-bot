@@ -69,6 +69,8 @@ class BotClient {
 			// check size and split if necessary
 			// even with multiple embeds, limit is still 6000 for the whole
 			return this._splitEmbed(response).map((r) => { return {embeds: [ r ], ephemeral: hidden} });
+		} else if (response.hasOwnProperty('content')) {
+			return [response];
 		}
 		return [{content: response, ephemeral: hidden, components: components}];
 	}
@@ -302,6 +304,7 @@ class BotCommander {
 					}
 				}
 			} else {
+				console.log(option);
 				if (args[argIndex]) {
 					let value;
 					if (argIndex == options.length-1) {
