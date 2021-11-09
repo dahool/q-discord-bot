@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 
@@ -14,10 +17,16 @@ const ROT_FORMAT = 'yyyy-MM-dd';
 
 const { dailiesMax, dailiesPart } = require('../config.json');
 
+const TIMEZONE = process.env.DAILY_TIMEZONE;
+
+function getCurrentTime() {
+	return DateTime.utc().setZone(TIMEZONE)
+}
+
 function get_next_execution(rotation, daily) {
-	var start = DateTime.utc().set({hour: daily.start.substr(0,2), minute: daily.start.substr(2,2)}).setLocale('en');
+	var start = getCurrentTime().set({hour: daily.start.substr(0,2), minute: daily.start.substr(2,2)}).setLocale('en');
 	if (rotation.rotation == daily.day) {
-		const today = DateTime.utc();
+		const today = getCurrentTime();
 		if (today > start) {
 			start = start.plus({days: dailiesMax});
 		}
@@ -33,8 +42,8 @@ function get_next_execution(rotation, daily) {
 
 function running(rotation, z) {
 	if (z.day == rotation.rotation) {
-		const today = DateTime.utc();
-		const start = DateTime.fromFormat(rotation.rotationDay, ROT_FORMAT).set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)})
+		const today = getCurrentTime();
+		const start = DateTime.fromFormat(rotation.rotationDay, ROT_FORMAT).set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setZone(TIMEZONE, { keepLocalTime: true })
 		const end = start.plus({hours: z.duration});
 		return (today >= start && today < end);
 	}
@@ -62,7 +71,7 @@ function find_by_name(rotation, name) {
 }
 
 function find_next(rotation) {
-	const current = parseInt(DateTime.utc().toFormat('HHmm'));
+	const current = parseInt(getCurrentTime().toFormat('HHmm'));
 	var ls = dailies.filter(z => rotation.rotation == z.day && parseInt(z.start) > current)
 	if (!ls) {
 		const r = doRotate(rotation.rotation);
@@ -81,7 +90,7 @@ function doRotate(value) {
 }
 
 function endTime(rotation, zone) {
-	return DateTime.utc().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).setLocale('en').plus({hours: zone.duration})
+	return getCurrentTime().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).setLocale('en').plus({hours: zone.duration})
 }
 
 async function notify(connection, section, client, rotate) {

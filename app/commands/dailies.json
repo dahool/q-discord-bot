@@ -1,7 +1,7 @@
 [
 	{
 		"day": 1,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -10,7 +10,7 @@
 	},
 	{
 		"day": 1,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -19,7 +19,7 @@
 	},
 	{
 		"day": 1,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_Heroic.jpg",
@@ -28,7 +28,7 @@
 	},
 	{
 		"day": 1,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -37,7 +37,7 @@
 	},	
 	{
 		"day": 1,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -46,7 +46,7 @@
 	},
 	{
 		"day": 1,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -55,7 +55,7 @@
 	},
 	{
 		"day": 2,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -64,7 +64,7 @@
 	},
 	{
 		"day": 2,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -73,7 +73,7 @@
 	},
 	{
 		"day": 2,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -82,7 +82,7 @@
 	},
 	{
 		"day": 2,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Station SLB",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -91,7 +91,7 @@
 	},	
 	{
 		"day": 2,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -100,7 +100,7 @@
 	},
 	{
 		"day": 2,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -109,7 +109,7 @@
 	},
 	{
 		"day": 3,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -118,7 +118,7 @@
 	},
 	{
 		"day": 3,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -127,7 +127,7 @@
 	},
 	{
 		"day": 3,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch.jpg",
@@ -136,7 +136,7 @@
 	},
 	{
 		"day": 3,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -145,7 +145,7 @@
 	},	
 	{
 		"day": 3,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -154,7 +154,7 @@
 	},
 	{
 		"day": 3,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -163,7 +163,7 @@
 	},
 	{
 		"day": 4,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -172,7 +172,7 @@
 	},
 	{
 		"day": 4,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -181,7 +181,7 @@
 	},
 	{
 		"day": 4,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -190,7 +190,7 @@
 	},
 	{
 		"day": 4,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -199,7 +199,7 @@
 	},	
 	{
 		"day": 4,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Limited Time Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -208,7 +208,7 @@
 	},
 	{
 		"day": 4,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -217,7 +217,7 @@
 	},	
 	{
 		"day": 5,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -226,7 +226,7 @@
 	},
 	{
 		"day": 5,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -235,7 +235,7 @@
 	},
 	{
 		"day": 5,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -244,7 +244,7 @@
 	},
 	{
 		"day": 5,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -253,7 +253,7 @@
 	},	
 	{
 		"day": 5,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Officer Recruit SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -262,7 +262,7 @@
 	},
 	{
 		"day": 5,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -271,7 +271,7 @@
 	},
 	{
 		"day": 6,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -280,7 +280,7 @@
 	},
 	{
 		"day": 6,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Officer XP SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -289,7 +289,7 @@
 	},
 	{
 		"day": 6,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -298,7 +298,7 @@
 	},
 	{
 		"day": 6,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -307,7 +307,7 @@
 	},	
 	{
 		"day": 6,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -316,7 +316,7 @@
 	},
 	{
 		"day": 6,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Ship SLB",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -325,7 +325,7 @@
 	},		
 	{
 		"day": 7,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -334,7 +334,7 @@
 	},
 	{
 		"day": 7,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Limited Time Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -343,7 +343,7 @@
 	},
 	{
 		"day": 7,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -352,7 +352,7 @@
 	},
 	{
 		"day": 7,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -361,7 +361,7 @@
 	},	
 	{
 		"day": 7,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Officer Recruit Heroic",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -370,7 +370,7 @@
 	},
 	{
 		"day": 7,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Officer XP SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -379,7 +379,7 @@
 	},
 	{
 		"day": 8,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -388,7 +388,7 @@
 	},
 	{
 		"day": 8,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -397,7 +397,7 @@
 	},
 	{
 		"day": 8,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -406,7 +406,7 @@
 	},
 	{
 		"day": 8,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -415,7 +415,7 @@
 	},	
 	{
 		"day": 8,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Limited Time Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -424,7 +424,7 @@
 	},
 	{
 		"day": 8,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -433,7 +433,7 @@
 	},	
 	{
 		"day": 9,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -442,7 +442,7 @@
 	},
 	{
 		"day": 9,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -451,7 +451,7 @@
 	},
 	{
 		"day": 9,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -460,7 +460,7 @@
 	},
 	{
 		"day": 9,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -469,7 +469,7 @@
 	},	
 	{
 		"day": 9,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Officer XP SLB",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -478,7 +478,7 @@
 	},
 	{
 		"day": 9,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -487,7 +487,7 @@
 	},	
 	{
 		"day": 10,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -496,7 +496,7 @@
 	},
 	{
 		"day": 10,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -505,7 +505,7 @@
 	},
 	{
 		"day": 10,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Limited Time Ship",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -514,7 +514,7 @@
 	},
 	{
 		"day": 10,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Station",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -523,7 +523,7 @@
 	},	
 	{
 		"day": 10,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -532,7 +532,7 @@
 	},
 	{
 		"day": 10,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Limited Time Station SLB",
 		"image": "https://www.stfc.ovh/dimg/SStation.jpg",
@@ -541,7 +541,7 @@
 	},	
 	{
 		"day": 11,
-		"start": "0500",
+		"start": "0000",
 		"duration": 12,
 		"event": "Officer XP",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_XP.jpg",
@@ -550,7 +550,7 @@
 	},
 	{
 		"day": 11,
-		"start": "0500",
+		"start": "0000",
 		"duration": 6,
 		"event": "Ship Heroic",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -559,7 +559,7 @@
 	},
 	{
 		"day": 11,
-		"start": "1100",
+		"start": "0600",
 		"duration": 6,
 		"event": "Limited Time Research",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
@@ -568,7 +568,7 @@
 	},
 	{
 		"day": 11,
-		"start": "1700",
+		"start": "1200",
 		"duration": 12,
 		"event": "Officer Recruit",
 		"image": "https://www.stfc.ovh/dimg/SOfficer_Recruit_-_SLB.jpg",
@@ -577,7 +577,7 @@
 	},	
 	{
 		"day": 11,
-		"start": "1700",
+		"start": "1200",
 		"duration": 6,
 		"event": "Ship Heroic",
 		"image": "https://www.stfc.ovh/dimg/SLimited_Time_Ship.jpg",
@@ -586,7 +586,7 @@
 	},
 	{
 		"day": 11,
-		"start": "2300",
+		"start": "1800",
 		"duration": 6,
 		"event": "Research SLB",
 		"image": "https://www.stfc.ovh/dimg/SResearch_-_SLB.jpg",
