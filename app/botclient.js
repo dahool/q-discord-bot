@@ -207,7 +207,7 @@ class BotCommander {
 			route = Routes.applicationGuildCommands(clientId, process.env.TEST_SERVER);
 		} else {
 			route = Routes.applicationCommands(clientId);
-			this._cleanUnusedCommands(route);
+			if (process.env.CLEAN_COMMANDS === true) this._cleanUnusedCommands(route);
 		}
 
 		console.log("Commands for %s: %s", this.options.name, JSON.stringify(this.commandsData));
