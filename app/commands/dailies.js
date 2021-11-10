@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const Discord = require('discord.js');
-const { DateTime } = require('luxon');
+const { DateTime, Settings } = require('luxon');
 
 const { groupBy, asTimeRelative } = require('../utils')
 
@@ -11,22 +11,17 @@ const cs = require('../values')
 const db = require('../db/db');
 
 const dailies = require('./dailies.json');
-//const dayRotation = require('./dailiesrotation.json');
 
 const ROT_FORMAT = 'yyyy-MM-dd';
 
 const { dailiesMax, dailiesPart } = require('../config.json');
 
-const TIMEZONE = process.env.DAILY_TIMEZONE;
-
-function getCurrentTime() {
-	return DateTime.utc().setZone(TIMEZONE)
-}
+Settings.defaultZone = process.env.DAILY_TIMEZONE;
 
 function get_next_execution(rotation, daily) {
-	var start = getCurrentTime().set({hour: daily.start.substr(0,2), minute: daily.start.substr(2,2)}).setLocale('en');
+	var start = DateTime.local().set({hour: daily.start.substr(0,2), minute: daily.start.substr(2,2)});
 	if (rotation.rotation == daily.day) {
-		const today = getCurrentTime();
+		const today = DateTime.local();
 		if (today > start) {
 			start = start.plus({days: dailiesMax});
 		}
@@ -42,8 +37,8 @@ function get_next_execution(rotation, daily) {
 
 function running(rotation, z) {
 	if (z.day == rotation.rotation) {
-		const today = getCurrentTime();
-		const start = DateTime.fromFormat(rotation.rotationDay, ROT_FORMAT).set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)}).setZone(TIMEZONE, { keepLocalTime: true })
+		const today = DateTime.local();
+		const start = DateTime.fromFormat(rotation.rotationDay, ROT_FORMAT).set({hour: z.start.substr(0,2), minute: z.start.substr(2,2)})
 		const end = start.plus({hours: z.duration});
 		return (today >= start && today < end);
 	}
@@ -71,7 +66,7 @@ function find_by_name(rotation, name) {
 }
 
 function find_next(rotation) {
-	const current = parseInt(getCurrentTime().toFormat('HHmm'));
+	const current = parseInt(DateTime.local().toFormat('HHmm'));
 	var ls = dailies.filter(z => rotation.rotation == z.day && parseInt(z.start) > current)
 	if (!ls) {
 		const r = doRotate(rotation.rotation);
@@ -90,7 +85,7 @@ function doRotate(value) {
 }
 
 function endTime(rotation, zone) {
-	return getCurrentTime().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).setLocale('en').plus({hours: zone.duration})
+	return DateTime.local().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).plus({hours: zone.duration})
 }
 
 async function notify(connection, section, client, rotate) {
@@ -124,7 +119,7 @@ async function notify(connection, section, client, rotate) {
 
 function rotateInPlace(general) {
 	general.rotation = doRotate(general.rotation);
-	general.rotationDay = DateTime.utc().toFormat(ROT_FORMAT);
+	general.rotationDay = DateTime.local().toFormat(ROT_FORMAT);
 }
 
 async function rotate(connection) {
@@ -136,7 +131,7 @@ async function rotate(connection) {
 }
 
 async function getCurrentRotation(client) {
-	const currentDay = DateTime.utc().toFormat(ROT_FORMAT);
+	const currentDay = DateTime.local().toFormat(ROT_FORMAT);
 	//return dayRotation.find(v => v.rotationDay == currentDay);
 	const dDb = new db.DailiesDb(client.connection);
 	return await dDb.findByDay(currentDay);
