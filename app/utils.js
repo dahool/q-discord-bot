@@ -24,6 +24,10 @@ const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
 const USER_ID = /<@!(\d+)+>/;
 
+function randomId(prefix) {
+    return prefix + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+}
+
 function asTime(dateTime) {
     return '<t:' + Math.trunc(dateTime.toSeconds()) + '>'
 }
@@ -152,5 +156,6 @@ module.exports = {
     asChannel,
     asUser,
     asTimeRelative,
-    asTimeFormat
+    asTimeFormat,
+    randomId
 };

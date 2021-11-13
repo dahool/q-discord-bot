@@ -19,7 +19,7 @@ module.exports = {
 	async execute(client, args) {
         const allianceDB = new db.AllianceDb(client.connection);
         try {
-            var tag = args.tag.toUpperCase().slice(0, 4);
+            var tag = args.tag.toUpperCase();
             var allianceInfo = await allianceDB.findOne(client.guild.id, tag);
             var status = statusKey.NEUTRAL;
             var allowance = "";
@@ -51,8 +51,9 @@ module.exports = {
                         b.append(DateTime.fromJSDate(eventInfo.time).toFormat("LLL d, yyyy @ h:mm a ZZZZ"))
                         if (eventInfo.reason) b.append('\nReason: ' + eventInfo.reason)
 
+                        const status = eventInfo.type || eventInfo.status
                         eventEmbed.push({ 
-                            name: `Event: *${eventInfo.status}*`, 
+                            name: `Event: *${status}*`, 
                             value: b.toString()
                         });
                     })

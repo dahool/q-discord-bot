@@ -38,7 +38,16 @@ module.exports = {
 				const aliases = c.aliases ? '/' + c.aliases.join('/') : ''
 				msgEmbed.addField(c.description, '`' + `!${this.name} ${c.name}${aliases} ${c.usage}` + '`')
 			})
-			return client.reply(msgEmbed);
+
+			const row = new Discord.MessageActionRow()
+				.addComponents(
+					new Discord.MessageButton()
+						.setLabel('Web Config Dashboard')
+						.setURL('https://dashqb.herokuapp.com/')
+						.setStyle('LINK'),
+				);
+
+			return client.reply(msgEmbed, false, [row]);
 		} else {
 			// la primera clave es el 'comando'
 			const commandName = Object.keys(args)[0].toLowerCase();

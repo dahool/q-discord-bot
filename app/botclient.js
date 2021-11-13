@@ -68,7 +68,7 @@ class BotClient {
 		if (response instanceof Discord.MessageEmbed) {
 			// check size and split if necessary
 			// even with multiple embeds, limit is still 6000 for the whole
-			return this._splitEmbed(response).map((r) => { return {embeds: [ r ], ephemeral: hidden} });
+			return this._splitEmbed(response).map((r) => { return {embeds: [ r ], ephemeral: hidden, components: components} });
 		} else if (response.hasOwnProperty('content')) {
 			return [response];
 		}
