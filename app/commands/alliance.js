@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 const { statusKey } = require('../config.json');
 const db = require('../db/db');
-const { StringBuilder } = require('../utils');
+const { StringBuilder, asTimeFormat } = require('../utils');
 
 module.exports = {
 	name: `alliance`,
@@ -43,12 +43,30 @@ module.exports = {
                             status = statusKey.NEUTRAL;
                     }
                 }
+
+                if (allianceInfo.roe !== undefined) {
+                    allianceInfo.roe.sort((a,b) => b.time - a.time).forEach((eventInfo) => {
+                        const b = new StringBuilder();
+                        b.append('Recorded by: <@' + eventInfo.officer + '>\n')
+                        b.append(asTimeFormat(DateTime.fromJSDate(eventInfo.time)))
+                        b.append('\nReason: ' + eventInfo.reason)
+                        const status = eventInfo.type || eventInfo.status
+                        eventEmbed.push({ 
+                            name: `ROE Incident`, 
+                            value: b.toString()
+                        });
+                    })                    
+                } else {
+                    eventEmbed.push({ name: 'ROE Incident', value: `There are no recorded ROE incidents associated with this alliance.` });
+                }
+                eventEmbed.push({ name: '\u200B', value: '\u200B' });
+                
                 var eventList = allianceInfo.events;
                 if (eventList !== undefined) {
                     eventList.sort((a,b) => b.time - a.time).forEach((eventInfo) => {
                         const b = new StringBuilder();
                         b.append('Recorded by: <@' + eventInfo.officer + '> | Status: *' + eventInfo.status + '*' + '\n')
-                        b.append(DateTime.fromJSDate(eventInfo.time).toFormat("LLL d, yyyy @ h:mm a ZZZZ"))
+                        b.append(asTimeFormat(DateTime.fromJSDate(eventInfo.time)))
                         if (eventInfo.reason) b.append('\nReason: ' + eventInfo.reason)
 
                         const status = eventInfo.type || eventInfo.status

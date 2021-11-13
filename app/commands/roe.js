@@ -17,7 +17,7 @@ module.exports = {
 		required: true
 	},{
 		name: 'event',
-		description: 'Event',
+		description: 'ROE Indicent',
 		type: 3,
 		required: true
 	}],
@@ -29,18 +29,18 @@ module.exports = {
 		const reason = args.event;
 
 		var allianceInfo = await allianceDB.findOne(guild, tag);
-		var status = statusKey.NEUTRAL;
+		var status = statusKey.NEUTRAL.name;
 
 		if (allianceInfo !== undefined) {
 			status = allianceInfo.status
 		}
 
 		const eventID = randomId("ROE")
-		const event = {uuid: eventID, reason: reason, status: status, officer: client.member.user.id, time: DateTime.utc().toJSDate(), type: 'ROE' };
+		const event = {uuid: eventID, reason: reason, officer: client.member.user.id, time: DateTime.utc().toJSDate() };
 
 		allianceDB.findOne(guild, tag).then(ob => {
-			const newOb = Object.assign({events: []}, ob, {status: status})
-			newOb.events.push(event);
+			const newOb = Object.assign({roe: []}, ob, {status: status})
+			newOb.roe.push(event);
 			allianceDB.push(guild, tag, newOb);
 		});
 
@@ -49,9 +49,6 @@ module.exports = {
 			.setTitle(`Added ROE event to alliance **${tag}**`)
 			.setDescription(reason)
 			.setThumbnail(statusKey.NEUTRAL.image)
-			/*.addFields(
-				{ name: 'Event', value: reason, inline: true },
-			)*/
 			.setTimestamp()
 			.setFooter(`!${this.name} • Executed by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`);
 		
