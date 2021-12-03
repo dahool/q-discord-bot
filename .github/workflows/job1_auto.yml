@@ -6,7 +6,7 @@ name: Build and Deploy qDiscordBot
 on:
   push:
     branches:
-      - master
+      - deploy
   workflow_dispatch:
 
 jobs:
