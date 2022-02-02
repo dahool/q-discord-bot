@@ -38,25 +38,25 @@ const botclient = new BotCommander(connectionManager,
 
 var botDb;
 botclient.once('ready', async () => {
-	const botguilds = botclient.client.guilds.cache;
+	const botguilds = botclient.client.guilds.cache.filter(c => c.channels);
 	const savedguilds = await botDb.fetchGuilds();
 	const filtered = botguilds.filter(guild => !savedguilds.some(s => s.id == guild.id)).map(g => { return {id: g.id, name: g.name} })
 	if (filtered.length) botDb.addGuilds(filtered);
-	botguilds.forEach(async (guild) => {
-
+	
+	for (const [guildId, guild] of botguilds) {
 		// channels
-		const guildchannels = guild.channels.cache;
-		const savedchannels = await botDb.fetchChannels(guild.id);
-		const filteredchannels = guildchannels.filter(ch => !ch.deleted && ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
-		if (filteredchannels.length) botDb.addChannels(guild.id, filteredchannels);
+		const guildchannels = await guild.channels.fetch();
+		const savedchannels = await botDb.fetchChannels(guildId);
+		const filteredchannels = guildchannels.filter(ch => ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
+		if (filteredchannels.length) botDb.addChannels(guildId, filteredchannels);
 
 		// roles
-		const guildroles = guild.roles.cache;
-		const savedroles = await botDb.fetchRoles(guild.id);
+		const guildroles = await guild.roles.fetch();
+		const savedroles = await botDb.fetchRoles(guildId);
 		const filteredroles = guildroles.filter(r => !savedroles.some(s => s.id == r.id)).map(r => { return {id: r.id, name: r.name}});
-		if (filteredroles.length) botDb.addRoles(guild.id, filteredroles);
+		if (filteredroles.length) botDb.addRoles(guildId, filteredroles);
 
-	})
+	}
 });
 
 botclient.on("guildCreate", guild => {
