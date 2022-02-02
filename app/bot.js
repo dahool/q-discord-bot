@@ -47,7 +47,7 @@ botclient.once('ready', async () => {
 		// channels
 		const guildchannels = guild.channels.cache;
 		const savedchannels = await botDb.fetchChannels(guild.id);
-		const filteredchannels = guildchannels.filter(ch => !ch.deleted && ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent.name} });
+		const filteredchannels = guildchannels.filter(ch => !ch.deleted && ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
 		if (filteredchannels.length) botDb.addChannels(guild.id, filteredchannels);
 
 		// roles
