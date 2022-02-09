@@ -59,7 +59,8 @@ serveCalendar = async (connection, guild, res) => {
     const query = {
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({days: 30}).toJSDate()},
         src: { $ne: 'calendar'},
-        notified: false
+        notified: false,
+        guild: guild
     }
 
     const events = await db.findBy(query);
