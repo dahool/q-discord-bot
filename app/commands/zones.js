@@ -9,6 +9,8 @@ const rss = require('./rss.json');
 
 const { extract_role } = require('../utils');
 
+const INTERACTION_TIMEOUT = 60000;
+
 const rssMap = new Map();
 rss.forEach(item => {
 	rssMap.set(item.id, item.icon)
@@ -93,7 +95,7 @@ async function handle_tag(client, zone) {
 	const messages = [];
 
 	const filter = m => m.author.id == client.member.user.id;
-	const collector = client.channel.createMessageCollector({ filter, time: 30000 } );
+	const collector = client.channel.createMessageCollector({ filter, time: INTERACTION_TIMEOUT } );
 	
 	collector.on('collect', m => {
 		messages.push(m);
@@ -153,7 +155,7 @@ async function handle_deltag(client, zone) {
 		
 		const messages = [];
 		const filter = m => m.author.id == client.member.user.id;
-		const collector = client.channel.createMessageCollector({ filter, time: 30000});
+		const collector = client.channel.createMessageCollector({ filter, time: INTERACTION_TIMEOUT});
 		collector.on('collect', m => {
 			messages.push(m);
 			if ('cancel' == m.content.toLowerCase()) {
