@@ -1,5 +1,6 @@
 const { safeLower } = require('../utils');
 const cmds = require('./say.json');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: 'say',
@@ -9,7 +10,7 @@ module.exports = {
 	options: [{
 		name: 'command',
 		description: 'Command',
-		type: 3
+		type: ApplicationCommandOptionType.String
 	}],
 	async execute(client, args) {
 		if (!args.command) {

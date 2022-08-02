@@ -3,18 +3,15 @@ dotenv.config();
 
 const Discord = require('discord.js');
 const { DateTime, Settings } = require('luxon');
-
 const { groupBy, asTimeRelative } = require('../utils')
-
 const cs = require('../values')
-
 const db = require('../db/db');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 const dailies = require('./dailies.json');
+const { dailiesMax, dailiesPart } = require('../config.json');
 
 const ROT_FORMAT = 'yyyy-MM-dd';
-
-const { dailiesMax, dailiesPart } = require('../config.json');
 
 Settings.defaultZone = process.env.DAILY_TIMEZONE;
 
@@ -98,7 +95,7 @@ async function notify(connection, section, client, rotate) {
 				const end = endTime(general, z)
 				guilds.forEach((guild) => {
 					const channel = client.client.guilds.cache.get(guild.guild).channels.cache.get(guild.channel);
-					const msgEmbed = new Discord.MessageEmbed()
+					const msgEmbed = new Discord.EmbedBuilder()
 					.setColor(z.color)
 					.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
 					.setDescription("Coming up next")
@@ -108,7 +105,7 @@ async function notify(connection, section, client, rotate) {
 					.setTimestamp();
 
 					if (z.description) {
-						msgEmbed.setFooter(z.description);
+						msgEmbed.setFooter({ text: z.description });
 					}
 					
 					channel.send({ embeds: [msgEmbed]}).catch((e) => console.error(e));
@@ -150,7 +147,7 @@ module.exports = {
     options: [{
 		name: 'command',
 		description: 'Command',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		choices: [
 			{
 				name: 'Next event in rotation',
@@ -164,7 +161,7 @@ module.exports = {
 	},{
 		name: 'event',
 		description: 'Event name',
-		type: 3
+		type: ApplicationCommandOptionType.String
 	}],	
 	async execute(client, args) {
 		const rotation = await getCurrentRotation(client);
@@ -189,7 +186,7 @@ module.exports = {
 				return client.reply('No matching dailies found');
 			}
 
-			const msgEmbed = new Discord.MessageEmbed()
+			const msgEmbed = new Discord.EmbedBuilder()
 			.setColor('#f2f542')
 			.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
 			.setTitle('Upcoming Events')
@@ -203,7 +200,7 @@ module.exports = {
 				} else {
 					suffix = "next " + asTimeRelative(z.next);
 				}
-				msgEmbed.addField(z.event + ' Event (' + suffix + ")", z.description)
+				msgEmbed.addFields({name: z.event + ' Event (' + suffix + ")", value: z.description})
 			})
 
 			client.reply(msgEmbed);
@@ -211,15 +208,15 @@ module.exports = {
 		} else {
 			const list = find_by_day(rotation);
 
-			const msgEmbed = new Discord.MessageEmbed()
+			const msgEmbed = new Discord.EmbedBuilder()
 			.setColor('#0099ff')
 			.setThumbnail("https://www.dropbox.com/s/b6g9gijywzoh3ks/stfc.png?raw=1")
 			.setTitle('Current Events')
-			.setFooter(`(${rotation.rotation})`)
+			.setFooter({text: `(${rotation.rotation})`})
 			.setTimestamp();
 		
 			list.sort((a,b) => a.next - b.next).forEach(z => {
-				msgEmbed.addField(z.event + ' Event (ends ' + asTimeRelative(z.end) + ')', z.description || z.event)
+				msgEmbed.addFields({name: z.event + ' Event (ends ' + asTimeRelative(z.end) + ')', value: z.description || z.event })
 			})
 
 			client.reply(msgEmbed);

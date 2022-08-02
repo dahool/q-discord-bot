@@ -4,6 +4,8 @@ const { safeLower, groupBy, toRelative, asTimeRelative, asTimeFormat } = require
 const db = require('../db/db');
 const cs = require('../values')
 
+const { ApplicationCommandOptionType } = require('discord.js');
+
 const zones = require('./zones.json');
 const rss = require('./rss.json');
 
@@ -203,11 +205,11 @@ async function list_all_events(client) {
 
 	calevents.sort((a,b) => a.start - b.start);
 	
-	const msgEmbed = new Discord.MessageEmbed()
+	const msgEmbed = new Discord.EmbedBuilder()
 	.setColor('#e1dad8')
 	.setThumbnail(client.guild ? client.guild.iconURL() : client.client.user.avatarURL())
 	.setTitle("Territory Events in next 7 days")
-	.setFooter("* calendar events can't be removed by me")
+	.setFooter({text: "* calendar events can't be removed by me"})
 	.setTimestamp();
 
 	groupBy(calevents, u => u.location).forEach((values, key) => {
@@ -246,7 +248,7 @@ async function list_events(client, zone) {
 	zevents.then(ze => {
 		if ((ze && ze.events.length) || calevents.length) {
 
-			const msgEmbed = new Discord.MessageEmbed()
+			const msgEmbed = new Discord.EmbedBuilder()
 			.setColor('#e1dad8')
 			.setThumbnail(client.guild ? client.guild.iconURL() : client.client.user.avatarURL())
 			.setTitle("Events for " + zone.zone)
@@ -264,7 +266,7 @@ async function list_events(client, zone) {
 				caevents.push(values[0].summary);
 			})
 			if (caevents.length > 0) {
-				msgEmbed.addField('Calendar Events', caevents.join('\n'))
+				msgEmbed.addFields([{name: 'Calendar Events', value: caevents.join('\n')}])
 			}
 			client.reply(msgEmbed);
 
@@ -283,12 +285,12 @@ module.exports = {
 	options: [{
 			name: 'argument',
 			description: 'Zone or particle name',
-			type: 3,
+			type: ApplicationCommandOptionType.String,
 			required: true
 		},{
 		name: 'command',
 		description: 'Command',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: false,
 		choices: [
 			{
@@ -358,7 +360,7 @@ module.exports = {
 
 		const icon = client.guild ? client.guild.iconURL() : client.client.user.avatarURL();
 
-		const msgEmbed = new Discord.MessageEmbed()
+		const msgEmbed = new Discord.EmbedBuilder()
 			.setColor('#e1dad8')
 			.setThumbnail(icon)
 			.setTitle("Territory")
@@ -381,7 +383,7 @@ module.exports = {
                         content+= "`Takeover Time:` " + asTimeFormat(z.next) + "\n"; 
 			content+= "`Next:` **" + asTimeRelative(z.next) + "**";
 			
-			msgEmbed.addField(z.zone, content);
+			msgEmbed.addFields({name: z.zone, value: content});
 		})	
 
 		return client.reply(msgEmbed);

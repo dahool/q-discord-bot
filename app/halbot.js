@@ -3,16 +3,17 @@ dotenv.config();
 
 const { prefix } = require('./config.json');
 const { BotCommander } = require('./botclient');
-const { Intents } = require('discord.js');
+const { GatewayIntentBits } = require('discord.js');
 
 const { connectionManager } = require('./db/db');
 
 const INTENTS = [
-	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.GUILD_MESSAGES,
-	Intents.FLAGS.DIRECT_MESSAGES,
-	Intents.FLAGS.GUILD_VOICE_STATES
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.GuildVoiceStates,
+	GatewayIntentBits.DirectMessages
 ]
+
 
 const botclient = new BotCommander(connectionManager, 
 	INTENTS,

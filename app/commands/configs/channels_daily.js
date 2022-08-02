@@ -1,4 +1,5 @@
 const cs = require('../../values')
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: cs.DAILY_CHANNEL,
@@ -7,12 +8,12 @@ module.exports = {
 		{
 			name: 'set',
 			description: 'Set Dailies Announcement Channel',
-			type: 1,
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: 'channel',
 					description: 'Channel',
-					type: 7,
+					type: ApplicationCommandOptionType.Channel,
 					required: true
 				}
 			]
@@ -20,7 +21,7 @@ module.exports = {
 		{
 			name: 'get',
 			description: 'Get Dailies Announcement Channel',
-			type: 1
+			type: ApplicationCommandOptionType.Subcommand
 		}
 	],
 	usage: '<set/get> <channel>',

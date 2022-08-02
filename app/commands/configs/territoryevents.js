@@ -1,4 +1,5 @@
 const ical = require('node-ical');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: 'territory_events',
@@ -8,7 +9,7 @@ module.exports = {
 		{
 			name: 'url',
 			description: 'Calendar ICAL URL',
-			type: 3,
+			type: ApplicationCommandOptionType.String,
 			required: true
 		},
 	],

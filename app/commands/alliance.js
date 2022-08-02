@@ -1,4 +1,6 @@
 const Discord = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js');
+
 const { DateTime } = require('luxon');
 const { statusKey } = require('../config.json');
 const db = require('../db/db');
@@ -13,7 +15,7 @@ module.exports = {
     options: [{
 		name: 'tag',
 		description: 'Alliance Tag',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: true
 	}],
 	async execute(client, args) {
@@ -94,7 +96,7 @@ module.exports = {
                 allowance = `Normal RoE applies to members of the ${tag} alliance`;
             }
 
-            const msgEmbed = new Discord.MessageEmbed()
+            const msgEmbed = new Discord.EmbedBuilder()
                 .setColor(`#${status.color}`)
                 .setTitle(`The ${tag} Alliance is listed as: **${status.name}**.`)
                 .setThumbnail(status.image)
@@ -103,7 +105,8 @@ module.exports = {
                     eventEmbed
                 )
                 .setTimestamp()
-                .setFooter(`!alliance ${tag} • Requested by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`);
+                .setFooter({text: `!alliance ${tag} • Requested by ${client.member.user.username}`, iconURL: client.member.user.displayAvatarURL()});
+
             client.sendMessage(msgEmbed);
         }
         catch (err) {

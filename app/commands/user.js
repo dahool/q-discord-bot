@@ -2,6 +2,7 @@ const db = require('../db/db');
 const { DateTime } = require('luxon');
 const utils = require('../utils');
 const Discord = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 displayName = (member) => {
 	if (member.nickname && member.nickname != null) {
@@ -17,7 +18,7 @@ module.exports = {
 	options: [{
 		name: 'user',
 		description: 'User',
-		type: 6,
+		type: ApplicationCommandOptionType.User,
 		required: true
 	}],
 	description: 'Get user profile',
@@ -28,7 +29,7 @@ module.exports = {
 		const user = client.guild.members.cache.get(args.user);
 
 		if (member) {
-			const msgEmbed = new Discord.MessageEmbed()
+			const msgEmbed = new Discord.EmbedBuilder()
 			.setColor(utils.randomColor())
 			.setTitle(`${member.displayName || member.userName}`)
 			.setDescription('User Profile')
@@ -39,7 +40,7 @@ module.exports = {
 			.setTimestamp();
 
 			if (member.phone && member.phone != '0') {
-				msgEmbed.addField(":telephone: Contact number", member.phone);
+				msgEmbed.addFields({name: ":telephone: Contact number", value: member.phone});
 			}
 
 			client.reply(msgEmbed, true);

@@ -20,7 +20,7 @@ createMessage = (data) => {
     const pstTime = startTime.setZone('America/Los_Angeles').toFormat('h:mma ZZZZ');
     const mstTime = startTime.setZone('America/Denver').toFormat('h:mma ZZZZ');*/
 
-    /*const message = new Discord.MessageEmbed()
+    /*const message = new Discord.EmbedBuilder()
         .setColor(randomColor())
         .setTitle(data.summary)
         .setURL('https://www.timeanddate.com/countdown/generic?p0=1440&iso=' + startTime.setZone('UTC').toISO() + "&msg=" + encodeURIComponent(data.summary))
@@ -31,7 +31,7 @@ createMessage = (data) => {
             { name: 'Starts at', value: '`' + pstTime + '` - `' + mstTime + '` - `' + cstTime + '` - `' + estTime + '`', inline: true });
     */
 
-    const message = new Discord.MessageEmbed()
+    const message = new Discord.EmbedBuilder()
         .setColor(randomColor())
         .setTitle(data.summary)
         .setURL('https://www.timeanddate.com/countdown/generic?p0=1440&iso=' + startTime.setZone('UTC').toISO() + "&msg=" + encodeURIComponent(data.summary))

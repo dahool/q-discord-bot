@@ -41,11 +41,11 @@ recurseOptions = (ops) => {
 
 helper = (name, client, args) => {
     if (!args.command) {
-        const help = new Discord.MessageEmbed()
+        const help = new Discord.EmbedBuilder()
             .setColor('#015267')
             .setTitle('What can I do')
             .setThumbnail(client.client.user.avatarURL())
-            .setFooter('Type `!' + name + ' <command>` for more help')
+            .setFooter({text: 'Type `!' + name + ' <command>` for more help'})
             .setTimestamp();
 
         var commands = [];
@@ -54,7 +54,7 @@ helper = (name, client, args) => {
                 commands.push('`!' + cmd.name + '` :: ' + cmd.description)
             }
         })
-        help.addField('Commands', commands.join('\n'));
+        help.addFields({name: 'Commands', value: commands.join('\n')});
         return client.reply(help);
     }
 
@@ -66,12 +66,12 @@ helper = (name, client, args) => {
         return client.reply('Command `' + cmdName + '` not found.');
     }
 
-    const help = new Discord.MessageEmbed()
+    const help = new Discord.EmbedBuilder()
         .setColor('#015267')
         .setTitle(cmd.description)
         .setThumbnail(client.client.user.avatarURL())
         .addFields({name: 'Command', value: cmd.name})
-        .setFooter('Help for ' + cmd.name)
+        .setFooter({text: 'Help for ' + cmd.name})
         .setTimestamp();
 
     if (cmd.man_description) {
@@ -79,14 +79,12 @@ helper = (name, client, args) => {
     }
 
     if (cmd.aliases) {
-        help.addField("Alias", cmd.aliases.join('\n'));
+        help.addFields({name: "Alias", value: cmd.aliases.join('\n')});
     }
 
     const options = recurseOptions(cmd.options);
     if (options.length) {
-        options.forEach(o => {
-            help.addField(o.name, o.values);
-        })
+        help.addFields(options.map(o => { return {name: o.name, value: o.values} } ))
     }
 
     return client.reply(help);

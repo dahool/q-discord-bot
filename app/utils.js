@@ -1,4 +1,5 @@
 const { DateTime } = require('luxon');
+const { MessageMentions } = require('discord.js');
 
 const COLORS = [
     '#ff00ff',
@@ -19,10 +20,11 @@ const units = [
     'minute',
     'second',
 ];
-
+/*
 const CHANNEL_ID = /<#(\d+)+>/;
 const ROLE_ID = /<@&(\d+)+>/;
-const USER_ID = /<@!(\d+)+>/;
+const USER_ID = /<@(\d+)+>/;
+*/
 
 function randomId(prefix) {
     return prefix + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
@@ -49,7 +51,7 @@ function asRole(number) {
 }
 
 function asUser(number) {
-    return '<@!' + number + '>'
+    return '<@' + number + '>'
 }
 
 function extract_id(regex, str) {
@@ -61,15 +63,15 @@ function extract_id(regex, str) {
 }
 
 function extract_role(str) {
-    return extract_id(ROLE_ID, str);
+    return extract_id(MessageMentions.RolesPattern, str);
 }
 
 function extract_user(str) {
-    return extract_id(USER_ID, str);
+    return extract_id(MessageMentions.UsersPattern, str);
 }
 
 function extract_channel(str) {
-    return extract_id(CHANNEL_ID, str);
+    return extract_id(MessageMentions.ChannelsPattern, str);
 }
 
 function randomColor() {

@@ -1,6 +1,6 @@
 const playerQueue = new Map();
 const ytdl = require('ytdl-core');
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { Duration } = require('luxon');
 const { setTimeout } = require('timers');
 const { promisify } = require('util');
@@ -146,13 +146,13 @@ class MusicSubscription {
         }
       } else if (newState.status === AudioPlayerStatus.Playing) {
         // If the Playing state has been entered, then a new track has started playback.
-        const playingEmbed = new MessageEmbed()
+        const playingEmbed = new EmbedBuilder()
           .setURL(this.nowPlaying.url)
           .setTitle(this.nowPlaying.title)
           .setDescription(":notes: Now playing")
           .setColor('#ff0000')
           .addField('Duration', Duration.fromObject({seconds:this.nowPlaying.duration}).toFormat('mm:ss'))
-          .setFooter(`Requested by ${this.nowPlaying.member.user.username}`, this.nowPlaying.member.user.displayAvatarURL());
+          .setFooter({text: `Requested by ${this.nowPlaying.member.user.username}`, iconURL: this.nowPlaying.member.user.displayAvatarURL()});
         this.textChannel.send({ embeds: [playingEmbed] });
       }
     });

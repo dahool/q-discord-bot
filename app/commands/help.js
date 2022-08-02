@@ -1,4 +1,5 @@
 const { helper } = require('../helper');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: 'q',
@@ -9,7 +10,7 @@ module.exports = {
 	options: [{
 		name: 'command',
 		description: 'Command you require help for',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: false
 	}],
 	help: false,

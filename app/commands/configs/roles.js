@@ -1,3 +1,4 @@
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: 'role',
@@ -6,12 +7,12 @@ module.exports = {
 		{
 			name: 'add',
 			description: 'Add Role',
-			type: 1,
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: 'role',
 					description: 'Role',
-					type: 8,
+					type: ApplicationCommandOptionType.Role,
 					required: true
 				}
 			]
@@ -19,12 +20,12 @@ module.exports = {
 		{
 			name: 'del',
 			description: 'Remove Role',
-			type: 1,
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: 'role',
 					description: 'Role',
-					type: 8,
+					type: ApplicationCommandOptionType.Role,
 					required: true
 				}
 			]
@@ -32,7 +33,7 @@ module.exports = {
 		{
 			name: 'get',
 			description: 'List Roles',
-			type: 1
+			type: ApplicationCommandOptionType.Subcommand
 		},
 	],
 	usage: '<add/del/get> <role>',

@@ -1,5 +1,6 @@
 const { statusKey } = require('../config.json');
 const { AllianceStatus } = require('./allied')
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	AllianceStatus,
@@ -11,7 +12,7 @@ module.exports = {
     options: [{
 		name: 'tag',
 		description: 'Alliance Tag',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: true
 	}],
 	async execute(client, args) {

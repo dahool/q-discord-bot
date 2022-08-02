@@ -11,7 +11,7 @@ validateHookUrl = (url) => {
 relayMessage = async (message, target) => {
 
     /*
-    const embed = new Discord.MessageEmbed()
+    const embed = new Discord.EmbedBuilder()
         .setColor('#f31515')
         .setURL(`https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`)
         //.setThumbnail(message.channel.guild.iconURL())

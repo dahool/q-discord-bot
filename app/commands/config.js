@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const db = require('../db/db');
 const cs = require('../values')
+const { ApplicationCommandOptionType, ButtonStyle } = require('discord.js');
 
 function isPromise(value) {
 	return Boolean(value && typeof value.then === 'function');
@@ -12,7 +13,7 @@ const commands = [];
 const commandOptions = [];
 for (const file of fs.readdirSync(path.resolve(__dirname, 'configs')).filter(file => file.endsWith('.js'))) {
 	const command = require(`./configs/${file}`);
-	commandOptions.push({name: command.name, description: command.description, type: command.type || 2, options: command.options})
+	commandOptions.push({name: command.name, description: command.description, type: command.type || ApplicationCommandOptionType.SubcommandGroup, options: command.options})
 	commands.push(command);
 }
 
@@ -25,26 +26,28 @@ module.exports = {
 	options: commandOptions,
     async execute(client, args) {
 		
-		const msgEmbed = new Discord.MessageEmbed()
+		const me = await client.guild.members.fetchMe();
+		
+		const msgEmbed = new Discord.EmbedBuilder()
 			.setColor('#e1dad8')
-			.setThumbnail(client.client.user.avatarURL())
+			.setThumbnail(me.displayAvatarURL())
 			.setTitle('Settings of the Continuum')
-			.setFooter(`!config | Requested by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`)
+			.setFooter({text: `!config | Requested by ${client.member.user.username}`, iconURL: client.member.user.displayAvatarURL()})
 			.setTimestamp();
 
 		if (!Object.keys(args).length) {
 			msgEmbed.setDescription('Change the settings for this server. Re run the commands with the required parameters');
 			commands.forEach(c => {
 				const aliases = c.aliases ? '/' + c.aliases.join('/') : ''
-				msgEmbed.addField(c.description, '`' + `!${this.name} ${c.name}${aliases} ${c.usage}` + '`')
+				msgEmbed.addFields({name: c.description, value: '`' + `!${this.name} ${c.name}${aliases} ${c.usage}` + '`'})
 			})
 
-			const row = new Discord.MessageActionRow()
+			const row = new Discord.ActionRowBuilder()
 				.addComponents(
-					new Discord.MessageButton()
+					new Discord.ButtonBuilder()
 						.setLabel('Web Config Dashboard')
 						.setURL('https://dashqb.herokuapp.com/')
-						.setStyle('LINK'),
+						.setStyle(ButtonStyle.Link),
 				);
 
 			return client.reply(msgEmbed, false, [row]);

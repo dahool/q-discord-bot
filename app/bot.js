@@ -3,7 +3,7 @@ dotenv.config();
 
 const { prefix } = require('./config.json');
 const { BotCommander } = require('./botclient');
-const { Intents } = require('discord.js');
+const { GatewayIntentBits, ChannelType } = require('discord.js');
 
 const announcer = require('./functions/announcer');
 const calendar = require('./functions/calendar');
@@ -16,12 +16,13 @@ var dailies = require('./commands/dailies');
 const { MembersDb, ConfigDb, BotDb, connectionManager } = require('./db/db');
 
 const INTENTS = [
-	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.GUILD_PRESENCES,
-	Intents.FLAGS.GUILD_MEMBERS,
-	Intents.FLAGS.GUILD_MESSAGES,
-	Intents.FLAGS.GUILD_WEBHOOKS,
-	Intents.FLAGS.DIRECT_MESSAGES
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildPresences,
+	GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.GuildWebhooks,
+	GatewayIntentBits.DirectMessages,
+	GatewayIntentBits.MessageContent
 ]
 
 const botclient = new BotCommander(connectionManager, 
@@ -47,7 +48,7 @@ botclient.once('ready', async () => {
 		// channels
 		const guildchannels = await guild.channels.fetch();
 		const savedchannels = await botDb.fetchChannels(guildId);
-		const filteredchannels = guildchannels.filter(ch => ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
+		const filteredchannels = guildchannels.filter(ch => ch.type === ChannelType.GuildText && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
 		if (filteredchannels.length) botDb.addChannels(guildId, filteredchannels);
 
 		// roles
@@ -71,7 +72,7 @@ botclient.on("guildDelete", guild => {
 
 botclient.on("channelCreate", channel => {
     console.debug("Created Channel: " + channel.name);
-	if (channel.type == 'GUILD_TEXT') botDb.addChannel(channel.guild.id, channel.id, channel.name);
+	if (channel.type === ChannelType.GuildText) botDb.addChannel(channel.guild.id, channel.id, channel.name);
 })
 
 botclient.on("channelDelete", channel => {
@@ -81,10 +82,10 @@ botclient.on("channelDelete", channel => {
 
 botclient.on("channelUpdate", async (oldchannel, channel) => {
     console.debug("Updated Channel: " + channel.name);
-	if (oldchannel.type == 'GUILD_TEXT') {
+	if (oldchannel.type === ChannelType.GuildText) {
 		await botDb.removeChannel(oldchannel.guild.id, oldchannel.id);
 	}
-	if (channel.type == 'GUILD_TEXT') {
+	if (channel.type === ChannelType.GuildText) {
 		botDb.addChannel(channel.guild.id, channel.id, channel.name);
 	}
 })
@@ -127,7 +128,7 @@ module.exports = {
 		memberDb = new MembersDb(connectionManager);
 		configDb = new ConfigDb(connectionManager);
 		botDb = new BotDb(connectionManager);
-		botclient.login(process.env.MAIA_TOKEN);
+		botclient.login(process.env.Q_TOKEN);
 	},
 	async rotate() {
 		console.log('rotate daily calendar');

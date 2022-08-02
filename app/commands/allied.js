@@ -4,6 +4,7 @@ const { statusKey } = require('../config.json');
 const { build_diplomacy } = require('./diplomacy');
 const cs = require('../values')
 const db = require('../db/db');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 class AllianceStatus {
 
@@ -34,7 +35,7 @@ class AllianceStatus {
 			this.allianceDB.push(guild, alliance, newOb);
 		});
 
-		const confirm = new Discord.MessageEmbed()
+		const confirm = new Discord.EmbedBuilder()
 			.setColor(`#${this.status.color}`)
 			.setTitle(`Alliance **${alliance}** set to ***${this.status.name}*** status`)
 			.setDescription(`The status of **${alliance}** alliance has been updated`)
@@ -44,10 +45,10 @@ class AllianceStatus {
 				{ name: `Status`, value: `${status}`, inline: true },
 			)
 			.setTimestamp()
-			.setFooter(`!${this.cmd} • Executed by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`);
+			.setFooter({text: `!${this.cmd} • Executed by ${client.member.user.username}`, iconURL: client.member.user.displayAvatarURL()});
 
 		if (this.status == statusKey.ENEMY || this.status == statusKey.HOSTILE) {
-			confirm.addField('Reason', reason);
+			confirm.addFields({name: 'Reason', value: reason});
 		}
 
 		this.config.findOne(guild, cs.ANNOUNCE_CHANNEL).then(cfg => {
@@ -86,7 +87,7 @@ module.exports = {
     options: [{
 		name: 'tag',
 		description: 'Alliance Tag',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: true
 	}],
 	async execute(client, args) {

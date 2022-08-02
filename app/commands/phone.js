@@ -1,4 +1,5 @@
 const db = require('../db/db');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: 'phone',
@@ -6,7 +7,7 @@ module.exports = {
 	options: [{
 		name: 'argument',
 		description: 'Phone number (enter 0 to clear)',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: true
 	}],
 	description: 'Update contact info',

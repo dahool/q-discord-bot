@@ -3,6 +3,7 @@ const { randomId } = require('../utils')
 const db = require('../db/db');
 const { DateTime } = require('luxon');
 const Discord = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: 'roe',
@@ -13,12 +14,12 @@ module.exports = {
     options: [{
 		name: 'tag',
 		description: 'Alliance Tag',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: true
 	},{
 		name: 'event',
 		description: 'ROE Indicent',
-		type: 3,
+		type: ApplicationCommandOptionType.String,
 		required: true
 	}],
 	async execute(client, args) {
@@ -44,13 +45,13 @@ module.exports = {
 			allianceDB.push(guild, tag, newOb);
 		});
 
-		const confirm = new Discord.MessageEmbed()
+		const confirm = new Discord.EmbedBuilder()
 			.setColor(`#${statusKey.NEUTRAL.color}`)
 			.setTitle(`Added ROE event to alliance **${tag}**`)
 			.setDescription(reason)
 			.setThumbnail(statusKey.NEUTRAL.image)
 			.setTimestamp()
-			.setFooter(`!${this.name} • Executed by ${client.member.user.username}`, `${client.member.user.displayAvatarURL()}`);
+			.setFooter({text: `!${this.name} • Executed by ${client.member.user.username}`, iconURL: client.member.user.displayAvatarURL() });
 		
 		client.reply(confirm);
 	}

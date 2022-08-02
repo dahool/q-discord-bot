@@ -1,5 +1,6 @@
 const cs = require('../../values')
 const { validateHookUrl } = require('../../functions/hooksender');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
 	name: 'relay',
@@ -8,29 +9,29 @@ module.exports = {
 		{
 			name: 'list',
 			description: 'List All Channel Broadcast',
-			type: 1
+			type: ApplicationCommandOptionType.Subcommand
 		},
 		{
 			name: 'add',
 			description: 'Add Broadcast',
-			type: 1,
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: 'channel',
 					description: 'Channel',
-					type: 7,
+					type: ApplicationCommandOptionType.Channel,
 					required: true
 				},
 				{
 					name: 'url',
 					description: 'Discord Webhook URL',
-					type: 3,
+					type: ApplicationCommandOptionType.String,
 					required: true
 				},
 				{
 					name: 'name',
 					description: 'Name',
-					type: 3,
+					type: ApplicationCommandOptionType.String,
 					required: true
 				}
 			]
@@ -38,12 +39,12 @@ module.exports = {
 		{
 			name: 'get',
 			description: 'List Channel Broadcast',
-			type: 1,
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: 'channel',
 					description: 'Channel',
-					type: 7,
+					type: ApplicationCommandOptionType.Channel,
 					required: true
 				}
 			]			
@@ -51,18 +52,18 @@ module.exports = {
 		{
 			name: 'delete',
 			description: 'Delete Channel Broadcast',
-			type: 1,
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: 'channel',
 					description: 'Channel',
-					type: 7,
+					type: ApplicationCommandOptionType.Channel,
 					required: true
 				},
 				{
 					name: 'name',
 					description: 'Name',
-					type: 3,
+					type: ApplicationCommandOptionType.String,
 					required: true
 				}				
 			]			
@@ -70,12 +71,12 @@ module.exports = {
 		{
 			name: 'clear',
 			description: 'Clear Channel Broadcasts',
-			type: 1,
+			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
 					name: 'channel',
 					description: 'Channel',
-					type: 7,
+					type: ApplicationCommandOptionType.Channel,
 					required: true
 				}
 			]			

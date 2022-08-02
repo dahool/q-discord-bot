@@ -5,14 +5,17 @@ const fs = require('fs');
 const Discord = require('discord.js');
 
 const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const { Routes } = require('discord-api-types/v10');
 
-const { Client, Permissions } = require('discord.js');
+const { Client, PermissionsBitField, Partials, ChannelType, ApplicationCommandOptionType, GuildMemberManager } = require('discord.js');
 
 const { ConfigDb, LoggerDb } = require('./db/db');
 
 const { safeTrim, extract_channel, extract_role, extract_user } = require('./utils');
 const { MESSAGES } = require('./messages');
+const { timingSafeEqual } = require('crypto');
+
+const REST_VERSION = '10';
 
 class BotClient {
 	
@@ -31,7 +34,7 @@ class BotClient {
 	}
 	
 	_cloneEmbed(embed) {
-		const r = new Discord.MessageEmbed(embed);
+		const r = Discord.EmbedBuilder.from(embed.toJSON());
 		r.setFields([]);
 		return r;
 	}
@@ -48,24 +51,27 @@ class BotClient {
 		let current = this._cloneEmbed(embed);
 
 		let size = generalSize;
-		embed.fields.forEach((field) => {
-			const s = field.name.length + field.value.length;
-			size += s;
-			if (size < 5900) {
-				current.addFields([ field ]);
-			} else {
-				response.push(current);
-				size = generalSize;
-				current = this._cloneEmbed(embed);
-			}
-		})
+		console.log(embed);
+		if (embed.data.fields) {
+			embed.data.fields.forEach((field) => {
+				const s = field.name.length + field.value.length;
+				size += s;
+				if (size < 5900) {
+					current.addFields([ field ]);
+				} else {
+					response.push(current);
+					size = generalSize;
+					current = this._cloneEmbed(embed);
+				}
+			})
+		}
 		response.push(current);
 
 		return response;
 	}
 
 	_createMessage(response, hidden = false, components = []) {
-		if (response instanceof Discord.MessageEmbed) {
+		if (response instanceof Discord.EmbedBuilder) {
 			// check size and split if necessary
 			// even with multiple embeds, limit is still 6000 for the whole
 			return this._splitEmbed(response).map((r) => { return {embeds: [ r ], ephemeral: hidden, components: components} });
@@ -163,11 +169,11 @@ class BotClient {
 	}
 
 	testChannel = async(channel) => {
-		return this.guild.me.permissionsIn(channel).has([Permissions.FLAGS.VIEW_CHANNEL, Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.MANAGE_MESSAGES])
+		return (await this.guild.members.fetchMe()).permissionsIn(channel).has([PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ManageMessages])
 	}
 	
 	clear = () => {
-		if (this.channel.type != "DM" && !this.interaction) this.message.delete().catch((e) => true );
+		if (this.channel.type !== ChannelType.DM && !this.interaction) this.message.delete().catch((e) => true );
 	}
 
 }
@@ -175,7 +181,7 @@ class BotClient {
 class BotCommander {
 	
 	constructor(connectionManager, intents, options) {
-		this.client = new Client({ intents: intents, partials: ['CHANNEL']});
+		this.client = new Client({ intents: intents, partials: 	[Partials.Channel]});
 
 		this.connectionManager = connectionManager;
 		this.client.commands = new Discord.Collection();
@@ -189,7 +195,7 @@ class BotCommander {
 		
 		if (cmdList.length > 0) {
 			console.log("Remove %s", JSON.stringify(cmdList))
-			const rest = new REST({ version: '9' }).setToken(this.tokenId);
+			const rest = new REST({ version: REST_VERSION }).setToken(this.tokenId);
 			cmdList.forEach(c => {
 				rest.delete(route + `/${c.id}`).then(() => console.log(`Removed ${c.id} ${c.name}`))
 				.catch((e) => console.error(e));
@@ -199,7 +205,7 @@ class BotCommander {
 	}
 
 	async _registerAppCommands() {
-		const rest = new REST({ version: '9' }).setToken(this.tokenId);
+		const rest = new REST({ version: REST_VERSION }).setToken(this.tokenId);
 	
 		let route;
 		const clientId = this.client.user.id;
@@ -265,7 +271,7 @@ class BotCommander {
 	_parseOptions = (args, options) => {
 		const parsed = {};
 		options.forEach((option) => {
-			if (option.type == 1) {
+			if (option.type === ApplicationCommandOptionType.Subcommand) {
 				if (args.getSubcommand() == option.name) {
 					if (option.options) {
 						parsed[option.name] = this._parseOptions(args, option.options);
@@ -273,7 +279,7 @@ class BotCommander {
 						parsed[option.name] = {};
 					}
 				}
-			} else if (option.type == 2) {
+			} else if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
 				if (args.getSubcommandGroup() == option.name) {
 					if (option.options) {
 						parsed[option.name] = this._parseOptions(args, option.options);
@@ -295,7 +301,7 @@ class BotCommander {
 		const parsed = {};
 		let argIndex = 0;
 		options.forEach((option, index) => {
-			if (option.type == 1 || option.type == 2) {
+			if (option.type == ApplicationCommandOptionType.Subcommand || option.type == ApplicationCommandOptionType.SubcommandGroup) {
 				if (args[argIndex] == option.name) {
 					if (option.options) {
 						parsed[option.name] = this._parseArguments(args.slice(argIndex+1), option.options)
@@ -312,15 +318,15 @@ class BotCommander {
 					} else {
 						value = safeTrim(args[argIndex]);
 					}
-					if (option.type == 7) {
+					if (option.type === ApplicationCommandOptionType.Channel) {
 						const id = extract_channel(value);
 						if (!id) throw 'Invalid channel ' + value
 						value = id;
-					} else if (option.type == 8) {
+					} else if (option.type === ApplicationCommandOptionType.Role) {
 						const id = extract_role(value);
 						if (!id) throw 'Invalid role ' + value
 						value = id;
-					} else if (option.type == 6) {
+					} else if (option.type === ApplicationCommandOptionType.User) {
 						const id = extract_user(value);
 						if (!id) throw 'Invalid user ' + value
 						value = id;
@@ -345,14 +351,14 @@ class BotCommander {
 		if (!command) return;
 
 		const roles = (await this.configDb.findOne(guild.id, "roles", "roles")) || [];
-		const isAdmin = member.permissions.has([Permissions.FLAGS.ADMINISTRATOR,Permissions.FLAGS.MANAGE_GUILD]);
+		const isAdmin = member.permissions.has([PermissionsBitField.Flags.Administrator, PermissionsBitField.Flags.ManageGuild]);
 		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r.id) );
 		
     	console.debug("Command: " + commandName +  " - IsManager: " + isManager);
 
 		const bc = new BotClient(this.client, message, member, guild, channel, this.connectionManager, isAdmin, isManager, interaction);
 
-		if (channel.type == "DM" && command.dm === false) {
+		if (channel.type === ChannelType.DM && command.dm === false) {
 			return bc.reply(MESSAGES.denied_dm);
 		}
 		
