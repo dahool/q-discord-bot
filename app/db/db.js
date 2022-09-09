@@ -125,6 +125,20 @@ class BotDb extends DbHelper {
         return this.db.insertOne({type: 'guild', id: id, name: name});
     }
 
+    async fetchGuild(id) {
+        const results = await this.findBy({type: 'guild', id: id});
+        if (results.length > 0) {
+            return results[0];
+        }
+        return null;
+    }
+
+    async updateGuildToken(id, token) {
+        const query = {type: 'guild', id: id};
+        const toUpdate= { $set: {type: 'guild', id: id, token: token} }
+        return this.db.updateOne(query, toUpdate, { upsert: true});
+    }
+
     async addGuilds(guilds) {
         return this.db.insertMany(guilds.map(g => Object.assign({type: 'guild'}, g)));
     }

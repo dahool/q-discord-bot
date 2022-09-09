@@ -1,6 +1,6 @@
 
 const { DateTime } = require("luxon");
-const { ConfigDb, CalendarDb } = require("../db/db");
+const { ConfigDb, CalendarDb, BotDb } = require("../db/db");
 const ical = require('node-ical');
 const cs = require('../values');
 const generator = require('ical-generator');
@@ -52,7 +52,17 @@ loadEvents = async (guild, url, type, connection) => {
 
 }
 
-serveCalendar = async (connection, guild, res) => {
+serveCalendar = async (connection, req, res) => {
+    // validate token
+    const botDb = new BotDb(connection);
+    const guildData = await botDb.fetchGuild(req.query.ID);
+
+    if (!(guildData && guildData.token == req.query.TOKEN)) {
+        console.error("Calendar 404");
+        res.status(404).send('Not found');
+        return;        
+    }
+
     const cal = generator({name: 'Territory Events'});
     const db = new CalendarDb(connection);
 
@@ -60,7 +70,7 @@ serveCalendar = async (connection, guild, res) => {
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({days: 30}).toJSDate()},
         src: { $ne: 'calendar'},
         notified: false,
-        guild: guild
+        guild: guildData.id
     }
 
     const events = await db.findBy(query);

@@ -61,18 +61,13 @@ app.get('/events', function(req, resp) {
 
 app.get('/calendar', function(req ,resp) {
     console.log("Calendar get");
-    if (process.env.SECRET == req.query.TOKEN) {
-        serveCalendar(connectionManager, req.query.ID, resp);
-    } else {
-        console.error("Calendar 404");
-        resp.status(404).send('Not found');
-    }
+    serveCalendar(connectionManager, req, resp);
 });
 
 let loggerDb;
 connectionManager.connect().then(() => {
     bot.start(connectionManager);
-    halbot.start(connectionManager);
+    //halbot.start(connectionManager);
     loggerDb = new LoggerDb(connectionManager);
 
     app.listen(port, () => {

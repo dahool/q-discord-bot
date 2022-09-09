@@ -7,6 +7,8 @@ const cs = require('../values')
 const zones = require('./zones.json');
 const rss = require('./rss.json');
 
+const urlgenerator = require('urlgenerator');
+
 const { extract_role } = require('../utils');
 
 const INTERACTION_TIMEOUT = 60000;
@@ -203,11 +205,22 @@ async function list_all_events(client) {
 
 	calevents.sort((a,b) => a.start - b.start);
 	
+	const botDb = new db.BotDb(client.connection);
+	const guildData = await botDb.fetchGuild(client.guild.id);
+
+	let params = {
+		'TOKEN': encodeURIComponent(guildData.token),
+		'ID': encodeURIComponent(client.guild.id)
+	}
+
+	const url = urlgenerator.createURLwithParameters(process.env.CALENDAR_URL, params);
+
 	const msgEmbed = new Discord.MessageEmbed()
 	.setColor('#e1dad8')
 	.setThumbnail(client.guild ? client.guild.iconURL() : client.client.user.avatarURL())
+	.setURL(url)
 	.setTitle("Territory Events in next 7 days")
-	.setFooter("* calendar events can't be removed by me")
+	.setFooter({text: "* calendar events can't be removed by me"})
 	.setTimestamp();
 
 	groupBy(calevents, u => u.location).forEach((values, key) => {

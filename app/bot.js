@@ -11,6 +11,8 @@ const membersOnline = require('./functions/online');
 const hook = require('./functions/hooksender');
 const cs = require('./values')
 
+const TokenGenerator = require('uuid-token-generator');
+
 var dailies = require('./commands/dailies');
 
 const { MembersDb, ConfigDb, BotDb, connectionManager } = require('./db/db');
@@ -56,8 +58,20 @@ botclient.once('ready', async () => {
 		const filteredroles = guildroles.filter(r => !savedroles.some(s => s.id == r.id)).map(r => { return {id: r.id, name: r.name}});
 		if (filteredroles.length) botDb.addRoles(guildId, filteredroles);
 
+		updateGuildToken(guildId);
 	}
+
 });
+
+updateGuildToken = (guildId) => {
+	botDb.fetchGuild(guildId).then((guild) => {
+		if (guild && !guild.token)	{
+			const tokenGen = new TokenGenerator(256, TokenGenerator.BASE62);
+			const tokenValue = tokenGen.generate();
+			botDb.updateGuildToken(guildId, tokenValue);
+		}
+	})
+}
 
 botclient.on("guildCreate", guild => {
     console.log("Joined: " + guild.name);
@@ -127,7 +141,7 @@ module.exports = {
 		memberDb = new MembersDb(connectionManager);
 		configDb = new ConfigDb(connectionManager);
 		botDb = new BotDb(connectionManager);
-		botclient.login(process.env.MAIA_TOKEN);
+		botclient.login(process.env.Q_TOKEN);
 	},
 	async rotate() {
 		console.log('rotate daily calendar');
