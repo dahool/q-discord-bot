@@ -46,22 +46,28 @@ botclient.once('ready', async () => {
 	if (filtered.length) botDb.addGuilds(filtered);
 	
 	for (const [guildId, guild] of botguilds) {
-		// channels
-		const guildchannels = await guild.channels.fetch();
-		const savedchannels = await botDb.fetchChannels(guildId);
-		const filteredchannels = guildchannels.filter(ch => ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
-		if (filteredchannels.length) botDb.addChannels(guildId, filteredchannels);
-
-		// roles
-		const guildroles = await guild.roles.fetch();
-		const savedroles = await botDb.fetchRoles(guildId);
-		const filteredroles = guildroles.filter(r => !savedroles.some(s => s.id == r.id)).map(r => { return {id: r.id, name: r.name}});
-		if (filteredroles.length) botDb.addRoles(guildId, filteredroles);
-
-		updateGuildToken(guildId);
+		syncGuild(guild);
 	}
 
 });
+
+syncGuild = async (guild) => {
+	console.log("Sync: " + guild.name);
+
+	updateGuildToken(guild.id);
+
+	// channels
+	const guildchannels = await guild.channels.fetch();
+	const savedchannels = await botDb.fetchChannels(guild.id);
+	const filteredchannels = guildchannels.filter(ch => ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
+	if (filteredchannels.length) botDb.addChannels(guild.id, filteredchannels);
+
+	// roles
+	const guildroles = await guild.roles.fetch();
+	const savedroles = await botDb.fetchRoles(guild.id);
+	const filteredroles = guildroles.filter(r => !savedroles.some(s => s.id == r.id)).map(r => { return {id: r.id, name: r.name}});
+	if (filteredroles.length) botDb.addRoles(guild.id, filteredroles);
+}
 
 updateGuildToken = (guildId) => {
 	botDb.fetchGuild(guildId).then((guild) => {
@@ -75,7 +81,9 @@ updateGuildToken = (guildId) => {
 
 botclient.on("guildCreate", guild => {
     console.log("Joined: " + guild.name);
-	botDb.addGuild(guild.id, guild.name);
+	botDb.addGuild(guild.id, guild.name).then(() => {
+		syncGuild(guild);
+	});
 })
 
 botclient.on("guildDelete", guild => {

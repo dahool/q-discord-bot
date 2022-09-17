@@ -218,7 +218,7 @@ async function list_all_events(client) {
 	const msgEmbed = new Discord.MessageEmbed()
 	.setColor('#e1dad8')
 	.setThumbnail(client.guild ? client.guild.iconURL() : client.client.user.avatarURL())
-	.setURL(url)
+	.setURL(url + '&nocache')
 	.setTitle("Territory Events in next 7 days")
 	.setFooter({text: "* calendar events can't be removed by me"})
 	.setTimestamp();
