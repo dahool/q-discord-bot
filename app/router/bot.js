@@ -52,7 +52,7 @@ calendarView = (req, res) => {
 
 routerSetup = (app) => {
 
-    app.get('/q', (req, resp) => {
+    app.get('/', (req, resp) => {
         resp.send("OK");
     });
     

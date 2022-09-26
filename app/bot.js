@@ -124,7 +124,7 @@ botclient.on("roleUpdate", async (oldrole, newrole) => {
 
 botclient.on('presenceUpdate', async (oldMember, newMember) => {
 	if (!newMember.user.bot && newMember.status != 'offline') {
-		memberDb.updateOnline(newMember.guild.members.cache.get(newMember.user.id));
+		db.members.updateOnline(newMember.guild.members.cache.get(newMember.user.id));
 	}
 })
 
