@@ -3,13 +3,11 @@ const { DateTime } = require('luxon');
 const { statusKey } = require('../config.json');
 const { build_diplomacy } = require('./diplomacy');
 const cs = require('../values')
-const db = require('../db/db');
+const { db } = require('../db/db');
 
 class AllianceStatus {
 
-	constructor(connection, status, cmd) {
-		this.allianceDB = new db.AllianceDb(connection);
-		this.config = new db.ConfigDb(connection);
+	constructor(status, cmd) {
 		this.status = status;
 		this.cmd = cmd;
 	}
@@ -28,10 +26,10 @@ class AllianceStatus {
 		const eventID = "AL" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
 		const event = {uuid: eventID, reason: reason, status: status, officer: client.member.user.id, time: DateTime.utc().toJSDate() };
 
-		this.allianceDB.findOne(guild, alliance).then(ob => {
+		db.alliance.findOne(guild, alliance).then(ob => {
 			const newOb = Object.assign({events: []}, ob, {status: status})
 			newOb.events.push(event);
-			this.allianceDB.push(guild, alliance, newOb);
+			db.alliance.push(guild, alliance, newOb);
 		});
 
 		const confirm = new Discord.MessageEmbed()
@@ -50,14 +48,14 @@ class AllianceStatus {
 			confirm.addField('Reason', reason);
 		}
 
-		this.config.findOne(guild, cs.ANNOUNCE_CHANNEL).then(cfg => {
+		db.config.findOne(guild, cs.ANNOUNCE_CHANNEL).then(cfg => {
 			if (cfg) {
 				const announcement = client.guild.channels.cache.get(cfg.channel);
 				if (announcement) client.sendTo(announcement, confirm);
 			}
 		})
 
-		this.config.findOne(guild, cs.DIPLOMACY_CHANNEL).then(cfg => {
+		db.config.findOne(guild, cs.DIPLOMACY_CHANNEL).then(cfg => {
 			if (cfg) {
 				const channel = client.guild.channels.cache.get(cfg.channel);
 				if (channel) {

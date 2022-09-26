@@ -1,6 +1,3 @@
-const dotenv = require('dotenv');
-dotenv.config();
-
 const fs = require('fs');
 const Discord = require('discord.js');
 
@@ -9,17 +6,15 @@ const { Routes } = require('discord-api-types/v9');
 
 const { Client, Permissions } = require('discord.js');
 
-const { ConfigDb, LoggerDb } = require('./db/db');
-
 const { safeTrim, extract_channel, extract_role, extract_user } = require('./utils');
 const { MESSAGES } = require('./messages');
+const { db } = require('./db/db');
 
 class BotClient {
 	
-	constructor(client, message, member, guild, channel, connectionManager, isAdmin, isManager, interaction) {
+	constructor(client, message, member, guild, channel, isAdmin, isManager, interaction) {
 		this.client = client;
 		this.interaction = interaction;
-		this.connection = connectionManager;
 		this.member = member;
 		this.guild = guild;
 		this.channel = channel;
@@ -174,10 +169,10 @@ class BotClient {
 
 class BotCommander {
 	
-	constructor(connectionManager, intents, options) {
+	constructor(intents, options) {
 		this.client = new Client({ intents: intents, partials: ['CHANNEL']});
 
-		this.connectionManager = connectionManager;
+		this.connectionManager = void 0;
 		this.client.commands = new Discord.Collection();
 		this.options = Object.assign({commandsDir: null, prefix: '!'}, options)
 		this._initialize();
@@ -344,13 +339,13 @@ class BotCommander {
 
 		if (!command) return;
 
-		const roles = (await this.configDb.findOne(guild.id, "roles", "roles")) || [];
+		const roles = (await db.config.findOne(guild.id, "roles", "roles")) || [];
 		const isAdmin = member.permissions.has([Permissions.FLAGS.ADMINISTRATOR,Permissions.FLAGS.MANAGE_GUILD]);
 		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r.id) );
 		
     	console.debug("Command: " + commandName +  " - IsManager: " + isManager);
 
-		const bc = new BotClient(this.client, message, member, guild, channel, this.connectionManager, isAdmin, isManager, interaction);
+		const bc = new BotClient(this.client, message, member, guild, channel, isAdmin, isManager, interaction);
 
 		if (channel.type == "DM" && command.dm === false) {
 			return bc.reply(MESSAGES.denied_dm);
@@ -385,7 +380,7 @@ class BotCommander {
 		} catch (error) {
 			bc.reply(MESSAGES.error);
 			console.error(error);
-			this.loggerDb.error(error);
+			db.logger.error(error);
 		}
 		
 	}
@@ -417,10 +412,12 @@ class BotCommander {
 	}
 	
 	login = (tokenId) => {
-		this.configDb = new ConfigDb(this.connectionManager);
-		this.loggerDb = new LoggerDb(this.connectionManager);
 		this.tokenId = tokenId;
 		return this.client.login(tokenId);
+	}
+
+	stop = () => {
+		this.client.destroy();
 	}
 
 	on = (event, callback) => {

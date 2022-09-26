@@ -1,15 +1,13 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
 const { safeLower, groupBy, toRelative, asTimeRelative, asTimeFormat } = require('../utils');
-const db = require('../db/db');
+const { db } = require('../db/db');
 const cs = require('../values')
 
 const zones = require('./zones.json');
 const rss = require('./rss.json');
 
-const urlgenerator = require('urlgenerator');
-
-const { extract_role } = require('../utils');
+const { extract_role, createURLwithParameters } = require('../utils');
 
 const INTERACTION_TIMEOUT = 60000;
 
@@ -61,17 +59,15 @@ async function add_event(connection, guild, time, title, location, recurrent, me
 			times.push(time.toJSDate());
 		} while (times.length < 24)
 	}
-	const calendar = new db.CalendarDb(connection);
-	const zevent = new db.ZoneEventsDb(connection);
-
+	
 	times.forEach((tm, index) => {
-		calendar.insert([{guild: guild, type: cs.TERRITORY_CHANNEL, uid: eventID, recurrence: index, summary: title, location: location, start: tm, description: '', notified: false, mentions: mentions}]);
+		db.calendar.insert([{guild: guild, type: cs.TERRITORY_CHANNEL, uid: eventID, recurrence: index, summary: title, location: location, start: tm, description: '', notified: false, mentions: mentions}]);
 	})
 
-	var zoneevent = await zevent.findOne(guild, location) || {events: []};
+	var zoneevent = await db.zoneEvents.findOne(guild, location) || {events: []};
 	zoneevent.events.push({id: eventID, title: title, last: times[times.length-1]})
 
-	return zevent.push(guild, location, zoneevent);
+	return db.zoneEvents.push(guild, location, zoneevent);
 }
 
 async function create_event(client, zone, title, recurrent, mentions) {
@@ -81,7 +77,7 @@ async function create_event(client, zone, title, recurrent, mentions) {
 	} else {
 		content = "Created a one time reminder `" + title + "` for zone `" + zone.zone + "` on " + asTimeFormat(zone.next);
 	}
-	return add_event(client.connection, client.guild.id, zone.next, title, zone.zone, recurrent, mentions).then(() => {
+	return add_event(client.guild.id, zone.next, title, zone.zone, recurrent, mentions).then(() => {
 		client.edit(content, true);
 	});
 }
@@ -143,10 +139,8 @@ async function handle_tag(client, zone) {
 }
 
 async function handle_deltag(client, zone) {
-	const zevent = new db.ZoneEventsDb(client.connection);
-	const calendar = new db.CalendarDb(client.connection);
 
-	const ze = await zevent.findOneBy({
+	const ze = await db.zoneEvents.findOneBy({
 		guild: client.guild.id,
 		uuid: zone.zone,
 		events: { $elemMatch: {last: { $gte: DateTime.utc().toJSDate() }} }
@@ -169,8 +163,8 @@ async function handle_deltag(client, zone) {
 					m.reply("Sorry, can't find event `" + m.content + "`. Try again.").then(m => messages.push(m) );
 				} else {
 					ze.events = ze.events.filter(e => ev.id != e.id);
-					calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: ev.id});
-					zevent.push(client.guild.id, zone.zone, ze);
+					db.calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: ev.id});
+					db.zoneEvents.push(client.guild.id, zone.zone, ze);
 					client.edit(`Event \`${ev.title}\` deleted`, true);
 					collector.stop('done');
 				}
@@ -191,12 +185,10 @@ async function handle_deltag(client, zone) {
 }
 
 async function list_all_events(client) {
-	const calendar = new db.CalendarDb(client.connection);
-
 	const fromDate = DateTime.utc().toJSDate();
 	const toDate = DateTime.utc().plus({days: 7}).toJSDate();
 
-	const calevents = await calendar.findBy({
+	const calevents = await db.calendar.findBy({
 		guild: client.guild.id,
 		type: cs.TERRITORY_CHANNEL,
 		notified: false,
@@ -205,15 +197,14 @@ async function list_all_events(client) {
 
 	calevents.sort((a,b) => a.start - b.start);
 	
-	const botDb = new db.BotDb(client.connection);
-	const guildData = await botDb.fetchGuild(client.guild.id);
+	const guildData = await db.bot.fetchGuild(client.guild.id);
 
 	let params = {
 		'TOKEN': encodeURIComponent(guildData.token),
 		'ID': encodeURIComponent(client.guild.id)
 	}
 
-	const url = urlgenerator.createURLwithParameters(process.env.CALENDAR_URL, params);
+	const url = createURLwithParameters(process.env.CALENDAR_URL, params);
 
 	const msgEmbed = new Discord.MessageEmbed()
 	.setColor('#e1dad8')
@@ -238,16 +229,13 @@ async function list_all_events(client) {
 }
 
 async function list_events(client, zone) {
-	const zevent = new db.ZoneEventsDb(client.connection);
-	const calendar = new db.CalendarDb(client.connection);
-
-	const zevents = zevent.findOneBy({
+	const zevents = db.zoneEvents.findOneBy({
 		guild: client.guild.id,
 		uuid: zone.zone,
 		events: { $elemMatch: {last: { $gte: DateTime.utc().toJSDate() }} }
 	});
 
-	const calevents = await calendar.findBy({
+	const calevents = await db.calendar.findBy({
 		guild: client.guild.id,
 		location: zone.zone,
 		type: cs.TERRITORY_CHANNEL,
@@ -380,18 +368,11 @@ module.exports = {
 
 		const today = DateTime.utc();
 		zones.sort((a,b) => a.next - b.next).forEach(z => {
-			/*
-			const estTime = z.next.setZone('America/New_York').toFormat('ccc, h:mma ZZZZ');
-			const cstTime = z.next.setZone('America/Chicago').toFormat('ccc, h:mma ZZZZ');
-			const pstTime = z.next.setZone('America/Los_Angeles').toFormat('ccc, h:mma ZZZZ');
-			const mstTime = z.next.setZone('America/Denver').toFormat('ccc, h:mma ZZZZ');
-			*/
 			var content = "`Particle:` <" + rssMap.get(z.particle) + "> " + z.particle + "\n";
 			content+= "`Type:` " + z.type + "\n";
 			content+= "`Resources:` " + z.rss.map(i => '<' + rssMap.get(i) + '>').join(' ') + "\n";
 			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
-			//content+= "`Takeover Time:` [" + asTimeFormat(z.next) + "]("+ get_link(z.zone, z.next) + ")\n";
-                        content+= "`Takeover Time:` " + asTimeFormat(z.next) + "\n"; 
+            content+= "`Takeover Time:` " + asTimeFormat(z.next) + "\n"; 
 			content+= "`Next:` **" + asTimeRelative(z.next) + "**";
 			
 			msgEmbed.addField(z.zone, content);

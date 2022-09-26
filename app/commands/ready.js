@@ -1,5 +1,5 @@
 const cs = require('../values')
-const db = require('../db/db');
+const { db } = require('../db/db');
 
 module.exports = {
 	name: 'ready',
@@ -8,13 +8,11 @@ module.exports = {
 	description: 'Self check',
 	async execute(client, args) {
 		
-		const configDb = new db.ConfigDb(client.connection);
-
 		const errors = new Set();
 		
 		for (const cv in cs) {
 			const key = cs[cv];
-			const cfg = await configDb.findOne(client.guild.id, key);
+			const cfg = await db.config.findOne(client.guild.id, key);
 			if (cfg) {
 				const r = await client.testChannel(client.guild.channels.cache.get(cfg.channel));
 				if (r) {

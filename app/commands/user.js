@@ -1,4 +1,4 @@
-const db = require('../db/db');
+const { db } = require('../db/db');
 const { DateTime } = require('luxon');
 const utils = require('../utils');
 const Discord = require('discord.js');
@@ -22,8 +22,7 @@ module.exports = {
 	}],
 	description: 'Get user profile',
 	async execute(client, args) {
-		const memberDb = new db.MembersDb(client.connection);
-		const member = await memberDb.findOneBy({ gid: args.user, guild: client.guild.id })
+		const member = await db.member.findOneBy({ gid: args.user, guild: client.guild.id })
 
 		const user = client.guild.members.cache.get(args.user);
 

@@ -1,11 +1,10 @@
 const Discord = require('discord.js');
 const { statusKey } = require('../config.json');
-const db = require('../db/db');
+const { db } = require('../db/db');
 const { groupBy } = require('../utils')
 
 build_diplomacy = async(client) => {
-	const al = new db.AllianceDb(client.connection);
-	var list = await al.findBy({guild: client.guild.id, status: {$ne: statusKey.NEUTRAL.name}});
+	var list = await db.alliance.findBy({guild: client.guild.id, status: {$ne: statusKey.NEUTRAL.name}});
 	if (list.length == 0) {
 		return `${client.guild.name} doesn't have diplomatic relationships with any alliance`
 	}

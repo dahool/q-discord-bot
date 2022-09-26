@@ -140,7 +140,28 @@ toRelative = (dateTime) => {
     return s.toString()
 }
 
+function isEmpty(obj){
+    return (Object.keys(obj).length === 0 && JSON.stringify(obj) === JSON.stringify({}));
+}
+  
+createURLwithParameters = (baseURL,parameters) => {
+    if(!isEmpty(parameters)){
+        var obj = parameters;
+        var cnt = 0;
+        for (var prop in obj) {
+            if( cnt == 0 ) 
+            baseURL = baseURL.concat('?',prop,'=',obj[prop]);
+            else
+            baseURL = baseURL.concat('&',prop,'=',obj[prop]); 
+            cnt++;         
+        }
+    }
+    return baseURL;
+}
+
 module.exports = {
+    createURLwithParameters,
+    isEmpty,
 	groupBy,
 	randomColor,
     safeLower,

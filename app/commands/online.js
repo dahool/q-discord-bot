@@ -1,5 +1,5 @@
 const { DateTime } = require('luxon');
-const db = require('../db/db');
+const { db } = require('../db/db');
 
 module.exports = {
 	name: 'online',
@@ -8,9 +8,8 @@ module.exports = {
 	slash: false,
 	private: true,
 	async execute(client, args) {
-		const memberDb = new db.MembersDb(client.connection);
 		let content = [];
-		var list = await memberDb.findBy({ guild: client.guild.id })
+		var list = await db.members.findBy({ guild: client.guild.id })
 		list.sort((a, b) => b.lastOnline - a.lastOnline).forEach((member) => {
 			const time = DateTime.fromJSDate(member.lastOnline).setLocale('en').toRelative();
 			content.push("> " + member.displayName || member.userName + " \u0009 `" + time + "`");
