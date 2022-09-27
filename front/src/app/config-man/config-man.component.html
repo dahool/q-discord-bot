@@ -1,0 +1,15 @@
+<div class="message-container text-center">
+  <alerts [config]="{timeout: 5000, dismissOnNavigate: true, dismissible: false}"></alerts>
+</div>
+
+<div class="list-group mt-5 mb-4">
+    <a (click)="select(cfg)" *ngFor="let cfg of configTypes" class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{cfg.description}}</h5>
+      </div>
+    </a>
+</div>
+
+<ng-container *ngIf="currentType">
+<app-config-editor [config]="currentType" [id]="currentId"></app-config-editor>
+</ng-container>

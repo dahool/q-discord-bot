@@ -4,12 +4,15 @@ const bot = require('./bot')
 
 const { connectionManager } = require('./db/db');
 
+const serverRouter = require('./router/server');
 const botRouter = require('./router/bot');
 
 const app = express()
 app.use(express.json());
 app.use(favicon('public/favicon.ico'));
+app.use(express.static('static'))
 
+serverRouter.routerSetup(app);
 botRouter.routerSetup(app);
 
 const port = process.env.WEB_PORT || 3000;

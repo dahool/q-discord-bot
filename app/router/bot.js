@@ -1,5 +1,8 @@
 const bot = require('../bot')
 const { db } = require('../db/db');
+const { isPresent } = require('../utils');
+
+const ENV_VARS = ['Q_TOKEN','DBCONN','DBNAME','CALENDAR_URL','DASHBOARD_URL'];
 
 notifyView = (req, resp) => {
     console.log("notify")
@@ -49,10 +52,19 @@ calendarView = (req, res) => {
     serveCalendar(req, res);
 }
 
+checkEnvironment = () => {
+    ENV_VARS.forEach(v => {
+        if (!isPresent(process.env[v])) {
+            throw new Error('Missing ' + v);
+        }
+    })
+}
 
 routerSetup = (app) => {
 
-    app.get('/', (req, resp) => {
+    checkEnvironment();
+
+    app.get('/q', (req, resp) => {
         resp.send("OK");
     });
     

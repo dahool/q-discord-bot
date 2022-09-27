@@ -1,0 +1,11 @@
+<div class="list-group mt-5" *ngIf="servers">
+    <h3 class="text-center">Please select a server</h3>
+    <ng-container *ngFor="let server of servers">
+    <a [routerLink]="['config', {'id': server.id}]" class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">{{server.name}}</h5>
+        <img src="{{server.icon}}" width="128px" height="128px">
+      </div>
+    </a>
+    </ng-container>
+</div>

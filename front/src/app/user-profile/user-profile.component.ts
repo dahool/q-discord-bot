@@ -1,0 +1,21 @@
+import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { AppService } from '../service/app-services.service';
+
+@Component({
+  selector: 'app-user-profile',
+  templateUrl: './user-profile.component.html'
+})
+export class UserProfileComponent implements OnInit {
+
+  user: any = null;
+
+  constructor(private service: AppService) { }
+
+  ngOnInit(): void {
+    this.service.getProfile().subscribe(u => {
+      this.user = u;
+    })
+  }
+
+}

@@ -86,6 +86,10 @@ function safeTrim(value) {
     return value;
 }
 
+function isPresent(value) {
+    return value != undefined && value != null;
+}
+
 function groupBy(list, keyGetter) {
     const map = new Map();
     list.forEach((item) => {
@@ -178,5 +182,6 @@ module.exports = {
     asUser,
     asTimeRelative,
     asTimeFormat,
-    randomId
+    randomId,
+    isPresent
 };

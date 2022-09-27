@@ -21,7 +21,13 @@ jobs:
       with:
         node-version: '16.x'
 
-    - name: npm install
+    - name: Build frontend
+      working-directory: ./front
+      run: |
+        npm install
+        npm run build
+
+    - name: Install bot app
       working-directory: ./app
       run: |
         npm install
