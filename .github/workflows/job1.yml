@@ -30,7 +30,7 @@ jobs:
     - name: Install bot app
       working-directory: ./app
       run: |
-        npm install
+        npm install --omit=dev
 
     - name: Zip artifact for deployment
       working-directory: ./app

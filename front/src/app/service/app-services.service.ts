@@ -1,11 +1,9 @@
-import { Observable, of } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
-import { Channel, Role, UserServer } from './models';
+import { Channel, Role, Server, UserServer } from './models';
 
 const API_URL = '';
 
@@ -29,7 +27,11 @@ export class AppService extends BaseService {
   listRoles(id: string): Observable<Role[]> {
     return this.executeGet('roles/' + id);
   }
-  
+
+  getServer(id: string): Observable<Server> {
+    return this.executeGet('server/' + id);
+  }
+
   loadConfig(server: string, configId: string): Observable<any> {
     return this.executeGet('config/' + server + '/' + configId);
   }

@@ -3,6 +3,11 @@
 </div>
 
 <div class="list-group mt-5 mb-4">
+    <div class="d-flex mt-1 mb-2">
+      <img src="{{server.icon}}" width="32px" height="32px">&nbsp;
+      <h5>{{server.name}}</h5>
+    </div>
+
     <a (click)="select(cfg)" *ngFor="let cfg of configTypes" class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">{{cfg.description}}</h5>

@@ -14,3 +14,9 @@ export class Role {
     id?: string;
     name?: string;
 }
+
+export class Server {
+    id?: string;
+    name?: string;
+    icon?: string;
+}

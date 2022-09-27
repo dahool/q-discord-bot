@@ -41,6 +41,9 @@ viewUser = (req, res) => {
             username: user.username,
             icon: user.avatarURL({size: 128, format: 'webp'})
         })
+    }).catch((e) => {
+        console.log(e);
+        res.send({});
     })
 }
 
@@ -57,6 +60,24 @@ viewServers = (req, res) => {
                 }
             }))
         })
+    }).catch((e) => {
+        console.log(e);
+        res.send({});
+    })
+}
+
+// '/api/server/:id'
+viewGetServer = (req, res) => {
+    client.getGuilds(req.session.token.accessToken).then((guilds) => {
+        const guild = guilds.find(g => g.id == req.params.id)
+        res.send({
+            id: guild.id,
+            name: guild.name,
+            icon: guild.iconURL({size: 128, format: 'webp'})
+        })
+    }).catch((e) => {
+        console.log(e);
+        res.send({});
     })
 }
 
@@ -184,6 +205,7 @@ routerSetup = (app) => {
 
     app.get('/api/user', viewUser);
     app.get('/api/servers', viewServers);
+    app.get('/api/server/:id', viewGetServer);
     app.get('/api/channels/:id', viewChannels);
     app.get('/api/roles/:id', viewRoles);
     app.get('/api/config/:server/:config', viewLoadConfig);
