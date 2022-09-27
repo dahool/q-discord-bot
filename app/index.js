@@ -1,81 +1,32 @@
 const express = require('express')
 const favicon = require('serve-favicon');
 const bot = require('./bot')
-//const halbot = require('./halbot');
+
+const { connectionManager } = require('./db/db');
+
+const serverRouter = require('./router/server');
+const botRouter = require('./router/bot');
 
 const app = express()
 app.use(express.json());
 app.use(favicon('public/favicon.ico'));
+app.use(express.static('static'))
 
-const connectionManager = require('./db/db').connectionManager;
-const { LoggerDb } = require('./db/db');
+serverRouter.routerSetup(app);
+botRouter.routerSetup(app);
 
-const port = process.env.PORT || 3000;
+const port = process.env.WEB_PORT || 3000;
 
-app.get('/', function(req, resp) {
-    resp.send("OK");
-})
-
-app.get('/notify', function(req, resp) {
-    console.log("notify")
-    const num = req.query.number || 30;
-    bot.announce(num).then(() => resp.send("OK"))
-    .catch((error) => {
-        resp.send(error);
-        loggerDb.error(error);
+process.on('SIGINT', function() {
+    bot.stop();
+    connectionManager.close().then(() => {
+        process.exit(0);
     });
 });
 
-app.get('/load', function(req, resp) {
-    bot.loadEvents().then(() => resp.send("OK"))
-    .catch((error) => {
-        resp.send(error);
-        loggerDb.error(error);
-    });
-});
-
-app.get('/online', function(req, resp) {
-    bot.online().then(() => resp.send("OK"))
-    .catch((error) => {
-        resp.send(error);
-        loggerDb.error(error);
-    });
-});
-
-app.get('/rotate', function(req, resp) {
-    bot.rotate().then((r) => resp.send("OK " + r))
-    .catch((error) => {
-        resp.send(error);
-        loggerDb.error(error);
-    });
-});
-
-app.get('/events', function(req, resp) {
-    const num = req.query.number || 0;
-    bot.events(num).then((r) => resp.send("OK"))
-    .catch((error) => {
-        resp.send(error);
-        loggerDb.error(error);
-    });
-});
-
-app.get('/calendar', function(req ,resp) {
-    console.log("Calendar get");
-    if (process.env.SECRET == req.query.TOKEN) {
-        serveCalendar(connectionManager, req.query.ID, resp);
-    } else {
-        console.error("Calendar 404");
-        resp.status(404).send('Not found');
-    }
-});
-
-let loggerDb;
 connectionManager.connect().then(() => {
-    bot.start(connectionManager);
-    //halbot.start(connectionManager);
-    loggerDb = new LoggerDb(connectionManager);
-
+    bot.start();
     app.listen(port, () => {
-        console.log("Ready on port " + port);
-    })    
+        console.log("Web Listener Ready on port " + port);
+    })
 })

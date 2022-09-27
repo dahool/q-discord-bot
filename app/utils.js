@@ -88,6 +88,10 @@ function safeTrim(value) {
     return value;
 }
 
+function isPresent(value) {
+    return value != undefined && value != null;
+}
+
 function groupBy(list, keyGetter) {
     const map = new Map();
     list.forEach((item) => {
@@ -142,7 +146,28 @@ toRelative = (dateTime) => {
     return s.toString()
 }
 
+function isEmpty(obj){
+    return (Object.keys(obj).length === 0 && JSON.stringify(obj) === JSON.stringify({}));
+}
+  
+createURLwithParameters = (baseURL,parameters) => {
+    if(!isEmpty(parameters)){
+        var obj = parameters;
+        var cnt = 0;
+        for (var prop in obj) {
+            if( cnt == 0 ) 
+            baseURL = baseURL.concat('?',prop,'=',obj[prop]);
+            else
+            baseURL = baseURL.concat('&',prop,'=',obj[prop]); 
+            cnt++;         
+        }
+    }
+    return baseURL;
+}
+
 module.exports = {
+    createURLwithParameters,
+    isEmpty,
 	groupBy,
 	randomColor,
     safeLower,
@@ -159,5 +184,6 @@ module.exports = {
     asUser,
     asTimeRelative,
     asTimeFormat,
-    randomId
+    randomId,
+    isPresent
 };

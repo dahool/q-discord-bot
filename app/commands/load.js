@@ -9,7 +9,7 @@ module.exports = {
 	admin: true,
 	async execute(client, args) {
 		client.clear();
-		const r = calendar.execute(client.connection).then(r => client.reply(r, true));
+		const r = calendar.execute().then(r => client.reply(r, true));
 		return r;
 	}
 };

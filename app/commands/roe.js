@@ -1,6 +1,6 @@
 const { statusKey } = require('../config.json');
 const { randomId } = require('../utils')
-const db = require('../db/db');
+const { db } = require('../db/db');
 const { DateTime } = require('luxon');
 const Discord = require('discord.js');
 const { ApplicationCommandOptionType } = require('discord.js');
@@ -23,13 +23,11 @@ module.exports = {
 		required: true
 	}],
 	async execute(client, args) {
-		const allianceDB = new db.AllianceDb(client.connection);
-
 		const guild = client.guild.id;
 		const tag = args.tag.toUpperCase();
 		const reason = args.event;
 
-		var allianceInfo = await allianceDB.findOne(guild, tag);
+		var allianceInfo = await db.alliance.findOne(guild, tag);
 		var status = statusKey.NEUTRAL.name;
 
 		if (allianceInfo !== undefined) {
@@ -39,7 +37,7 @@ module.exports = {
 		const eventID = randomId("ROE")
 		const event = {uuid: eventID, reason: reason, officer: client.member.user.id, time: DateTime.utc().toJSDate() };
 
-		allianceDB.findOne(guild, tag).then(ob => {
+		db.alliance.findOne(guild, tag).then(ob => {
 			const newOb = Object.assign({roe: []}, ob, {status: status})
 			newOb.roe.push(event);
 			allianceDB.push(guild, tag, newOb);

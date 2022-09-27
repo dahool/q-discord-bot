@@ -1,12 +1,9 @@
-const dotenv = require('dotenv');
-dotenv.config();
-
 const Discord = require('discord.js');
 const { DateTime, Settings } = require('luxon');
 const { groupBy, asTimeRelative } = require('../utils')
 const cs = require('../values')
-const db = require('../db/db');
 const { ApplicationCommandOptionType } = require('discord.js');
+const { db } = require('../db/db');
 
 const dailies = require('./dailies.json');
 const { dailiesMax, dailiesPart } = require('../config.json');
@@ -85,10 +82,9 @@ function endTime(rotation, zone) {
 	return DateTime.local().set({hour: zone.start.substr(0,2), minute: zone.start.substr(2,2)}).plus({hours: zone.duration})
 }
 
-async function notify(connection, section, client, rotate) {
-	const config = new db.ConfigDb(connection);
+async function notify(section, client, rotate) {
 	general = await getCurrentRotation(client);
-	config.findBy({uuid: cs.DAILY_CHANNEL}).then(guilds => {
+	db.config.findBy({uuid: cs.DAILY_CHANNEL}).then(guilds => {
 		if (rotate) rotateInPlace(general);
 		dailies.filter(z => z.day == general.rotation && z.start == section)
 			.forEach((z) => {
@@ -119,9 +115,8 @@ function rotateInPlace(general) {
 	general.rotationDay = DateTime.local().toFormat(ROT_FORMAT);
 }
 
-async function rotate(connection) {
-    const config = new db.ConfigDb(connection);
-    var general = await config.getCommon("general") || {'rotation': 1};
+async function rotate() {
+    var general = await db.config.getCommon("general") || {'rotation': 1};
 	rotateInPlace(general);
     config.pushCommon("general", general);
     return general;
@@ -130,8 +125,7 @@ async function rotate(connection) {
 async function getCurrentRotation(client) {
 	const currentDay = DateTime.local().toFormat(ROT_FORMAT);
 	//return dayRotation.find(v => v.rotationDay == currentDay);
-	const dDb = new db.DailiesDb(client.connection);
-	return await dDb.findByDay(currentDay);
+	return await db.dailies.findByDay(currentDay);
 }
 
 module.exports = {

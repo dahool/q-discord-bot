@@ -1,6 +1,6 @@
 
 const { DateTime } = require("luxon");
-const { ConfigDb, CalendarDb } = require("../db/db");
+const { db } = require("../db/db");
 const ical = require('node-ical');
 const cs = require('../values');
 const generator = require('ical-generator');
@@ -22,13 +22,11 @@ processRecurrentEvent = (ev) => {
     return events;
 }
 
-loadEvents = async (guild, url, type, connection) => {
+loadEvents = async (guild, url, type) => {
     console.log("load " + url);
     const data = await ical.async.fromURL(url);
 
-    const calendar = new CalendarDb(connection);
-
-    await calendar.delete({guild: guild, type: type, src: 'calendar'});
+    await db.calendar.delete({guild: guild, type: type, src: 'calendar'});
 
     for (let k in data) {
         if (data.hasOwnProperty(k)) {
@@ -38,12 +36,12 @@ loadEvents = async (guild, url, type, connection) => {
                     const events = processRecurrentEvent(ev);
                     if (events.length > 0) {
                         console.log(events);
-                        await calendar.insert(events.map(e => Object.assign({}, e, {guild: guild, type: type, src: 'calendar'})));
+                        await db.calendar.insert(events.map(e => Object.assign({}, e, {guild: guild, type: type, src: 'calendar'})));
                     }
                 } else {
                     if (DateTime.fromJSDate(ev.start) > DateTime.local()) {
                         console.log(ev);
-                        await calendar.insert([{guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'}]);
+                        await db.calendar.insert([{guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'}]);
                     }
                 }
             }
@@ -52,18 +50,26 @@ loadEvents = async (guild, url, type, connection) => {
 
 }
 
-serveCalendar = async (connection, guild, res) => {
+serveCalendar = async (req, res) => {
+    // validate token
+    const guildData = await db.bot.fetchGuild(req.query.ID);
+
+    if (!(guildData && guildData.token == req.query.TOKEN)) {
+        console.error("Calendar 404");
+        res.status(404).send('Not found');
+        return;        
+    }
+
     const cal = generator({name: 'Territory Events'});
-    const db = new CalendarDb(connection);
 
     const query = {
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({days: 30}).toJSDate()},
         src: { $ne: 'calendar'},
         notified: false,
-        guild: guild
+        guild: guildData.id
     }
 
-    const events = await db.findBy(query);
+    const events = await db.calendar.findBy(query);
 
     events.forEach(event => {
         cal.createEvent({
@@ -79,14 +85,11 @@ serveCalendar = async (connection, guild, res) => {
 
 module.exports = {
     serveCalendar,
-	async execute(connection) {
-        const config = new ConfigDb(connection);
-
-        const configs = await config.findBy({uuid: 'territory_events'});
+	async execute() {
+        const configs = await db.config.findBy({uuid: 'territory_events'});
         configs.forEach(ev => {
-            loadEvents(ev.guild, ev.url, cs.TERRITORY_CHANNEL, connection);
+            loadEvents(ev.guild, ev.url, cs.TERRITORY_CHANNEL);
         });
-
         return "Processed calendars: " + configs.length;
 	},
 };

@@ -21,7 +21,7 @@ module.exports = {
 		required: true
 	}],
 	async execute(client, args) {
-		const as = new AllianceStatus(client.connection, statusKey.HOSTILE, this.name);
+		const as = new AllianceStatus(statusKey.HOSTILE, this.name);
 		as.execute(client, args);
 	}
 };

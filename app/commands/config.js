@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const db = require('../db/db');
+const { db } = require('../db/db');
 const cs = require('../values')
 const { ApplicationCommandOptionType, ButtonStyle } = require('discord.js');
 
@@ -46,8 +46,8 @@ module.exports = {
 				.addComponents(
 					new Discord.ButtonBuilder()
 						.setLabel('Web Config Dashboard')
-						.setURL('https://dashqb.herokuapp.com/')
-						.setStyle(ButtonStyle.Link),
+						.setStyle(ButtonStyle.Link)
+						.setURL(process.env.DASHBOARD_URL)
 				);
 
 			return client.reply(msgEmbed, false, [row]);
@@ -61,8 +61,7 @@ module.exports = {
 				return client.reply(`Sorry, unknown command \`${commandName}\``);
 			}
 
-			const configDb = new db.ConfigDb(client.connection);
-			const response = await command.execute(configDb, client, args[commandName]);
+			const response = await command.execute(db.config, client, args[commandName]);
 			
 			if (isPromise(response)) return response;
 

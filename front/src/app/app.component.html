@@ -1,0 +1,14 @@
+<div class="container-fluid fixed-top bg-secondary p-2">
+  <app-user-profile></app-user-profile>
+</div>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-circus" [fullScreen] = "true"><p style="color: white" > Loading... </p></ngx-spinner>
+
+<div class="fixed-bottom" style="width: 65px;">
+  <a class="navbar-brand" href="#">
+    <img src="/assets/q.webp" alt="Q" width="64" height="71" class="d-inline-block float-end mb-2">
+  </a>
+</div>

@@ -16,7 +16,7 @@ module.exports = {
 		required: true
 	}],
 	async execute(client, args) {
-		const as = new AllianceStatus(client.connection, statusKey.NEUTRAL, this.name);
+		const as = new AllianceStatus(statusKey.NEUTRAL, this.name);
 		as.execute(client, args);
 	}
 };

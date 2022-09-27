@@ -1,9 +1,9 @@
-const dotenv = require('dotenv');
-dotenv.config();
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient, ObjectId }  = require('mongodb');
 const { DateTime } = require('luxon');
 
 class ConnectionManager {
+
+    connectListeners = [];
 
     constructor() {
         this.client = new MongoClient(process.env.DBCONN, {
@@ -18,13 +18,22 @@ class ConnectionManager {
             console.log("Database connected");
             this._db = this.client.db(process.env.DBNAME);
         }
+        this.connectListeners.forEach((fn) => fn(this));
         return this._db;
+    }
+
+    onConnect(fn) {
+        this.connectListeners.push(fn);
     }
 
     getConnection() {
         return this._db;
     }
 
+    async close() {
+        return this.client.close();
+    }
+    
 }
 
 class DbHelper {
@@ -107,6 +116,33 @@ class ConfigDb extends DbHelper {
     constructor(connection) {
         super(connection, "config");
     }
+    
+    async push(guild, uuid, id, data) {
+        const query = { guild: guild, uuid: uuid }
+        if (id) {
+            query['_id'] = new ObjectId(id);
+        }
+        const mergedData = Object.assign({}, data, query);
+        if (id) {
+            const toInsert= { $set: mergedData }
+            console.log(toInsert);
+            return this.db.updateOne(query, toInsert, { upsert: true});
+        } else {
+            console.log(mergedData);
+            return this.db.insertOne(mergedData);
+        }
+    }    
+
+    async find(guild, uuid) {
+        const query = { guild: guild, uuid: uuid }
+        return await this.db.find(query).toArray();
+    }
+
+    async delete(guild, uuid, id) {
+        const query = { guild: guild, uuid: uuid, _id: new ObjectId(id) }
+        return this.db.deleteOne(query);
+    }
+
 }
 
 class ZoneEventsDb extends DbHelper {
@@ -123,6 +159,20 @@ class BotDb extends DbHelper {
 
     async addGuild(id, name) {
         return this.db.insertOne({type: 'guild', id: id, name: name});
+    }
+
+    async fetchGuild(id) {
+        const results = await this.findBy({type: 'guild', id: id});
+        if (results.length > 0) {
+            return results[0];
+        }
+        return null;
+    }
+
+    async updateGuildToken(id, token) {
+        const query = {type: 'guild', id: id};
+        const toUpdate= { $set: {type: 'guild', id: id, token: token} }
+        return this.db.updateOne(query, toUpdate, { upsert: true});
     }
 
     async addGuilds(guilds) {
@@ -182,6 +232,7 @@ class LoggerDb {
     }
 
 }
+
 class CalendarDb {
 
     constructor(connection) {
@@ -268,6 +319,45 @@ class DailiesDb extends DbHelper {
 
 }
 
-const connectionManager = new ConnectionManager();
+class ServerDb extends DbHelper {
+    constructor(connection) {
+        super(connection, "bot");
+    }
 
-module.exports = { connectionManager, UserDb, AllianceDb, ConfigDb, MembersDb, CalendarDb, ZoneEventsDb, LoggerDb, BotDb, DailiesDb }
+    async listChannels(guild) {
+        const query = { guild: guild, type: 'channel' }
+        return await this.db.find(query).toArray();
+    }
+
+    async listRoles(guild) {
+        const query = { guild: guild, type: 'role' }
+        return await this.db.find(query).toArray();
+    }
+
+    async listGuilds() {
+        const query = { type: 'guild' }
+        return await this.db.find(query).toArray();
+    }
+    
+}
+
+const connectionManager = new ConnectionManager();
+let db = {}
+
+// initialize DI
+connectionManager.onConnect(function(cm) {
+    console.log('initialize DI');
+    db.user = new UserDb(cm);
+    db.alliance = new AllianceDb(cm);
+    db.config = new ConfigDb(cm);
+    db.zoneEvents = new ZoneEventsDb(cm);
+    db.bot = new BotDb(cm);
+    db.logger = new LoggerDb(cm);
+    db.calendar = new CalendarDb(cm);
+    db.members = new MembersDb(cm);
+    db.dailies = new DailiesDb(cm);
+    db.server = new ServerDb(cm);
+    Object.freeze(db);
+});
+
+module.exports = { db, connectionManager }

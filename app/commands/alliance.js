@@ -3,7 +3,7 @@ const { ApplicationCommandOptionType } = require('discord.js');
 
 const { DateTime } = require('luxon');
 const { statusKey } = require('../config.json');
-const db = require('../db/db');
+const { db } = require('../db/db');
 const { StringBuilder, asTimeFormat } = require('../utils');
 
 module.exports = {
@@ -19,10 +19,9 @@ module.exports = {
 		required: true
 	}],
 	async execute(client, args) {
-        const allianceDB = new db.AllianceDb(client.connection);
         try {
             var tag = args.tag.toUpperCase();
-            var allianceInfo = await allianceDB.findOne(client.guild.id, tag);
+            var allianceInfo = await db.alliance.findOne(client.guild.id, tag);
             var status = statusKey.NEUTRAL;
             var allowance = "";
             var eventEmbed = [];
