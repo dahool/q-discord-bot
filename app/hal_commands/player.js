@@ -151,7 +151,7 @@ class MusicSubscription {
           .setTitle(this.nowPlaying.title)
           .setDescription(":notes: Now playing")
           .setColor('#ff0000')
-          .addField('Duration', Duration.fromObject({seconds:this.nowPlaying.duration}).toFormat('mm:ss'))
+          .addFields({name: 'Duration', value: Duration.fromObject({seconds:this.nowPlaying.duration}).toFormat('mm:ss')})
           .setFooter({text: `Requested by ${this.nowPlaying.member.user.username}`, iconURL: this.nowPlaying.member.user.displayAvatarURL()});
         this.textChannel.send({ embeds: [playingEmbed] });
       }

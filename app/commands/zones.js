@@ -218,12 +218,12 @@ async function list_all_events(client) {
 
 	groupBy(calevents, u => u.location).forEach((values, key) => {
 		values.sort((a,b) => a.start - b.start);
-		msgEmbed.addField(key, values.map(ev => {
+		msgEmbed.addFields({name: key, value: values.map(ev => {
 			const start = DateTime.fromJSDate(ev.start).setZone('UTC');
 			const flag = ev.src == 'calendar' ? ':calendar_spiral:' : '';
 			const ob = '`' + ev.summary + '` on ' + asTimeFormat(start) + ' ' + flag;
 			return ob;
-		}).join('\n'))
+		}).join('\n')});
 	})
 
 	client.reply(msgEmbed);
