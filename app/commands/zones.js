@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const { DateTime } = require('luxon');
-const { safeLower, groupBy, toRelative, asTimeRelative, asTimeFormat } = require('../utils');
+const { safeLower, groupBy, asTimeRelative, asTimeFormat } = require('../utils');
 const { db } = require('../db/db');
 const cs = require('../values')
 
@@ -20,10 +20,6 @@ rss.forEach(item => {
 
 const POSITIVE = ['yes', 'si', 'sure', 'claro', 'yup','make it so','y']
 const NEGATIVE = ['no','n']
-
-function get_link(title, time) {
-	return 'https://www.timeanddate.com/worldclock/fixedtime.html?msg=' + encodeURIComponent(title) + '&p1=1440&iso=' + time.set({second: 0}).toISO();	
-}
 
 function get_next_execution(zone) {
 	const today = DateTime.utc();
@@ -52,9 +48,9 @@ function find_by_name(name) {
 		.map(z => Object.assign({next: get_next_execution(z)}, z));
 }
 
-async function add_event(connection, guild, time, title, location, recurrent, mentions) {
+async function add_event(guild, time, title, location, recurrent, mentions) {
 	const eventID = "Z" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-	var times = [time.toJSDate()];
+	var times = [time.toJSDate()];	
 	if (recurrent) {
 		do {
 			time = time.plus({days: 7});

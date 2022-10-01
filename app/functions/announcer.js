@@ -30,7 +30,7 @@ createMessage = (data) => {
 
 getRoles = (channel, message) => {
     let roles = [];
-    if (message.description != '') {
+    if (message.description && message.description != '') {
         const m = message.description.match(MENTION_REX);
         if (m) {
             m.forEach(v => {

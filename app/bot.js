@@ -155,23 +155,23 @@ module.exports = {
 	async events(part) {
 		const parts = ["0400","1000","1600","2200"]
 		console.log('dailies part ' + parts[part]);
-		return dailies.notify(connectionManager, parts[part], botclient, part == 0);
+		return dailies.notify(parts[part], botclient, part == 0);
 	},
 	async announce(num) {
 		if (!botclient.ready) {
 			console.error("Not ready yet!");
 			return;
 		}
-		return announcer.execute(botclient, connectionManager, num);
+		return announcer.execute(botclient, num);
 	},
 	async loadEvents() {
-		return calendar.execute(connectionManager);
+		return calendar.execute();
 	},
 	async online() {
 		if (!botclient.ready) {
 			console.error("Not ready yet!");
 			return;
 		}
-		return membersOnline.execute(botclient, connectionManager);
+		return membersOnline.execute(botclient);
 	}
 };

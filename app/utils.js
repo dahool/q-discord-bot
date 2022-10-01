@@ -123,6 +123,22 @@ StringBuilder.prototype.toString = function () {
     return this.__strings__.join("");
 };
 
+toDateTime = (value) => {
+    if (value instanceof DateTime) {
+        console.log(value + "is datetime");
+        return value;
+    }
+    if (value instanceof Date) {
+        console.log(value + "is Date");
+        return DateTime.fromJSDate(value);
+    }
+    if (isNaN(value)) {
+        console.log(value + "is number");
+        return DateTime.fromMillis(value);
+    }
+    return null;
+}
+
 toRelative = (dateTime) => {
     const diff = dateTime.diffNow().shiftTo(...units);
     const udf = units.filter((unit) => diff.get(unit) !== 0)
@@ -185,5 +201,6 @@ module.exports = {
     asTimeRelative,
     asTimeFormat,
     randomId,
-    isPresent
+    isPresent,
+    toDateTime
 };

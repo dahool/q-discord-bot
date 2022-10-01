@@ -22,8 +22,8 @@
     "express": "^4.17.1",
     "express-session": "^1.17.3",
     "ical-generator": "^3.0.0",
-    "luxon": "^3.0.1",
-    "mongodb": "^4.8.1",
+    "luxon": "^3.0.4",
+    "mongodb": "^4.10.0",
     "node-ical": "^0.13.0",
     "serve-favicon": "^2.5.0",
     "uuid-token-generator": "^1.0.0"
