@@ -6,7 +6,7 @@ function New-TemporaryDirectory {
 
 Get-Content $PSScriptRoot\deploy.env | Foreach-Object{
     $var = $_.Split('=')
-    New-Variable -Name $var[0] -Value $var[1]
+    New-Variable -Name $var[0] -Value $var[1] -Visibility Private
 }
 
 Write-Output "Build frontend"
@@ -26,4 +26,4 @@ Compress-Archive -Path $files -DestinationPath $PSScriptRoot\appdeploy.zip -Comp
 Set-Location $PSScriptRoot
 
 Write-Output "Deploy"
-Publish-AzWebApp -ResourceGroupName $AZ_GROUPNAME -Name $AZ_APP -ArchivePath $PSScriptRoot\appdeploy.zip -Confirm false
+Publish-AzWebApp -ResourceGroupName $AZ_GROUPNAME -Name $AZ_APP -ArchivePath $PSScriptRoot\appdeploy.zip
