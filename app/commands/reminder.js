@@ -34,17 +34,40 @@ module.exports = {
 		type: ApplicationCommandOptionType.String,
 		required: true
 	},{
+		name: 'tz',
+		description: 'Event TimeZone (sorry, discord doesn\'t provide me this info)',
+		type: ApplicationCommandOptionType.String,
+		required: true,
+		choices: [
+			{
+				name: 'Pacific',
+				value: 'US/Pacific'
+			},
+			{
+				name: 'Mountain',
+				value: 'US/Mountain'
+			},
+			{
+				name: 'Central',
+				value: 'US/Central'
+			},
+			{
+				name: 'Eastern',
+				value: 'US/Eastern'
+			}			
+		]		
+	}/*,{
 		name: 'role',
 		description: 'Role to mention',
 		type: ApplicationCommandOptionType.Role,
 		required: false
-	}
+	}*/
 	],
 	async interaction(client, id) {
 		const uid = extractUid(id);
 		if (id.startsWith('reminderyes')) {
 			const data = reminderDataMap.getAndDelete(uid);
-			await db.calendar.push(data.guild.id, uid, {"type": GENERAL_EVENTS, "start": data.startDate, "summary": data.title, "notified": false});
+			await db.calendar.push(data.guild.id, uid, {"type": GENERAL_EVENTS, "start": data.startDate.toJSDate(), "summary": data.title, "notified": false});
 			return client.reply("Created `"+data.title+"`", true);
 		}
 		return client.reply('Ok, bye.', true);
@@ -52,8 +75,19 @@ module.exports = {
 	async execute(client, args) {
 		const eventData = sherlock.parse(args.event);
 		const title = eventData.eventTitle;
-		const startDate = eventData.startDate;
-		
+
+		// since all time are UTC and I have no idea what timezone the user is
+		// I have to do this bs thingy to create an untouched time with correct timezone
+		const startDate = DateTime.fromObject(
+			{
+				year: eventData.startDate.getFullYear(),
+				month: eventData.startDate.getMonth(),
+				day: eventData.startDate.getDate(),
+				hour: eventData.startDate.getHours(),
+				minute: eventData.startDate.getMinutes(),
+			}
+		).setZone(args.tz);
+		 
 		if (title == null || startDate == null) {
 			return client.reply("Sorry, I don't understand, try to be more clear. Like  `Officer meeting next Saturday at 8PM`", true);
 		}
