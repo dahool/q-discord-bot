@@ -26,7 +26,8 @@
     "mongodb": "^4.10.0",
     "node-ical": "^0.13.0",
     "serve-favicon": "^2.5.0",
-    "uuid-token-generator": "^1.0.0"
+    "sherlockjs": "^1.4.2",
+    "uid-generator": "^2.0.0"
   },
   "repository": {},
   "keywords": [],

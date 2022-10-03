@@ -1,5 +1,6 @@
 const ical = require('node-ical');
 const { ApplicationCommandOptionType } = require('discord.js');
+const { db } = require('../../db/db');
 
 module.exports = {
 	name: 'territory_events',
@@ -14,7 +15,7 @@ module.exports = {
 		},
 	],
 	usage: '<url>',
-    async execute(configDb, client, args) {
+    async execute(client, args) {
 		const guild = client.guild.id;
 
 		if (!args.url) {
@@ -30,7 +31,7 @@ module.exports = {
 			return client.reply(`Sorry, I'm unable to validate URL \`${url}\``);
 		}
 		
-		configDb.push(guild, "territory_events", {'url': url});
+		db.config.push(guild, "territory_events", {'url': url});
 
 		return {message: this.description, fields: [{ name: 'URL', value : '`'+url+'`'}], log: true}
 

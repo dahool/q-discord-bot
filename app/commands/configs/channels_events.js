@@ -3,12 +3,12 @@ const { ApplicationCommandOptionType } = require('discord.js');
 const generic = require('./generic');
 
 module.exports = {
-	name: cs.DAILY_CHANNEL,
-    description: 'Dailies Announcement Channel',
+	name: cs.GENERAL_EVENTS,
+    description: 'Reminder Announcement Channel',
 	options: [
 		{
 			name: 'set',
-			description: 'Set Dailies Announcement Channel',
+			description: 'Set Reminder Announcement Channel',
 			type: ApplicationCommandOptionType.Subcommand,
 			options: [
 				{
@@ -21,7 +21,7 @@ module.exports = {
 		},
 		{
 			name: 'get',
-			description: 'Get Dailies Announcement Channel',
+			description: 'Get Reminder Announcement Channel',
 			type: ApplicationCommandOptionType.Subcommand
 		}
 	],

@@ -39,7 +39,11 @@ function asTimeRelative(dateTime) {
 }
 
 function asTimeFormat(dateTime, format = 'F') {
-    return '<t:' + Math.trunc(dateTime.toSeconds()) + ':' + format + '>'
+    var dt = dateTime;
+    if (!(dateTime instanceof DateTime)) {
+        dt = DateTime.fromJSDate(dateTime);
+    }
+    return '<t:' + Math.trunc(dt.toSeconds()) + ':' + format + '>'
 }
 
 function asChannel(number) {

@@ -1,4 +1,5 @@
 const { ApplicationCommandOptionType } = require('discord.js');
+const { db } = require('../../db/db');
 
 module.exports = {
 	name: 'role',
@@ -37,7 +38,7 @@ module.exports = {
 		},
 	],
 	usage: '<add/del/get> <role>',
-	async execute(configDb, client, args) {
+	async execute(client, args) {
 		const guild = client.guild.id;
 		const key = 'roles';
 
@@ -46,7 +47,7 @@ module.exports = {
 			if (id == null) {
 				return client.reply(`Missing argument. Specify a valid role.`);
 			}
-			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, key))
+			const configRole = Object.assign({roles: []}, await db.config.findOne(guild, key))
 			const response = {message: 'Privileged roles', log: true}
 
 			if ('add' in args) {
@@ -59,11 +60,11 @@ module.exports = {
 				response.fields = [{ name: 'Remove', value : '<@&' + id + '>'}]
 			}
 
-			configDb.push(guild, key, configRole);
+			db.config.push(guild, key, configRole);
 
 			return response;
 		} else {
-			const configRole = Object.assign({roles: []}, await configDb.findOne(guild, key))
+			const configRole = Object.assign({roles: []}, await db.config.findOne(guild, key))
 			const roles = configRole.roles.map(rid => '<@&' + rid + '>');
 
 			if (roles.length) {

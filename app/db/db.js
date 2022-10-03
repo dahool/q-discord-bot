@@ -117,7 +117,7 @@ class ConfigDb extends DbHelper {
         super(connection, "config");
     }
     
-    async push(guild, uuid, id, data) {
+    async push(guild, uuid, data, id) {
         const query = { guild: guild, uuid: uuid }
         if (id) {
             query['_id'] = new ObjectId(id);
@@ -233,12 +233,12 @@ class LoggerDb {
 
 }
 
-class CalendarDb {
+class CalendarDb extends DbHelper {
 
     constructor(connection) {
-        this.db = connection.getConnection().collection("events_calendar");
+        super(connection, "events_calendar");
     }
-    
+
     async readEvents(ahead, update) {
         const query = {
             start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus(ahead).toJSDate()},

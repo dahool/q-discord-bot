@@ -1,6 +1,7 @@
 const cs = require('../../values')
 const { validateHookUrl } = require('../../functions/hooksender');
 const { ApplicationCommandOptionType } = require('discord.js');
+const { db } = require('../../db/db');
 
 module.exports = {
 	name: 'relay',
@@ -83,7 +84,7 @@ module.exports = {
 		},		
 	],
 	usage: '<add/get/delete/clear/list> <channel> <name> <url>',
-    async execute(configDb, client, args) {
+    async execute(client, args) {
 		const guild = client.guild.id;
 
 		if ('add' in args) {
@@ -100,12 +101,12 @@ module.exports = {
 				return client.reply(`I require permissions to read/write/manage in <#${channelId}>`);
 			}
 
-			configDb.pushBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId, name: name}, {url: url});
+			db.config.pushBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId, name: name}, {url: url});
 
 			return {message: this.description, log: true, fields: [{ name: 'Add Channel', value : '<#' + channelId + '>'}, { name: 'Name', value : name}, { name: 'URL', value : url}]}
 		} else if ('get' in args) {
 			const channelId = args.get.channel;
-			const hooks = await configDb.findBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId});
+			const hooks = await db.config.findBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId});
 
 			const fields = [];
 			if (hooks?.length > 0) {
@@ -120,7 +121,7 @@ module.exports = {
 			}
 			return {message: this.description, log: false, fields: fields}
 		} else if ('list' in args) {
-			const hooks = await configDb.findBy({guild: guild, uuid: cs.WEBHOOK});
+			const hooks = await db.config.findBy({guild: guild, uuid: cs.WEBHOOK});
 			if (hooks) {
 				const fields = [];
 				hooks.forEach(hook => {
@@ -135,14 +136,14 @@ module.exports = {
 			}
 		} else if ('clear' in args) {
 			const channelId = args.clear.channel;
-			configDb.deleteBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId});
+			db.config.deleteBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId});
 			return {message: this.description, log: true, fields: [{ name: 'Channel', value : '<#' + channelId + '>'}, { name: 'URL', value : '`<< Cleared >>`'}]}
 		} else if ('delete' in args) {
 			const channelId = args.delete.channel;
 			const name = args.delete.name;
-			const r = await configDb.findBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId, name: new RegExp(`^${name}$`, "i")});
+			const r = await db.config.findBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId, name: new RegExp(`^${name}$`, "i")});
 			if (r?.length > 0) {
-				configDb.deleteBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId, name: new RegExp(`^${name}$`, "i")});
+				db.config.deleteBy({guild: guild, uuid: cs.WEBHOOK, channel: channelId, name: new RegExp(`^${name}$`, "i")});
 				return {message: this.description, log: true, fields: [{ name: 'Channel', value : '<#' + channelId + '>'}, { name: 'Name', value : name}, { name: 'URL', value : '`<< Cleared >>`'}]}
 			}
 			return client.reply(`Relay for channel <#${channelId}> named \`${name}\` not found.`);	

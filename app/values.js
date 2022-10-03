@@ -4,5 +4,6 @@ module.exports = {
 	TERRITORY_CHANNEL: "territory",
 	DAILY_CHANNEL: "daily",
 	WEBHOOK: "webhook",
-	DIPLOMACY_CHANNEL: "diplomacy"
+	DIPLOMACY_CHANNEL: "diplomacy",
+	GENERAL_EVENTS: "events"
 };

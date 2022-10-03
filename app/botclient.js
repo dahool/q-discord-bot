@@ -243,14 +243,24 @@ class BotCommander {
 		})
 
 		this.client.on("interactionCreate", async (interaction) => {
-			if (!interaction.isCommand()) return;
-
-			const member = interaction.member;
-			const command = interaction.commandName;
-			const channel = interaction.channel;
-			const guild = interaction.guild;
-
-			this.invokeCommand(interaction, null, command, {}, member, guild, channel);
+			if (interaction.isCommand()) {
+				const member = interaction.member;
+				const command = interaction.commandName;
+				const channel = interaction.channel;
+				const guild = interaction.guild;
+	
+				this.invokeCommand(interaction, null, command, {}, member, guild, channel);
+				//invokeCommand = async (interaction, message, commandName, args, member, guild, channel) => {
+			} else if (interaction.isButton()) {
+				const command = this.client.commands.get(interaction.message.interaction.commandName) 
+				if (!command) {
+					console.log(interaction);
+					console.error("Command " + interaction.commandName + " not found.")
+					return;
+				}
+				const bc = new BotClient(this.client, null, interaction.member, interaction.guild, interaction.channel, false, false, interaction);
+				command.interaction(bc, interaction.customId);
+			}
 		});
 
 		this._prepareCommands();

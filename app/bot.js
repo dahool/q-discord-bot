@@ -8,7 +8,7 @@ const membersOnline = require('./functions/online');
 const hook = require('./functions/hooksender');
 const cs = require('./values')
 
-const TokenGenerator = require('uuid-token-generator');
+const UIDGenerator = require('uid-generator');
 
 var dailies = require('./commands/dailies');
 
@@ -68,9 +68,10 @@ syncGuild = async (guild) => {
 updateGuildToken = (guildId) => {
 	db.bot.fetchGuild(guildId).then((guild) => {
 		if (guild && !guild.token)	{
-			const tokenGen = new TokenGenerator(256, TokenGenerator.BASE62);
-			const tokenValue = tokenGen.generate();
-			db.bot.updateGuildToken(guildId, tokenValue);
+			const uidgen = new UIDGenerator(256, UIDGenerator.BASE62);
+			uidgen.generate().then(uid => {
+				db.bot.updateGuildToken(guildId, uid);
+			})
 		}
 	})
 }

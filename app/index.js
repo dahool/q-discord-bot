@@ -12,8 +12,8 @@ app.use(express.json());
 app.use(favicon('public/favicon.ico'));
 app.use(express.static('static'))
 
-serverRouter.routerSetup(app);
 botRouter.routerSetup(app);
+serverRouter.routerSetup(app);
 
 const port = process.env.WEB_PORT || 3000;
 

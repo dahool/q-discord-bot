@@ -13,8 +13,10 @@ const commands = [];
 const commandOptions = [];
 for (const file of fs.readdirSync(path.resolve(__dirname, 'configs')).filter(file => file.endsWith('.js'))) {
 	const command = require(`./configs/${file}`);
-	commandOptions.push({name: command.name, description: command.description, type: command.type || ApplicationCommandOptionType.SubcommandGroup, options: command.options})
-	commands.push(command);
+	if (command.name) {
+		commandOptions.push({name: command.name, description: command.description, type: command.type || ApplicationCommandOptionType.SubcommandGroup, options: command.options})
+		commands.push(command);
+	}
 }
 
 module.exports = {
@@ -61,7 +63,7 @@ module.exports = {
 				return client.reply(`Sorry, unknown command \`${commandName}\``);
 			}
 
-			const response = await command.execute(db.config, client, args[commandName]);
+			const response = await command.execute(client, args[commandName]);
 			
 			if (isPromise(response)) return response;
 
@@ -69,7 +71,7 @@ module.exports = {
 				msgEmbed.setDescription(response.message);
 				if (response.fields) msgEmbed.addFields(response.fields);
 				if (response.log && response.log === true) {
-					configDb.findOne(client.guild.id, cs.LOG_CHANNEL).then(cfg => {
+					db.config.findOne(client.guild.id, cs.LOG_CHANNEL).then(cfg => {
 						if (cfg) client.sendTo(client.guild.channels.cache.get(cfg.channel), msgEmbed);
 					});
 				}

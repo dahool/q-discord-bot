@@ -118,7 +118,7 @@ viewSaveConfig = (req, res) => {
     const updates = req.body.map(el => { 
         const cloned = Object.assign({}, el);
         delete cloned.id;
-        return db.config.push(req.params.server, req.params.config, el.id, cloned)
+        return db.config.push(req.params.server, req.params.config, cloned, el.id)
     });
     Promise.all(updates)
         .then(r => res.send({status: true}))
@@ -211,6 +211,11 @@ routerSetup = (app) => {
     app.get('/api/config/:server/:config', viewLoadConfig);
     app.put('/api/config/:server/:config', viewSaveConfig);
     app.delete('/api/config/:server/:config/:id', viewDeleteConfig);
+
+    app.get('*', function(req, res){
+        res.redirect("index.html");
+        //res.sendFile(__dirname + "/../static/index.html");
+    });
 
 }
 
