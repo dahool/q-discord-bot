@@ -33,6 +33,18 @@ export const CONFIGS = [
         ]
     },
     {
+        id: 'events',
+        description: 'Events announcements Channel',
+        options: [
+            {
+                name: 'channel',
+                description: 'Channel',
+                type: 4,
+                required: true
+            }
+        ]
+    },    
+    {
         id: 'log',
         description: 'Logging Channel',
         options: [

@@ -81,7 +81,7 @@ module.exports = {
 		const startDate = DateTime.fromObject(
 			{
 				year: eventData.startDate.getFullYear(),
-				month: eventData.startDate.getMonth(),
+				month: eventData.startDate.getMonth()+1,
 				day: eventData.startDate.getDate(),
 				hour: eventData.startDate.getHours(),
 				minute: eventData.startDate.getMinutes(),
