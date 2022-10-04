@@ -1,6 +1,8 @@
+const { DateTime } = require('luxon');
 const bot = require('../bot')
 const { db } = require('../db/db');
 const { isPresent } = require('../utils');
+const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require('../values');
 
 const ENV_VARS = ['Q_TOKEN','DBCONN','DBNAME','CALENDAR_URL','DASHBOARD_URL'];
 
@@ -60,6 +62,47 @@ checkEnvironment = () => {
     })
 }
 
+clearZoneEvents = async () => {
+    const today = DateTime.utc().minus({days: 1}).toJSDate();
+    return new Promise((resolver) => {
+        db.zoneEvents.findBy({events: {$elemMatch: {last: {$lt: today}}}}).then((zoneEvents) => {
+            console.log(zoneEvents);
+            zoneEvents.forEach((ze) => {
+                var newEvents = [];
+                ze.events.forEach(event => {
+                    if (event.last < today) {
+                        console.log("Delete " + event.id);
+                        db.calendar.delete({guild: ze.guild, uid: event.id, type: TERRITORY_CHANNEL});
+                    } else {
+                        newEvents.push(event);
+                    }
+                })
+                if (newEvents.length > 0) {
+                    db.zoneEvents.push(ze.guild, ze.uuid, {events: newEvents});    
+                } else {
+                    db.zoneEvents.deleteBy({_id: ze._id});
+                }
+            })
+            resolver(zoneEvents.length);
+        });
+    })
+}
+
+clearReminders = async () => {
+    const today = DateTime.utc().minus({days: 1}).toJSDate();
+    return new Promise((resolver) => {
+        db.calendar.delete({type: GENERAL_EVENTS, start: {$lt: today}}).then(r => resolver(r['deletedCount']));
+    })
+}
+
+cleanExpiredEvents = (req, resp) => {
+    Promise.all([clearZoneEvents(), clearReminders()]).then((values) => {
+        console.log(values);
+        resp.send("OK " + values);
+    });    
+}
+
+
 routerSetup = (app) => {
 
     checkEnvironment();
@@ -74,6 +117,7 @@ routerSetup = (app) => {
     app.get('/rotate', rotateView);
     app.get('/online', onlineView);
     app.get('/load', loadView);
+    app.get('/clean', cleanExpiredEvents);
 
 }
 
