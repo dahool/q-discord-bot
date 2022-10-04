@@ -75,7 +75,7 @@ getRoles = (channel, message) => {
     return roles.join(' ');
 }
 
-sendMessage = async (cfg, data, channel) => {
+sendMessage = async (data, channel, cfgMention) => {
     if (data.type == TERRITORY_CHANNEL) {
         var embed = createTerritoryEmbed(data);
         var content = createTerritoryContent(data);
@@ -83,7 +83,7 @@ sendMessage = async (cfg, data, channel) => {
         var embed = createEventEmbed(data);
         var content = createEventContent(data);
     }
-    const roles =(data.mentions && data.mentions.length > 0 ? data.mentions : cfg.mention || []).map(r => asRole(r)).join(' ')
+    const roles =(data.mentions && data.mentions.length > 0 ? data.mentions : cfgMention || []).map(r => asRole(r)).join(' ')
                         + getRoles(channel, embed);
     return channel.send({ embeds: [ embed ], content: content + ' @here ' + roles }).catch((e) => console.error(e));
 }
@@ -93,13 +93,18 @@ module.exports = {
         db.calendar.readEvents({minutes: number}, true).then(events => {
             console.log(events);
             events.forEach(e => {
-                db.config.findOne(e.guild, e.type).then(cfg => {
-                    if (cfg) {
-                        console.log(cfg);
-                        const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
-                        if (channel) sendMessage(cfg, e, channel);
-                    }
-                })
+                if (e.channel) {
+                    const channel = client.client.guilds.cache.get(e.guild).channels.cache.get(e.channel);
+                    if (channel) sendMessage(e, channel, null);
+                } else {
+                    db.config.findOne(e.guild, e.type).then(cfg => {
+                        if (cfg) {
+                            console.log(cfg);
+                            const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
+                            if (channel) sendMessage(e, channel, cfg.mention);
+                        }
+                    })
+                }
             });
         })
 	}

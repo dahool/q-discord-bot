@@ -1,7 +1,7 @@
 const { ApplicationCommandOptionType, ButtonStyle, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 const Discord = require("discord.js");
 
-const { asTimeFormat } = require('../utils');
+const { asTimeFormat, asChannel } = require('../utils');
 const sherlock = require('sherlockjs');
 const UIDGenerator = require('uid-generator');
 const { db } = require('../db/db');
@@ -56,18 +56,22 @@ module.exports = {
 				value: 'US/Eastern'
 			}			
 		]		
-	}/*,{
-		name: 'role',
-		description: 'Role to mention',
-		type: ApplicationCommandOptionType.Role,
+	},{
+		name: 'channel',
+		description: 'Alternative channel to post the reminder (instead of the default)',
+		type: ApplicationCommandOptionType.Channel,
 		required: false
-	}*/
+	}
 	],
 	async interaction(client, id) {
 		const uid = extractUid(id);
 		if (id.startsWith('reminderyes')) {
 			const data = reminderDataMap.getAndDelete(uid);
-			await db.calendar.push(data.guild.id, uid, {"type": GENERAL_EVENTS, "start": data.startDate.toJSDate(), "summary": data.title, "notified": false});
+			const saveData = {"type": GENERAL_EVENTS, "start": data.startDate.toJSDate(), "summary": data.title, "notified": false};
+			if (data.channel) {
+				saveData['channel'] = data.channel;
+			}
+			await db.calendar.push(data.guild.id, uid, saveData);
 			return client.reply("Created `"+data.title+"`", true);
 		}
 		return client.reply('Ok, bye.', true);
@@ -95,7 +99,21 @@ module.exports = {
 		const uidgen = new UIDGenerator();
 		const uid = uidgen.generateSync();
 
-		reminderDataMap.set(uid, {'guild': client.guild, 'title': title, 'startDate': startDate});
+		reminderDataMap.set(uid, {'guild': client.guild, 'title': title, 'startDate': startDate, 'channel': args.channel});
+
+		const generalConfig = await db.config.findOne(client.guild.id, GENERAL_EVENTS);
+
+		var channel = args.channel;
+		var writeable = true;
+		if (channel) {
+			writeable = await client.testChannel(client.guild.channels.cache.get(channel));
+		} else if (generalConfig && generalConfig.channel) {
+			channel = generalConfig.channel;
+		}
+
+		if (!writeable) {
+			client.reply("Sorry, I can't write in " + asChannel(channel) + "!", true);
+		}
 
 		const row = new ActionRowBuilder()
 				.addComponents(
@@ -115,7 +133,8 @@ module.exports = {
 			.setTitle("Create Reminder?")
 			.addFields(
 				{name: 'Title', value: title},
-				{name: 'On', value: asTimeFormat(startDate)}
+				{name: 'On', value: asTimeFormat(startDate)},
+				{name: 'Post in', value: channel ? asChannel(channel) : 'YOU MUST CONFIGURE DEFAULT CHANNEL'}
 			);
 
 		return client.reply(msgEmbed, true, [row]);

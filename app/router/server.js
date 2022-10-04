@@ -118,7 +118,7 @@ viewSaveConfig = (req, res) => {
     const updates = req.body.map(el => { 
         const cloned = Object.assign({}, el);
         delete cloned.id;
-        return db.config.push(req.params.server, req.params.config, cloned, el.id)
+        return db.config.pushId(req.params.server, req.params.config, cloned, el.id)
     });
     Promise.all(updates)
         .then(r => res.send({status: true}))

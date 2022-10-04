@@ -12,7 +12,7 @@ getOrUpdate = async (client, key, description, args) => {
         if (!r) {
             return client.reply(`I require permissions to read/write/manage in <#${id}>`);
         }
-        db.config.push(guild, key, {'channel': id});
+        await db.config.push(guild, key, {'channel': id});
         return {message: 'Updated ' + description, fields: [{ name: 'Channel', value : '<#' + id + '>'}], log: true};
     } else {
         const value = await db.config.findOne(guild, key, 'channel');

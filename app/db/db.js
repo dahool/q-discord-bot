@@ -43,16 +43,11 @@ class DbHelper {
     }
 
     async push(guild, uuid, data) {
-        const query = { guild: guild, uuid: uuid }
-        const mergedData = Object.assign({}, data, query);
-        const toInsert= { $set: mergedData }
-        this.db.updateOne(query, toInsert, { upsert: true});
+        return this.pushBy({ guild: guild, uuid: uuid }, data)
     }
 
     async pushBy(query, data) {
-        const mergedData = Object.assign({}, data, query);
-        const toInsert= { $set: mergedData }
-        this.db.updateOne(query, toInsert, { upsert: true});
+        this.db.updateOne(query, { $set: data }, { upsert: true});
     }
 
     async findOne(guild, uuid, property) {
@@ -117,20 +112,12 @@ class ConfigDb extends DbHelper {
         super(connection, "config");
     }
     
-    async push(guild, uuid, data, id) {
+    async pushId(guild, uuid, data, id) {
         const query = { guild: guild, uuid: uuid }
         if (id) {
             query['_id'] = new ObjectId(id);
         }
-        const mergedData = Object.assign({}, data, query);
-        if (id) {
-            const toInsert= { $set: mergedData }
-            console.log(toInsert);
-            return this.db.updateOne(query, toInsert, { upsert: true});
-        } else {
-            console.log(mergedData);
-            return this.db.insertOne(mergedData);
-        }
+        return this.db.updateOne(query, { $set: data }, { upsert: true});
     }    
 
     async find(guild, uuid) {
