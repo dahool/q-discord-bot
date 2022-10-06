@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 
-const { Client, PermissionsBitField, Partials, ChannelType, ApplicationCommandOptionType, GuildMemberManager } = require('discord.js');
+const { Client, PermissionsBitField, Partials, ChannelType, ApplicationCommandOptionType } = require('discord.js');
 
 const { safeTrim, extract_channel, extract_role, extract_user } = require('../utils');
 const { MESSAGES } = require('../messages');
@@ -20,18 +20,27 @@ class BotCommander {
 	}
 
 	async _cleanUnusedCommands(route) {
-		const cmdList = await this.client.application.commands.fetch();
-		cmdList.filter((c) => this.commandsData.includes((ca) => ca.name == c.name));
+		var currentCommandList = await this.client.application.commands.fetch();
+		currentCommandList = currentCommandList.filter((c) => !this.commandsData.some((ca) => ca.name == c.name));
 		
-		if (cmdList.length > 0) {
-			console.log("Remove %s", JSON.stringify(cmdList))
+		if (currentCommandList.size > 0) {
+			console.log("Remove %s", JSON.stringify(currentCommandList))
 			const rest = new Discord.REST({ version: REST_VERSION }).setToken(this.tokenId);
-			cmdList.forEach(c => {
-				rest.delete(route + `/${c.id}`).then(() => console.log(`Removed ${c.id} ${c.name}`))
-				.catch((e) => console.error(e));
-			})
+			return Promise.all(
+				currentCommandList.map(c => {
+					return new Promise((resolve) => {
+						rest.delete(route + `/${c.id}`)
+							.then(() => console.log(`Removed ${c.id} ${c.name}`))
+							.catch((e) => {
+								console.error(`Error removing ${c.id} ${c.name}`);
+								console.error(e);
+							})
+							.finally(() => resolve());
+					});
+				})
+			)
 		}
-		
+
 	}
 
 	async _registerAppCommands() {
