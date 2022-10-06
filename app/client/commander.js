@@ -20,7 +20,7 @@ class BotCommander {
 	}
 
 	async _cleanUnusedCommands(route) {
-		const cmdList = await this._getApp().commands.get();
+		const cmdList = await this.client.application.commands.fetch();
 		cmdList.filter((c) => this.commandsData.includes((ca) => ca.name == c.name));
 		
 		if (cmdList.length > 0) {
@@ -41,6 +41,7 @@ class BotCommander {
 		const clientId = this.client.user.id;
 		if (process.env.TEST_SERVER) {
 			route = Discord.Routes.applicationGuildCommands(clientId, process.env.TEST_SERVER);
+			await this._cleanUnusedCommands(route);
 		} else {
 			route = Discord.Routes.applicationCommands(clientId);
 			//if (process.env.CLEAN_COMMANDS === true) this._cleanUnusedCommands(route);
@@ -266,14 +267,6 @@ class BotCommander {
 				}
 			}
 		}
-	}
-
-	_getApp = () => {
-		const app = this.client.api.applications(this.client.user.id)
-		if (process.env.TEST_SERVER) {
-			app.guilds(process.env.TEST_SERVER)
-		}
-		return app;
 	}
 	
 	login = (tokenId) => {
