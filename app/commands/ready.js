@@ -4,7 +4,8 @@ const { db } = require('../db/db');
 module.exports = {
 	name: 'ready',
 	aliases: ['help'],
-	slash: true,
+	private: true,
+	plain: true,
 	description: 'Self check',
 	async execute(client, args) {
 		
@@ -25,7 +26,7 @@ module.exports = {
 		}
 
 		if (errors.size > 0) {
-			return client.reply("Mon capitaine. I need permissions in the following channels\n>>> " + Array.from(errors).join('\n'));
+			return client.reply("Mon capitaine. I need permissions on the following channels\n>>> " + Array.from(errors).join('\n'));
 		}
 
 		return client.reply("I'm ready mon capitaine. Type !q for help");

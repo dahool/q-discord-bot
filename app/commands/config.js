@@ -24,7 +24,6 @@ module.exports = {
     description: 'My Settings',
 	dm: false,
 	admin: true,
-	slash: true,
 	options: commandOptions,
     async execute(client, args) {
 		

@@ -6,7 +6,6 @@ module.exports = {
 	slashName: 'help',
 	description: 'Help',
 	dm: true,
-	slash: true,
 	options: [{
 		name: 'command',
 		description: 'Command you require help for',

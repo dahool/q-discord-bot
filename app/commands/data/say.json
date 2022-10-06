@@ -1,0 +1,22 @@
+[
+	{
+		"id": "challenge",
+		"value": "https://tenor.com/view/star-trek-voyager-john-de-lancie-the-q-challenge-gif-22446770",
+		"text": "a challenge"
+	},
+	{
+		"id": "end",
+		"value": "https://tenor.com/view/all-good-things-must-come-to-an-end-star-trek-tng-goodbye-gif-17292598",
+		"text": "all things come to an end"
+	},
+	{
+		"id": "kiss",
+		"value": "https://tenor.com/view/startrek-gif-19916490",
+		"text": "send kisses"
+	},
+	{
+		"id": "secret",
+		"value": "https://tenor.com/view/keeping-a-secret-star-trek-tng-hidden-meaning-coy-gif-17292531",
+		"text": "it's a secret"
+	}
+]

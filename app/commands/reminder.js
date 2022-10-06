@@ -26,7 +26,6 @@ module.exports = {
 	name: 'reminder',
 	description: 'Create an event reminder',
 	dm: false,
-	slash: true,
 	private: true,
 	options: [{
 		name: 'event',
@@ -66,15 +65,16 @@ module.exports = {
 	async interaction(client, id) {
 		const uid = extractUid(id);
 		if (id.startsWith('reminderyes')) {
+			await client.defer();
 			const data = reminderDataMap.getAndDelete(uid);
 			const saveData = {"type": GENERAL_EVENTS, "start": data.startDate.toJSDate(), "summary": data.title, "notified": false};
 			if (data.channel) {
 				saveData['channel'] = data.channel;
 			}
 			await db.calendar.push(data.guild.id, uid, saveData);
-			return client.reply("Created `"+data.title+"`", true);
+			return client.edit("Created event `"+data.title+"`", false);
 		}
-		return client.reply('Ok, bye.', true);
+		return client.reply('Ok, bye.');
 	},
 	async execute(client, args) {
 		const eventData = sherlock.parse(args.event);
@@ -93,13 +93,15 @@ module.exports = {
 		).setZone(args.tz);
 		 
 		if (title == null || startDate == null) {
-			return client.reply("Sorry, I don't understand, try to be more clear. Like  `Officer meeting next Saturday at 8PM`", true);
+			return client.reply("Sorry, I don't understand, try to be more clear. Like  `Officer meeting next Saturday at 8PM`");
 		}
 
 		const uidgen = new UIDGenerator();
 		const uid = uidgen.generateSync();
 
 		reminderDataMap.set(uid, {'guild': client.guild, 'title': title, 'startDate': startDate, 'channel': args.channel});
+
+		await client.defer();
 
 		const generalConfig = await db.config.findOne(client.guild.id, GENERAL_EVENTS);
 
@@ -112,7 +114,7 @@ module.exports = {
 		}
 
 		if (!writeable) {
-			client.reply("Sorry, I can't write in " + asChannel(channel) + "!", true);
+			client.edit("Sorry, I can't write in " + asChannel(channel) + "!");
 		}
 
 		const row = new ActionRowBuilder()
@@ -137,6 +139,6 @@ module.exports = {
 				{name: 'Post in', value: channel ? asChannel(channel) : 'YOU MUST CONFIGURE DEFAULT CHANNEL'}
 			);
 
-		return client.reply(msgEmbed, true, [row]);
+		return client.edit(msgEmbed, true, [row]);
 	}
 };

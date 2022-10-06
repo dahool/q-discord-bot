@@ -20,11 +20,18 @@
                     #field1="ngModel"
                     [ngClass]="{'is-valid': (form.submitted || field1.touched) && field1.valid, 'is-invalid': (form.submitted || field1.touched) && field1.invalid}">
                         <option value="" *ngIf="!item.list">...</option>
-                        <ng-container *ngFor="let c of item.options | async | keyvalue">
-                            <optgroup label="{{c.key}}">
-                                <option *ngFor="let o of $any(c.value)" [ngValue]="o.id">{{o.name}}</option>
-                            </optgroup>
+                        <ng-container *ngIf="item.type == 4">
+                            <ng-container *ngFor="let c of item.options | async | keyvalue">
+                                <optgroup label="{{c.key}}">
+                                    <option *ngFor="let o of $any(c.value)" [ngValue]="o.id">{{o.name}}</option>
+                                </optgroup>
+                            </ng-container>
                         </ng-container>
+                        <ng-container *ngIf="item.type == 5">
+                            <ng-container *ngFor="let c of item.options | async">
+                                <option [ngValue]="c.id">{{c.name}}</option>
+                            </ng-container>
+                        </ng-container>                        
                     </select>
                 </ng-container>
                 <ng-template #noChoice>

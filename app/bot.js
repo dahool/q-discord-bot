@@ -1,5 +1,5 @@
 const { prefix } = require('./config.json');
-const { BotCommander } = require('./botclient');
+const { BotCommander } = require('./client/commander');
 const { GatewayIntentBits, ChannelType } = require('discord.js');
 
 const announcer = require('./functions/announcer');
@@ -9,8 +9,6 @@ const hook = require('./functions/hooksender');
 const cs = require('./values')
 
 const UIDGenerator = require('uid-generator');
-
-var dailies = require('./commands/dailies');
 
 const { db } = require('./db/db');
 
@@ -148,16 +146,16 @@ module.exports = {
 	async stop() {
 		botclient.stop();
 	},
-	async rotate() {
+	/*async rotate() {
 		console.log('rotate daily calendar');
 		return true; //disable
 		//return dailies.rotate(connectionManager);
-	},
-	async events(part) {
+	},*/
+	/*async events(part) {
 		const parts = ["0400","1000","1600","2200"]
 		console.log('dailies part ' + parts[part]);
 		return dailies.notify(parts[part], botclient, part == 0);
-	},
+	},*/
 	async announce(num) {
 		if (!botclient.ready) {
 			console.error("Not ready yet!");
