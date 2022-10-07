@@ -40,7 +40,6 @@ class BotCommander {
 				})
 			)
 		}
-
 	}
 
 	async _registerAppCommands() {
@@ -50,11 +49,10 @@ class BotCommander {
 		const clientId = this.client.user.id;
 		if (process.env.TEST_SERVER) {
 			route = Discord.Routes.applicationGuildCommands(clientId, process.env.TEST_SERVER);
-			await this._cleanUnusedCommands(route);
+			//await this._cleanUnusedCommands(route);
 		} else {
 			route = Discord.Routes.applicationCommands(clientId);
-			//if (process.env.CLEAN_COMMANDS === true) this._cleanUnusedCommands(route);
-            await this._cleanUnusedCommands(route);
+            //await this._cleanUnusedCommands(route);
 		}
 
 		console.log("Commands for %s: %s", this.options.name, JSON.stringify(this.commandsData));
