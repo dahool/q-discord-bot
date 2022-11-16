@@ -63,7 +63,7 @@ async function handle_create_event(client, zone, args) {
 		msgEmbed.addFields({name: 'Ping', value: asRole(mentions)});
 	}
 
-	return client.edit(msgEmbed, false);
+	return client.reply(msgEmbed, false);
 }
 
 async function remove_event(client, ids) {
@@ -84,9 +84,9 @@ async function remove_event(client, ids) {
 		// filter out matching events
 		await db.calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: delId});
 		await db.zoneEvents.push(client.guild.id, ze.uuid, { events: newEventList });
-		return client.edit(`Event \`${theEvent.title}\` deleted`);
+		return client.reply(`Event \`${theEvent.title}\` deleted`);
 	} else {
-		return client.edit('Sorry, event not found.');
+		return client.reply('Sorry, event not found.');
 	}
 }
 
@@ -161,7 +161,7 @@ async function list_all_events(client) {
 		}).join('\n')});
 	})
 
-	client.edit(msgEmbed, false);
+	client.reply(msgEmbed, false);
 }
 
 async function list_events(client, zone) {
@@ -205,10 +205,10 @@ async function list_events(client, zone) {
 			if (caevents.length > 0) {
 				msgEmbed.addFields([{name: 'Calendar Events', value: caevents.join('\n')}])
 			}
-			client.edit(msgEmbed, false);
+			client.reply(msgEmbed, false);
 
 		} else {
-			client.edit("No events scheduled for " + zone.zone);
+			client.reply("No events scheduled for " + zone.zone);
 		}
 	})
 

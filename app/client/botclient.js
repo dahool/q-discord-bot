@@ -66,10 +66,9 @@ class BotClient {
 	}
 
 	_reply_interaction = async (response) => {
-		if (this._replyOnce) {
+		if (this.interaction.deferred || this.interaction.replied) {
 			return this.interaction.followUp(response);
 		}
-		this._replyOnce = true;
 		return this.interaction.reply(response);
 	}
 
@@ -111,7 +110,7 @@ class BotClient {
 		r.catch(() => this._reply(MESSAGES.permission_dm))
 		return r;
 	}
-
+/*
 	edit = async (response, doReply = false) => {
 		// edit first message, and add follow up if necessary
 		const msgs = this._createMessage(response);
@@ -124,7 +123,7 @@ class BotClient {
 		}))
 		return Promise.all(r);
 	}
-
+*/
     // all replies are hidden by default
 	reply = async (response, hidden = true, components = []) => {
 		const r = this._createMessage(response, hidden, components)
@@ -140,7 +139,7 @@ class BotClient {
 	sendMessage = async (response, hidden = false) => {
 		const r = this._createMessage(response, hidden)
 			.map((msg) => {
-				if (this.interaction && !this._replyOnce) {
+				if (this.interaction) {
 					return this._reply_interaction(msg);
 				} else {
 					return this._replyChannel(msg);

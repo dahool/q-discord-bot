@@ -72,7 +72,7 @@ module.exports = {
 				saveData['channel'] = data.channel;
 			}
 			await db.calendar.push(data.guild.id, uid, saveData);
-			return client.edit("Created event `"+data.title+"`", false);
+			return client.reply("Created event `"+data.title+"`", false);
 		}
 		return client.reply('Ok, bye.');
 	},
@@ -114,7 +114,7 @@ module.exports = {
 		}
 
 		if (!writeable) {
-			client.edit("Sorry, I can't write in " + asChannel(channel) + "!");
+			client.reply("Sorry, I can't write in " + asChannel(channel) + "!");
 		}
 
 		const row = new ActionRowBuilder()
@@ -139,6 +139,6 @@ module.exports = {
 				{name: 'Post in', value: channel ? asChannel(channel) : 'YOU MUST CONFIGURE DEFAULT CHANNEL'}
 			);
 
-		return client.edit(msgEmbed, true, [row]);
+		return client.reply(msgEmbed, true, [row]);
 	}
 };
