@@ -110,11 +110,11 @@ class BotClient {
 		r.catch(() => this._reply(MESSAGES.permission_dm))
 		return r;
 	}
-/*
-	edit = async (response, doReply = false) => {
+
+	edit = async (response, hidden = true, components = []) => {
 		// edit first message, and add follow up if necessary
-		const msgs = this._createMessage(response);
-		const r = [ this._edit(msgs[0], doReply) ];
+		const msgs = this._createMessage(response, hidden, components);
+		const r = [ this._edit(msgs[0], true) ];
 		r.concat(msgs.slice(1).map((msg) => {
 			if (this.interaction) {
 				return this._reply_interaction(msg);
@@ -123,7 +123,7 @@ class BotClient {
 		}))
 		return Promise.all(r);
 	}
-*/
+
     // all replies are hidden by default
 	reply = async (response, hidden = true, components = []) => {
 		const r = this._createMessage(response, hidden, components)

@@ -72,9 +72,9 @@ module.exports = {
 				saveData['channel'] = data.channel;
 			}
 			await db.calendar.push(data.guild.id, uid, saveData);
-			return client.reply("Created event `"+data.title+"`", false);
+			return client.edit("Created event `"+data.title+"`", false);
 		}
-		return client.reply('Ok, bye.');
+		return client.edit('Ok, bye.');
 	},
 	async execute(client, args) {
 		const eventData = sherlock.parse(args.event);
