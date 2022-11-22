@@ -26,4 +26,5 @@ Compress-Archive -Path $files -DestinationPath $PSScriptRoot\appdeploy.zip -Comp
 Set-Location $PSScriptRoot
 
 Write-Output "Deploy"
-Publish-AzWebApp -ResourceGroupName $AZ_GROUPNAME -Name $AZ_APP -ArchivePath $PSScriptRoot\appdeploy.zip
+#Publish-AzWebApp -ResourceGroupName $AZ_GROUPNAME -Name $AZ_APP -ArchivePath $PSScriptRoot\appdeploy.zip
+az webapp deploy --resource-group $AZ_GROUPNAME --name $AZ_APP --src-path $PSScriptRoot\appdeploy.zip

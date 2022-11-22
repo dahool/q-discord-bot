@@ -69,7 +69,7 @@ async function handle_create_event(client, zone, args) {
 async function remove_event(client, ids) {
 	const delId = ids[0]; // we support 1 only
 
-	await client.defer();
+	await client.defer(true);
 
 	const ze = await db.zoneEvents.findOneBy({
 		guild: client.guild.id,
@@ -84,9 +84,9 @@ async function remove_event(client, ids) {
 		// filter out matching events
 		await db.calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: delId});
 		await db.zoneEvents.push(client.guild.id, ze.uuid, { events: newEventList });
-		return client.reply(`Event \`${theEvent.title}\` deleted`);
+		return client.edit(`Event \`${theEvent.title}\` deleted`);
 	} else {
-		return client.reply('Sorry, event not found.');
+		return client.edit('Sorry, event not found.');
 	}
 }
 
