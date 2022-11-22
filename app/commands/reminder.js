@@ -72,7 +72,10 @@ module.exports = {
 				saveData['channel'] = data.channel;
 			}
 			await db.calendar.push(data.guild.id, uid, saveData);
-			return client.edit("Created event `"+data.title+"`", false);
+			// discord limitation, all follow ups share the initial ephemereal flag.
+			// so we sent a general message following the confirmation
+			client.edit("Created event `"+data.title+"`");
+			return client.sendTo(client.channel, "Created event `"+data.title+"` on " + asTimeFormat(data.startDate));
 		}
 		return client.edit('Ok, bye.');
 	},
@@ -89,8 +92,8 @@ module.exports = {
 				day: eventData.startDate.getDate(),
 				hour: eventData.startDate.getHours(),
 				minute: eventData.startDate.getMinutes(),
-			}
-		).setZone(args.tz);
+			},{ zone: args.tz }
+		)
 		 
 		if (title == null || startDate == null) {
 			return client.reply("Sorry, I don't understand, try to be more clear. Like  `Officer meeting next Saturday at 8PM`");

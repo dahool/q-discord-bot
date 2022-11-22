@@ -62,6 +62,7 @@ class BotClient {
 		} else if (response.hasOwnProperty('content')) {
 			return [response];
 		}
+		console.log("hidden " + hidden);
 		return [{content: response, ephemeral: hidden, components: components}];
 	}
 
@@ -93,7 +94,10 @@ class BotClient {
 
 	_edit = async (response, doReply) => {
 		if (this.interaction) {
-			return this.interaction.editReply(response);
+			if (!this.interaction.deferred && !this.interaction.replied) {
+
+			}
+			return this._reply_interaction(response);
 		} else {
 			if (this._firstReplyMsg) {
 				await this._firstReplyMsg.delete().catch((e) => console.error(e));
@@ -160,8 +164,8 @@ class BotClient {
 		if (this.channel.type !== ChannelType.DM && !this.interaction) this.message.delete().catch((e) => true );
 	}
 
-	defer = () => {
-		return this.interaction.deferReply();
+	defer = (hidden = true) => {
+		return this.interaction.deferReply({ ephemeral: hidden });
 	}
 
 }

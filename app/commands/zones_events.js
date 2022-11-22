@@ -39,7 +39,7 @@ async function handle_create_event(client, zone, args) {
 		return client.reply("Please, specify a `Title` for the event. Try again.")
 	}
 
-	await client.defer();
+	await client.defer(false);
 
 	await create_event(client, zone, title, recurrent, mentions ? mentions : []);
 
@@ -121,7 +121,7 @@ async function handle_remove_event(client, zone) {
 
 async function list_all_events(client) {
 
-	await client.defer();
+	await client.defer(false);
 
 	const fromDate = DateTime.utc().toJSDate();
 	const toDate = DateTime.utc().plus({days: 7}).toJSDate();
@@ -166,7 +166,7 @@ async function list_all_events(client) {
 
 async function list_events(client, zone) {
 	
-	await client.defer();
+	await client.defer(false);
 
 	const zevents = db.zoneEvents.findOneBy({
 		guild: client.guild.id,
