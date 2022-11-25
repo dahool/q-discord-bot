@@ -22,18 +22,17 @@ FROM alpine
 RUN apk add --update nodejs npm
 
 # update npm
-RUN npm install -g npm@latest
-RUN npm install -g pm2@latest
+RUN npm install -g npm@latest pm2@latest
 
 RUN addgroup appuser && adduser --system --ingroup appuser appuser
 RUN mkdir /usr/app
-
-COPY --from=build /usr/build/app /usr/app
 
 RUN chown -R appuser:appuser /usr/app
 
 # switch to local user
 USER appuser
+
+COPY --from=build /usr/build/app /usr/app
 WORKDIR /usr/app
 
 EXPOSE 3000
