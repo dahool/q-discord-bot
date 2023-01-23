@@ -1,5 +1,6 @@
 
 const Discord = require("discord.js");
+const { json } = require("express/lib/response");
 const { DateTime } = require("luxon");
 const { db } = require('../db/db');
 
@@ -92,16 +93,23 @@ module.exports = {
 	async execute(client, number) {
         db.calendar.readEvents({minutes: number}, true).then(events => {
             console.log(events);
+            db.logger.info("Found events " + JSON.stringify(events), "announcer")
             events.forEach(e => {
                 if (e.channel) {
                     const channel = client.client.guilds.cache.get(e.guild).channels.cache.get(e.channel);
-                    if (channel) sendMessage(e, channel, null);
+                    if (channel) {
+                        sendMessage(e, channel, null);
+                    } else {
+                        db.logger.error("No channel found on guild " + e.guild + " with id " + e.channel, "announcer");
+                    }
                 } else {
                     db.config.findOne(e.guild, e.type).then(cfg => {
                         if (cfg) {
                             console.log(cfg);
                             const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
                             if (channel) sendMessage(e, channel, cfg.mention);
+                        } else {
+                            db.logger.error("No default channel defined for " + e.type + " on guild " + e.guild, "announcer");
                         }
                     })
                 }

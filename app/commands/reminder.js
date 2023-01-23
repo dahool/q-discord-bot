@@ -29,12 +29,22 @@ module.exports = {
 	private: true,
 	options: [{
 		name: 'event',
-		description: 'Event description and time. For example `Officer meeting next Saturday at 8PM`',
+		description: 'Event description',
 		type: ApplicationCommandOptionType.String,
 		required: true
 	},{
+		name: 'when',
+		description: 'tomorrow, next monday, January 24th, etc',
+		type: ApplicationCommandOptionType.String,
+		required: true
+	},{
+		name: 'time',
+		description: 'Time in military format (`for instance 7PM = 1900`)',
+		type: ApplicationCommandOptionType.Integer,
+		required: true
+	},{
 		name: 'tz',
-		description: 'Event TimeZone (sorry, discord doesn\'t provide me this info)',
+		description: 'Event TimeZone (sorry, discord doesn\'t provide me with this info)',
 		type: ApplicationCommandOptionType.String,
 		required: true,
 		choices: [
@@ -67,25 +77,40 @@ module.exports = {
 		if (id.startsWith('reminderyes')) {
 			await client.defer();
 			const data = reminderDataMap.getAndDelete(uid);
-			const saveData = {"type": GENERAL_EVENTS, "start": data.startDate.toJSDate(), "summary": data.title, "notified": false};
-			if (data.channel) {
-				saveData['channel'] = data.channel;
+			if (data) {
+				const saveData = {"type": GENERAL_EVENTS, "start": data.startDate.toJSDate(), "summary": data.title, "notified": false};
+				if (data.channel) {
+					saveData['channel'] = data.channel;
+				}
+				await db.calendar.push(data.guild.id, uid, saveData);
+				// discord limitation, all follow ups share the initial ephemereal flag.
+				// so we sent a general message following the confirmation
+				client.edit("Created event `"+data.title+"`");
+				return client.sendTo(client.channel, "Created event `"+data.title+"` on " + asTimeFormat(data.startDate));
+			} else {
+				return client.edit('Bye.');		
 			}
-			await db.calendar.push(data.guild.id, uid, saveData);
-			// discord limitation, all follow ups share the initial ephemereal flag.
-			// so we sent a general message following the confirmation
-			client.edit("Created event `"+data.title+"`");
-			return client.sendTo(client.channel, "Created event `"+data.title+"` on " + asTimeFormat(data.startDate));
 		}
 		return client.edit('Ok, bye.');
 	},
 	async execute(client, args) {
-		const eventData = sherlock.parse(args.event);
-		const title = eventData.eventTitle;
+		//const eventData = sherlock.parse(args.event);
+		//const title = eventData.eventTitle;
+		const title = args.event;
+		const when = sherlock.parse(args.when);
+
+		console.log(args);
+		
+		var startDate = DateTime.fromFormat(args.time.toString(),'Hmm', { zone: args.tz })
+							.set({ year: when.startDate.getFullYear(), 
+									month: when.startDate.getMonth()+1,
+									day: when.startDate.getDate() });
+
+		console.log(startDate);
 
 		// since all time are UTC and I have no idea what timezone the user is
 		// I have to do this bs thingy to create an untouched time with correct timezone
-		const startDate = DateTime.fromObject(
+		/*const startDate = DateTime.fromObject(
 			{
 				year: eventData.startDate.getFullYear(),
 				month: eventData.startDate.getMonth()+1,
@@ -93,7 +118,7 @@ module.exports = {
 				hour: eventData.startDate.getHours(),
 				minute: eventData.startDate.getMinutes(),
 			},{ zone: args.tz }
-		)
+		)*/
 		 
 		if (title == null || startDate == null) {
 			return client.reply("Sorry, I don't understand, try to be more clear. Like  `Officer meeting next Saturday at 8PM`");

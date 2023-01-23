@@ -88,7 +88,7 @@ function safeLower(value) {
 }
 
 function safeTrim(value) {
-    if (value != undefined) return value.trim();
+    if (value !== undefined && typeof value.trim === "function") return value.trim();
     return value;
 }
 

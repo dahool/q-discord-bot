@@ -214,8 +214,12 @@ class LoggerDb {
         this.db = connection.getConnection().collection("logging");
     }
 
-    error(message) {
-        this.db.insertOne({datetime: DateTime.utc().setZone(process.env.ZONE).toJSDate(), type: 'error', message: message})
+    error(message, type) {
+        this.db.insertOne({datetime: DateTime.utc().setZone(process.env.ZONE).toJSDate(), level: 'error', type: type || 'general', message: message})
+    }
+
+    info(message, type) {
+        this.db.insertOne({datetime: DateTime.utc().setZone(process.env.ZONE).toJSDate(), level: 'info', type: type, message: message})
     }
 
 }
