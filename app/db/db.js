@@ -230,23 +230,17 @@ class CalendarDb extends DbHelper {
         super(connection, "events_calendar");
     }
 
-    async readEvents(ahead, update) {
+    async readEvents(ahead) {
         const query = {
             start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus(ahead).toJSDate()},
             notified: false
         }
+        return await this.db.find(query).toArray();
+    }
 
-        const cursor = this.db.find(query);
-        let events = [];
-        await cursor.forEach((ev) => {
-            events.push(ev);
-        });
-        
-        if (update) {
-            await this.db.updateMany(query, {$set: {notified: true}}, {upsert: false});
-        }
-
-        return events;
+    async updateEvent(event) {
+        const query = { '_id': event._id }
+        return this.db.updateOne(query, { $set: {notified: true} }, {upsert: false});
     }
 
     async delete(query) {

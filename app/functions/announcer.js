@@ -91,14 +91,17 @@ sendMessage = async (data, channel, cfgMention) => {
 
 module.exports = {
 	async execute(client, number) {
-        db.calendar.readEvents({minutes: number}, true).then(events => {
+        db.calendar.readEvents({minutes: number}).then(events => {
             console.log(events);
             db.logger.info("Found events " + JSON.stringify(events), "announcer")
             events.forEach(e => {
                 if (e.channel) {
                     const channel = client.client.guilds.cache.get(e.guild).channels.cache.get(e.channel);
                     if (channel) {
-                        sendMessage(e, channel, null);
+                        sendMessage(e, channel, null).then(() => {
+                            console.debug("Mark event " + e);
+                            db.calendar.updateEvent(e);
+                        });
                     } else {
                         db.logger.error("No channel found on guild " + e.guild + " with id " + e.channel, "announcer");
                     }
@@ -107,7 +110,10 @@ module.exports = {
                         if (cfg) {
                             console.log(cfg);
                             const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
-                            if (channel) sendMessage(e, channel, cfg.mention);
+                            if (channel) sendMessage(e, channel, cfg.mention).then(() => {
+                                                        console.debug("Mark event " + e);
+                                                        db.calendar.updateEvent(e);
+                                                    });
                         } else {
                             db.logger.error("No default channel defined for " + e.type + " on guild " + e.guild, "announcer");
                         }
