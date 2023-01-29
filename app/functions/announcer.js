@@ -76,6 +76,19 @@ getRoles = (channel, message) => {
     return roles.join(' ');
 }
 
+getMentions = (data, cfgMention) => {
+    let r = [];
+    if (data.mentions && data.mentions.length > 0) {
+        r = data.mentions;
+    } else if (cfgMention) {
+        r = cfgMention;
+    }
+    if (Array.isArray(r)) {
+        return r;
+    }
+    return [ r ];
+}
+
 sendMessage = async (data, channel, cfgMention) => {
     if (data.type == TERRITORY_CHANNEL) {
         var embed = createTerritoryEmbed(data);
@@ -84,8 +97,7 @@ sendMessage = async (data, channel, cfgMention) => {
         var embed = createEventEmbed(data);
         var content = createEventContent(data);
     }
-    const roles =(data.mentions && data.mentions.length > 0 ? data.mentions : cfgMention || []).map(r => asRole(r)).join(' ')
-                        + getRoles(channel, embed);
+    const roles = getMentions(data, cfgMention).map(r => asRole(r)).join(' ') + getRoles(channel, embed);
     return channel.send({ embeds: [ embed ], content: content + ' @here ' + roles }).catch((e) => console.error(e));
 }
 
