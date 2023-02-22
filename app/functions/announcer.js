@@ -7,7 +7,7 @@ const { db } = require('../db/db');
 const { randomColor, asRole, asTimeRelative } = require('../utils');
 const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require("../values");
 
-const MENTION_REX = /@([\w]+)/gm;
+const MENTION_REX = /@([\w\s]+)/gm;
 
 createTerritoryContent = (data) => {
     return data.summary  + ' [' + data.location + ']';
@@ -61,11 +61,15 @@ createEventContent = (data) => {
 
 getRoles = (channel, message) => {
     let roles = [];
+    console.log("get roles" + message.description);
     if (message.description && message.description != '') {
         const m = message.description.match(MENTION_REX);
+        console.log(m);
         if (m) {
-            m.forEach(v => {
-                let role = channel.guild.roles.cache.find(r => r.name === v.substring(1));
+            m.map(v => v.substring(1).trim()).forEach(v => {
+                console.log("Lookup " + v);
+                let role = channel.guild.roles.cache.find(r => r.name === v);
+                console.log(role);
                 if (role) {
                     roles.push(asRole(role.id));
                 }
@@ -97,7 +101,7 @@ sendMessage = async (data, channel, cfgMention) => {
         var embed = createEventEmbed(data);
         var content = createEventContent(data);
     }
-    const roles = getMentions(data, cfgMention).map(r => asRole(r)).join(' ') + getRoles(channel, embed);
+    const roles = getMentions(data, cfgMention).map(r => asRole(r)).join(' ') + getRoles(channel, data);
     return channel.send({ embeds: [ embed ], content: content + ' @here ' + roles }).catch((e) => console.error(e));
 }
 
