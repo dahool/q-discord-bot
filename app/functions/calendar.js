@@ -64,7 +64,7 @@ serveCalendar = async (req, res) => {
 
     const query = {
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({days: 30}).toJSDate()},
-        src: { $ne: 'calendar'},
+        //src: { $ne: 'calendar'},
         notified: false,
         guild: guildData.id
     }
