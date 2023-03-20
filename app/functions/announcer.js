@@ -7,10 +7,19 @@ const { db } = require('../db/db');
 const { randomColor, asRole, asTimeRelative } = require('../utils');
 const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require("../values");
 
-const MENTION_REX = /@([\w\s]+)/gm;
+const striptags = require("striptags");
+
+const MENTION_REX = /@([\[\]\w\s]+)/gm;
 
 createTerritoryContent = (data) => {
     return data.summary  + ' [' + data.location + ']';
+}
+
+stripHtml = (data) => {
+    if (data && data != '') {
+        data = striptags(data.replace('<br>', '\n'));
+    }
+    return data;
 }
 
 createTerritoryEmbed = (data) => {
@@ -25,7 +34,7 @@ createTerritoryEmbed = (data) => {
         .setColor(randomColor())
         .setTitle(data.summary)
         .setURL('https://www.timeanddate.com/countdown/generic?p0=1440&iso=' + startTime.setZone('UTC').toISO() + "&msg=" + encodeURIComponent(data.summary))
-        .setDescription(data.description || ' ')
+        .setDescription(stripHtml(data.description) || ' ')
         .setThumbnail('https://www.dropbox.com/s/6jzlixqvk4nhpg9/redalert.gif?raw=1')
         .addFields(
             { name: 'Zone', value: data.location },
@@ -61,9 +70,10 @@ createEventContent = (data) => {
 
 getRoles = (channel, message) => {
     let roles = [];
-    console.log("get roles" + message.description);
     if (message.description && message.description != '') {
-        const m = message.description.match(MENTION_REX);
+        const msgdescription = stripHtml(message.description);
+        console.log("get roles " + msgdescription);
+        const m = msgdescription.match(MENTION_REX);
         console.log(m);
         if (m) {
             m.map(v => v.substring(1).trim()).forEach(v => {
@@ -74,7 +84,6 @@ getRoles = (channel, message) => {
                     roles.push(asRole(role.id));
                 }
             });
-            
         }
     }
     return roles.join(' ');
@@ -108,17 +117,18 @@ sendMessage = async (data, channel, cfgMention) => {
 module.exports = {
 	async execute(client, number) {
         db.calendar.readEvents({minutes: number}).then(events => {
-            console.log(events);
+            console.log("Found", events);
             db.logger.info("Found events " + JSON.stringify(events), "announcer")
             events.forEach(e => {
                 if (e.channel) {
                     const channel = client.client.guilds.cache.get(e.guild).channels.cache.get(e.channel);
                     if (channel) {
                         sendMessage(e, channel, null).then(() => {
-                            console.debug("Mark event " + e);
+                            console.debug("Mark event", JSON.stringify(e));
                             db.calendar.updateEvent(e);
                         });
                     } else {
+                        console.error("No channel found on guild", e.guild,"with id", e.channel);
                         db.logger.error("No channel found on guild " + e.guild + " with id " + e.channel, "announcer");
                     }
                 } else {
@@ -131,6 +141,7 @@ module.exports = {
                                                         db.calendar.updateEvent(e);
                                                     });
                         } else {
+                            console.error("No default channel defined for", e.guild,"with id", e.channel);
                             db.logger.error("No default channel defined for " + e.type + " on guild " + e.guild, "announcer");
                         }
                     })
