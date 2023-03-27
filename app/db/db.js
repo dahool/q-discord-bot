@@ -93,6 +93,11 @@ class DbHelper {
     async deleteBy(query) {
         await this.db.deleteOne(query);
     }
+
+    async updateOne(id, dataSet) {
+        return this.db.updateOne({ '_id': id }, { $set: dataSet }, {upsert: false});
+    }
+
 }
 
 class UserDb extends DbHelper {
@@ -237,7 +242,7 @@ class CalendarDb extends DbHelper {
         }
         return await this.db.find(query).toArray();
     }
-
+    
     async updateEvent(event) {
         const query = { '_id': event._id }
         return this.db.updateOne(query, { $set: {notified: true} }, {upsert: false});
@@ -245,6 +250,10 @@ class CalendarDb extends DbHelper {
 
     async delete(query) {
         return this.db.deleteMany(query);
+    }
+
+    async deleteById(id) {
+        return this.db.deleteOne({'_id': id})
     }
 
     async insert(list) {

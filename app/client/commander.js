@@ -101,7 +101,7 @@ class BotCommander {
 				const bc = new BotClient(this.client, null, interaction.member, interaction.guild, interaction.channel, false, false, interaction);
 				command.interaction(bc, interaction.customId);
 
-			} else if (interaction.isSelectMenu()) {
+			} else if (interaction.isStringSelectMenu()) {
 				const command = this._getInteractionCommand(interaction);
 				if (!command) return;
 				const bc = new BotClient(this.client, null, interaction.member, interaction.guild, interaction.channel, false, false, interaction);

@@ -8,6 +8,8 @@ const { randomColor, asRole, asTimeRelative } = require('../utils');
 const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require("../values");
 
 const striptags = require("striptags");
+const { scheduleEvent } = require("../client/events");
+const { description } = require("../commands/zones");
 
 const MENTION_REX = /@([\[\]\w\s]+)/gm;
 
@@ -114,6 +116,22 @@ sendMessage = async (data, channel, cfgMention) => {
     return channel.send({ embeds: [ embed ], content: content + ' @here ' + roles }).catch((e) => console.error(e));
 }
 
+generateSchedule = async (client) => {
+    const query = {
+        start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({hours: 24}).toJSDate()},
+        notified: false,
+        eventId: null,
+        type: 'territory'
+    }
+    const events = await db.calendar.findBy(query);
+    events.forEach((item) => {
+        scheduleEvent(client.client.guilds.cache.get(item.guild), item.summary, item.description, 'general', DateTime.fromJSDate(item.start), item.duration, item.location).then((event) => {
+            console.log("Scheduled event", event.id);
+            db.calendar.updateOne(item._id, { eventId: event.id });
+        })
+    })
+}
+
 module.exports = {
 	async execute(client, number) {
         db.calendar.readEvents({minutes: number}).then(events => {
@@ -147,6 +165,7 @@ module.exports = {
                     })
                 }
             });
-        })
+        });
+        generateSchedule(client);
 	}
 };

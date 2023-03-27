@@ -8,6 +8,7 @@ const { ApplicationCommandOptionType } = require('discord.js');
 
 const { createURLwithParameters } = require('../utils');
 const { find_by_name } = require('./zones');
+const { deleteSchedule } = require('../client/events');
 
 async function create_event(client, zone, title, recurrent, mentions) {
 	const eventID = "Z" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
@@ -25,7 +26,28 @@ async function create_event(client, zone, title, recurrent, mentions) {
 	zoneevent.events.push({id: eventID, title: title, last: times[times.length-1]})
 	await db.zoneEvents.push(client.guild.id, location, zoneevent);
 
-	const insertBulk = times.map((tm, index) => { return {guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: eventID, recurrence: index, summary: title, location: location, start: tm, description: '', notified: false, mentions: mentions} } );
+	let duration = 60;
+	if (zone.type == 1) {
+		duration = 30;
+	} else if (zone.type == 2) {
+		duration = 45;
+	}
+
+	const insertBulk = times.map((tm, index) => { 
+		return {
+			guild: client.guild.id, 
+			type: cs.TERRITORY_CHANNEL, 
+			uid: eventID, 
+			recurrence: index, 
+			summary: title, 
+			location: location, 
+			start: tm, 
+			description: '', 
+			notified: false, 
+			mentions: mentions,
+			duration: duration
+		}
+	} );
 	return db.calendar.insert(insertBulk)
 }
 
@@ -82,7 +104,17 @@ async function remove_event(client, ids) {
 		const newEventList = ze.events.filter(e => e.id != delId);
 
 		// filter out matching events
-		await db.calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: delId});
+		const calendarEvents = await db.calendar.findBy({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: delId});
+		await Promise.all(calendarEvents.map((calendarEvent) => {
+			return new Promise(async (resolv) => {
+				if (calendarEvent.eventId) {
+					console.log("Remove schedule", calendarEvent.eventId);
+					await deleteSchedule(client.guild, calendarEvent.eventId);
+				}
+				db.calendar.deleteById(calendarEvent._id).then(() => resolv());
+			});
+		}));
+		//await db.calendar.delete({guild: client.guild.id, type: cs.TERRITORY_CHANNEL, uid: delId});
 		await db.zoneEvents.push(client.guild.id, ze.uuid, { events: newEventList });
 		return client.edit(`Event \`${theEvent.title}\` deleted`);
 	} else {
@@ -107,7 +139,7 @@ async function handle_remove_event(client, zone) {
 		});
 		const row = new Discord.ActionRowBuilder()
 			.addComponents(
-				new Discord.SelectMenuBuilder()
+				new Discord.StringSelectMenuBuilder()
 					.setCustomId('remove-event')
 					.setPlaceholder('Nothing selected')
 					.addOptions(options)
