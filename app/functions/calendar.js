@@ -5,6 +5,10 @@ const ical = require('node-ical');
 const cs = require('../values');
 const generator = require('ical-generator');
 
+get_duration = (ev) => {
+    return Math.abs(DateTime.fromJSDate(ev.end).diff(DateTime.fromJSDate(ev.start)).as('minutes'));
+}
+
 processRecurrentEvent = (ev) => {
     let events = [];
     if (ev.rrule.options.until) {
@@ -15,8 +19,9 @@ processRecurrentEvent = (ev) => {
         //ev.rrule.options.dtstart = DateTime.local().minus({ days: 1}).toJSDate();
         ev.rrule.options.until = DateTime.local().plus({ months: 1}).toJSDate();
     }
+    const duration = get_duration(ev);
     ev.rrule.all((v) => {
-        events.push({uid: ev.uid, summary: ev.summary, location: ev.location, start: v, description: ev.description, notified: false});
+        events.push({uid: ev.uid, summary: ev.summary, location: ev.location, start: v, description: ev.description, notified: false, duration: duration});
         return true;
     })
     return events;
@@ -41,6 +46,7 @@ loadEvents = async (guild, url, type) => {
                 } else {
                     if (DateTime.fromJSDate(ev.start) > DateTime.local()) {
                         console.log(ev);
+                        const duration = get_duration(ev);
                         await db.calendar.insert([{guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'}]);
                     }
                 }
