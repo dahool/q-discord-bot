@@ -65,6 +65,7 @@ serveCalendar = async (req, res) => {
     const query = {
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({days: 30}).toJSDate()},
         //src: { $ne: 'calendar'},
+        type: 'territory',
         notified: false,
         guild: guildData.id
     }
@@ -74,7 +75,7 @@ serveCalendar = async (req, res) => {
     events.forEach(event => {
         cal.createEvent({
             start: event.start,
-            end: DateTime.fromJSDate(event.start).plus({minutes: 30}),
+            end: DateTime.fromJSDate(event.start).plus({minutes: event.duration}),
             summary: event.summary,
             location: event.location
         });
