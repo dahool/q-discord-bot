@@ -125,7 +125,7 @@ generateSchedule = async (client) => {
     }
     const events = await db.calendar.findBy(query);
     events.forEach((item) => {
-        scheduleEvent(client.client.guilds.cache.get(item.guild), item.summary, item.description, 'general', DateTime.fromJSDate(item.start), item.duration, item.location).then((event) => {
+        scheduleEvent(client.client.guilds.cache.get(item.guild), item.summary, '', 'general', DateTime.fromJSDate(item.start), item.duration, item.location).then((event) => {
             console.log("Scheduled event", event.id);
             db.calendar.updateOne(item._id, { eventId: event.id });
         })
