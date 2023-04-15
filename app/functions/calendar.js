@@ -33,7 +33,7 @@ loadEvents = async (guild, url, type) => {
     console.log("load " + url);
     const data = await ical.async.fromURL(url);
     
-    await db.calendar.delete({guild: guild, type: type, src: 'calendar', start: {$lte: DateTime.utc().toJSDate()}});
+    await db.calendar.delete({guild: guild, type: type, src: 'calendar', start: {$lt: DateTime.utc().toJSDate()}});
 
     let calendarEvents = [];
 
