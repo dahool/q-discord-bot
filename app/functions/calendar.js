@@ -21,7 +21,9 @@ processRecurrentEvent = (ev) => {
     }
     const duration = get_duration(ev);
     ev.rrule.all((v) => {
-        events.push({uid: ev.uid, summary: ev.summary, location: ev.location, start: v, description: ev.description, notified: false, duration: duration});
+        if (DateTime.fromJSDate(v) > DateTime.local()) {
+            events.push({uid: ev.uid, summary: ev.summary, location: ev.location, start: v, description: ev.description, notified: false, duration: duration});
+        }
         return true;
     })
     return events;
@@ -30,8 +32,10 @@ processRecurrentEvent = (ev) => {
 loadEvents = async (guild, url, type) => {
     console.log("load " + url);
     const data = await ical.async.fromURL(url);
+    
+    await db.calendar.delete({guild: guild, type: type, src: 'calendar', start: {$lte: DateTime.utc().toJSDate()}});
 
-    await db.calendar.delete({guild: guild, type: type, src: 'calendar'});
+    let calendarEvents = [];
 
     for (let k in data) {
         if (data.hasOwnProperty(k)) {
@@ -41,18 +45,29 @@ loadEvents = async (guild, url, type) => {
                     const events = processRecurrentEvent(ev);
                     if (events.length > 0) {
                         console.log(events);
-                        await db.calendar.insert(events.map(e => Object.assign({}, e, {guild: guild, type: type, src: 'calendar'})));
+                        calendarEvents = calendarEvents.concat(events.map(e => Object.assign({}, e, {guild: guild, type: type, src: 'calendar'})));
                     }
                 } else {
                     if (DateTime.fromJSDate(ev.start) > DateTime.local()) {
                         console.log(ev);
                         const duration = get_duration(ev);
-                        await db.calendar.insert([{guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'}]);
+                        calendarEvents.push({guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'});
                     }
                 }
             }
         }
     }
+
+    const existingEvents = await db.calendar.findBy({guild: guild, type: type, src: 'calendar'});
+
+    const toInsertEvents = calendarEvents.filter((element) => !existingEvents.some((c) => element.uid == c.uid && element.start.getTime() == c.start.getTime() ) );
+    const toDeleteEvents = existingEvents.filter((element) => !calendarEvents.some((c) => element.uid == c.uid && element.start.getTime() == c.start.getTime() ) );
+
+    console.log("Delete: %s", toDeleteEvents.map((e) => e.uid + " - " + e.start ));
+    console.log("Insert: %s", toInsertEvents.map((e) => e.uid + " - " + e.start ));
+
+    await db.calendar.deleteElements(toDeleteEvents);
+    await db.calendar.insert(toInsertEvents);
 
 }
 

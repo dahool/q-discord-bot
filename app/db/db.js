@@ -94,6 +94,12 @@ class DbHelper {
         await this.db.deleteOne(query);
     }
 
+    async deleteElements(elements) {
+        if (elements.length == 0) return;
+        const objects = elements.map( (e) => e._id );
+        return this.db.deleteMany({ _id: { $in: objects} });
+    }
+
     async updateOne(id, dataSet) {
         return this.db.updateOne({ '_id': id }, { $set: dataSet }, {upsert: false});
     }
@@ -257,6 +263,7 @@ class CalendarDb extends DbHelper {
     }
 
     async insert(list) {
+        if (list.length == 0) return;
         return this.db.insertMany(list);
     }
 
