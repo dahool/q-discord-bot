@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 
-const { Client, PermissionsBitField, Partials, ChannelType, ApplicationCommandOptionType } = require('discord.js');
+const { Events, Client, PermissionsBitField, Partials, ChannelType, ApplicationCommandOptionType } = require('discord.js');
 
 const { safeTrim, extract_channel, extract_role, extract_user } = require('../utils');
 const { MESSAGES } = require('../messages');
@@ -65,8 +65,30 @@ class BotCommander {
 
 	}
 
+	async _registerEvents() {
+
+		if (this.options.eventsDir) {
+			const cmdDir = this.options.eventsDir;
+			const eventFiles = fs.readdirSync(cmdDir).filter(file => file.endsWith('.js'));
+
+			for (const file of eventFiles) {
+				const event = require(`${cmdDir}/${file}`);
+				if (event.name) {
+					console.log(`Register ${file}`)
+					if (event.once) {
+						this.client.once(event.name, (...args) => event.execute(this.client, ...args));
+					} else {
+						this.client.on(event.name, (...args) => event.execute(this.client, ...args));
+					}
+				}
+			}
+		}
+
+	}
+
 	_initialize = () => {
-		this.client.once('ready', async () => {
+		
+		this.client.once(Events.ClientReady, async () => {
 			if (this.options.activity) {
 				this.client.user.setActivity(this.options.activity.message, { type: this.options.activity.type });
 			}
@@ -75,14 +97,14 @@ class BotCommander {
 			console.log((this.options.name || 'Bot') + ' online');
 		});
 
-		this.client.on('messageCreate', message => {
+		this.client.on(Events.MessageCreate, message => {
 			if (!message.content.startsWith(this.options.prefix) || message.author.bot || message.mentions.everyone) return;
 			const args = message.content.slice(this.options.prefix.length).split(/ +/);
 			const commandName = args.shift().toLowerCase();
 			this.invokeCommand(null, message, commandName, args, message.member, message.guild, message.channel);
 		})
 
-		this.client.on("interactionCreate", async (interaction) => {
+		this.client.on(Events.InteractionCreate, async (interaction) => {
 			
             console.log(interaction);
 
@@ -110,6 +132,7 @@ class BotCommander {
 
 		});
 
+		this._registerEvents();
 		this._prepareCommands();
 	}
 

@@ -25,6 +25,7 @@ const INTENTS = [
 const botclient = new BotCommander(INTENTS,
 	{name: 'Q', 
 	commandsDir: `${__dirname}/commands`,
+	eventsDir: `${__dirname}/events`,
 	prefix: prefix,
 	activity: {
 		message: 'you',

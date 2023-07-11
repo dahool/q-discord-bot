@@ -16,15 +16,16 @@
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "discord-oauth2-api": "^1.1.2",
-    "discord.js": "^14.8.0",
+    "discord.js": "^14.11.0",
     "express": "^4.17.1",
     "express-session": "^1.17.3",
     "ical-generator": "^3.0.0",
     "luxon": "^3.0.4",
-    "mongodb": "^4.14.0",
+    "mongodb": "^4.16.0",
     "node-ical": "^0.16.0",
     "serve-favicon": "^2.5.0",
     "sherlockjs": "^1.4.2",
+    "string-template": "^1.0.0",
     "striptags": "^3.2.0",
     "uid-generator": "^2.0.0"
   },

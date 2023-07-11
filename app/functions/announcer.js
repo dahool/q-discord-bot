@@ -133,6 +133,7 @@ generateSchedule = async (client) => {
 }
 
 module.exports = {
+    getRoles,
 	async execute(client, number) {
         db.calendar.readEvents({minutes: number}).then(events => {
             console.log("Found", events);

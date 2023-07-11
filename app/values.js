@@ -5,5 +5,7 @@ module.exports = {
 	DAILY_CHANNEL: "daily",
 	WEBHOOK: "webhook",
 	DIPLOMACY_CHANNEL: "diplomacy",
-	GENERAL_EVENTS: "events"
+	GENERAL_EVENTS: "events",
+	THREAD_ANNOUNCER: "threadPing",
+	THREAD_FOLLOWER: "threadFollower"
 };
