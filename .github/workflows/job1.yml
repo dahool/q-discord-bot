@@ -27,7 +27,7 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Starting build of ${{ github.event.commits[0].message }}
+        message: Starting build of ${{ github.event.head_commit.message }}
 
     - name: Build frontend
       working-directory: ./front
@@ -56,7 +56,7 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Build of ${{ github.event.commits[0].message }} has failed
+        message: Build of ${{ github.event.head_commit.message }} has failed
 
   deploy:
     runs-on: ubuntu-latest
@@ -91,7 +91,7 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: ${{ github.event.commits[0].message }} has been deployed
+        message: ${{ github.event.head_commit.message }} has been deployed
 
     - name: Deploy Failed
       if: ${{ failure() }}
@@ -99,4 +99,4 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Deploy of ${{ github.event.commits[0].message }} has failed
+        message: Deploy of ${{ github.event.head_commit.message }} has failed
