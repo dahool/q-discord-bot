@@ -54,7 +54,7 @@ syncGuild = async (guild) => {
 	// channels
 	const guildchannels = await guild.channels.fetch();
 	const savedchannels = await db.bot.fetchChannels(guild.id);
-	const filteredchannels = guildchannels.filter(ch => ch.type == 'GUILD_TEXT' && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
+	const filteredchannels = guildchannels.filter(ch => (ch.type === ChannelType.GuildText || ch.type === ChannelType.GuildForum) && !savedchannels.some(s => s.id == ch.id)).map(c=> { return {id: c.id, name: c.name, category: c.parent ? c.parent.name : null} });
 	if (filteredchannels.length) db.bot.addChannels(guild.id, filteredchannels);
 
 	// roles
@@ -89,7 +89,7 @@ botclient.on("guildDelete", guild => {
 
 botclient.on("channelCreate", channel => {
     console.debug("Created Channel: " + channel.name);
-	if (channel.type === ChannelType.GuildText) db.bot.addChannel(channel.guild.id, channel.id, channel.name);
+	if (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildForum ) db.bot.addChannel(channel.guild.id, channel.id, channel.name, channel.parent?.name);
 })
 
 botclient.on("channelDelete", channel => {
@@ -99,11 +99,11 @@ botclient.on("channelDelete", channel => {
 
 botclient.on("channelUpdate", async (oldchannel, channel) => {
     console.debug("Updated Channel: " + channel.name);
-	if (oldchannel.type === ChannelType.GuildText) {
+	if (oldchannel.type === ChannelType.GuildText || channel.type === ChannelType.GuildForum) {
 		await db.bot.removeChannel(oldchannel.guild.id, oldchannel.id);
 	}
-	if (channel.type === ChannelType.GuildText) {
-		db.bot.addChannel(channel.guild.id, channel.id, channel.name);
+	if (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildForum) {
+		db.bot.addChannel(channel.guild.id, channel.id, channel.name, channel.parent?.name);
 	}
 })
 

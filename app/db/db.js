@@ -187,8 +187,8 @@ class BotDb extends DbHelper {
         return this.findBy({type: 'guild'});
     }
 
-    async addChannel(guild, id, name) {
-        return this.db.insertOne({guild: guild, id: id, name: name, type: 'channel'});
+    async addChannel(guild, id, name, category) {
+        return this.db.insertOne({guild: guild, id: id, name: name, type: 'channel', category: category});
     }
 
     async removeChannel(guild, id) {
