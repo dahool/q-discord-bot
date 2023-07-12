@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppService } from '../service/app-services.service';
 import { Server } from '../service/models';
-import { ConfigOption, CONFIGS } from './configs';
+import { CONFIGS } from './configs';
 
 @Component({
   selector: 'app-config-man',
@@ -36,7 +35,6 @@ export class ConfigManComponent implements OnInit {
 
   select(cfg: any) {
     this.currentType = cfg;
-    //console.log(cfg);
   }
 
 }

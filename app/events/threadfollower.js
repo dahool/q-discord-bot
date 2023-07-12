@@ -11,8 +11,8 @@ module.exports = {
 			db.config.findOneBy({guild: thread.guildId, uuid: THREAD_FOLLOWER, channel: thread.parentId}).then(async cfg => {
 				if (cfg) {
 					const channel = guild.channels.cache.get(thread.parentId);
-					for (const memberId of channel.members.keys()) {
-						await thread.members.add(memberId);
+					for (const [id, member] of channel.members) {
+						if (!member.user.bot) await thread.members.add(id);
 					}
 				}
 			})

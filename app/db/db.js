@@ -127,6 +127,8 @@ class ConfigDb extends DbHelper {
         const query = { guild: guild, uuid: uuid }
         if (id) {
             query['_id'] = new ObjectId(id);
+        } else {
+            query['_id'] = new ObjectId();
         }
         return this.db.updateOne(query, { $set: data }, { upsert: true});
     }    

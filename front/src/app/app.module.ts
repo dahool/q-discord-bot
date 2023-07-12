@@ -1,17 +1,18 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { AlertModule } from './alerts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ServerSelectionComponent } from './server-selection/server-selection.component';
-import { ConfigManComponent } from './config-man/config-man.component';
 import { ConfigEditorComponent } from './config-editor/config-editor.component';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AlertModule } from './alerts';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import { ConfigFollowEditorComponent } from './config-editor/config-follow-editor.component';
+import { ConfigManComponent } from './config-man/config-man.component';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
+import { ServerSelectionComponent } from './server-selection/server-selection.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     ServerSelectionComponent,
     ConfigManComponent,
     ConfigEditorComponent,
+    ConfigFollowEditorComponent,
     UserProfileComponent
   ],
   imports: [

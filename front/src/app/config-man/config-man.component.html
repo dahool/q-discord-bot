@@ -13,8 +13,18 @@
         <h5 class="mb-1">{{cfg.description}}</h5>
       </div>
     </a>
+
+    <a (click)="select('follow')" class="list-group-item list-group-item-action">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Autofollow Threads</h5>
+      </div>
+    </a>
+
 </div>
 
 <ng-container *ngIf="currentType">
-<app-config-editor [config]="currentType" [id]="currentId"></app-config-editor>
+  <ng-container [ngSwitch]="currentType">
+      <app-config-follow-editor *ngSwitchCase="'follow'" [id]="currentId"></app-config-follow-editor>
+      <app-config-editor *ngSwitchDefault [config]="currentType" [id]="currentId"></app-config-editor>
+  </ng-container>
 </ng-container>
