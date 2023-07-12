@@ -69,4 +69,10 @@ jobs:
       uses: geekyeggo/delete-artifact@v2
       with:
         name: node-app
-      
+
+    - name: 'Send Notification'
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: ${{ github.event.commits[0].message }} has been deployed
