@@ -9,7 +9,8 @@ const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require("../values");
 
 const striptags = require("striptags");
 const { scheduleEvent } = require("../client/events");
-const { description } = require("../commands/zones");
+
+const { find_by_name } = require('../commands/zones');
 
 const MENTION_REX = /@([\[\]\w\s]+)/gm;
 
@@ -32,6 +33,8 @@ createTerritoryEmbed = (data) => {
         startTime = DateTime.fromISO(data.start).setLocale('en');
     }
 
+    const zones = find_by_name(data.location);
+
     const message = new Discord.EmbedBuilder()
         .setColor(randomColor())
         .setTitle(data.summary)
@@ -41,6 +44,12 @@ createTerritoryEmbed = (data) => {
         .addFields(
             { name: 'Zone', value: data.location },
             { name: 'Starts', value: asTimeRelative(startTime), inline: true });
+
+    if (zones.length > 0) {
+        const zone = zones[0];
+        message.addFields({name: 'Type', value: (zone.type == 1 ? ':one:' : zone.type == 2 ? ':two:' : ':three:')})
+        message.addFields({name: 'Risk level', value: zone.type == 1 ? 'High :warning:' : 'Medium'})
+    }
 
     return message;
 }

@@ -34,7 +34,7 @@ function list_by_particle(particle) {
 
 function find_by_name(name) {
 	return zones
-		.filter(z => z.zone.toLowerCase().includes(name))
+		.filter(z => z.zone.toLowerCase().includes(name.toLowerCase()))
 		.map(z => Object.assign({next: get_next_execution(z)}, z));
 }
 
