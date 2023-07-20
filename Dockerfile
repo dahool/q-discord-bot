@@ -1,7 +1,5 @@
 # build
-FROM node:16 AS build
-
-RUN npm install -g npm@latest
+FROM node:18 AS build
 
 # create build directory and copy everything
 RUN mkdir /usr/build
@@ -17,12 +15,11 @@ WORKDIR /usr/build/app
 RUN npm install --omit=dev
 
 # server
-FROM alpine
+FROM node:18-alpine
 
-RUN apk add --update nodejs npm
+ENV NODE_ENV production
 
-# update npm
-RUN npm install -g npm@latest pm2@latest
+RUN npm install -g pm2@latest
 
 RUN addgroup appuser && adduser --system --ingroup appuser appuser
 RUN mkdir /usr/app
