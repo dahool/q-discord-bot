@@ -344,6 +344,16 @@ class ServerDb extends DbHelper {
     
 }
 
+class PlayerInfo extends DbHelper {
+    constructor(connection) {
+        super(connection, "playerInfo");
+    }
+
+    async insertAll(list) {
+        return this.db.insertMany(list);
+    }
+
+}
 const connectionManager = new ConnectionManager();
 let db = {}
 
@@ -360,6 +370,7 @@ connectionManager.onConnect(function(cm) {
     db.members = new MembersDb(cm);
     db.dailies = new DailiesDb(cm);
     db.server = new ServerDb(cm);
+    db.player = new PlayerInfo(cm);
     Object.freeze(db);
 });
 

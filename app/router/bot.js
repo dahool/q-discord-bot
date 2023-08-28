@@ -3,6 +3,7 @@ const bot = require('../bot')
 const { db } = require('../db/db');
 const { isPresent } = require('../utils');
 const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require('../values');
+const { crawler } = require('../functions/crawler');
 
 const ENV_VARS = ['Q_TOKEN','DBCONN','DBNAME','CALENDAR_URL','DASHBOARD_URL'];
 
@@ -102,6 +103,10 @@ cleanExpiredEvents = (req, resp) => {
     });    
 }
 
+crawlerView = (req, res) => {
+    crawler();
+    res.send("OK");
+}
 
 routerSetup = (app) => {
 
@@ -118,6 +123,7 @@ routerSetup = (app) => {
     app.get('/online', onlineView);
     app.get('/load', loadView);
     app.get('/clean', cleanExpiredEvents);
+    app.get('/crawler', crawlerView);
 
 }
 
