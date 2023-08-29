@@ -37,7 +37,7 @@ module.exports = {
 		let attach = new AttachmentBuilder(Buffer.from(content, 'utf-8'), {name: 'alliance.csv'});
 
 		return client.channel.send({ files: [attach] }).then(() => {
-			client.reply("Posted");
+			client.reply("Here it is");
 		});
 
 	}
