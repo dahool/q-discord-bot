@@ -104,8 +104,9 @@ cleanExpiredEvents = (req, resp) => {
 }
 
 crawlerView = (req, res) => {
-    crawler();
-    res.send("OK");
+    crawler().then(() => {
+        res.send("OK");
+    });
 }
 
 routerSetup = (app) => {

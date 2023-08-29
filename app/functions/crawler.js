@@ -2,28 +2,6 @@ const axios = require('axios');
 const { db } = require('../db/db');
 
 const baseURL = "https://stfc.wtf/power/__data.json?server=36&sort=level&page=";
-const levelCache = {};
-const allianceCache = {};
-
-/*function parsePlayer(playerInfo) {
-    let header = playerInfo[0];
-    let player = {
-        name: playerInfo[1],
-    }
-    // do we have a level and tag?
-    if (typeof playerInfo[2] === 'string' || playerInfo[2] instanceof String) { // we have the tag here
-        allianceCache[header.alliance_tag] = playerInfo[2];
-        player['power'] = playerInfo[]
-    } else if (typeof playerInfo[3] === 'string' || playerInfo[3] instanceof String) {
-        levelCache[header.level] = playerInfo[2];
-        allianceCache[header.alliance_tag] = playerInfo[3];
-    } else if (!(header.level in levelCache)) {
-        levelCache[header.level] = playerInfo[2];
-    } 
-    player['level'] = levelCache[header.level];
-    player['alliance'] = allianceCache[header.alliance_tag];
-    return player;
-}*/
 
 function parsePlayer(data, index) {
     const header = data[index];
@@ -38,19 +16,10 @@ function parsePlayer(data, index) {
 }
 
 function parseList(data) {
-    // find start tag
-    let startNode = 0;
-    let endNode = 0;
     let players = [];
     for (let i = 0; i < data.length; i++) {
         if (data[i] != undefined && typeof data[i] === 'object' && 'owner' in data[i]) {
             players.push(parsePlayer(data, i));
-            /*if (startNode == 0) {
-                startNode = i;
-            } else if (startNode < i) {
-                players.push(parsePlayer(data.slice(startNode, i)));
-                startNode = i;
-            }*/
         }
     }
     return players;
@@ -97,12 +66,11 @@ async function crawler() {
     const getTags = await db.config.findBy({uuid: 'playerInfo'});
     
     if (getTags.length > 0) {
-        parsePage(0, undefined).then(list => {
-            insertPlayers(getTags, list);
-            console.log("Done");
-        });
+        const list = await parsePage(0, undefined);
+        await insertPlayers(getTags, list);
     }
 
+    return true;
 }
 
 module.exports = { crawler };
