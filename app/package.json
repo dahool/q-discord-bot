@@ -24,6 +24,7 @@
     "luxon": "^3.0.4",
     "mongodb": "^4.16.0",
     "node-ical": "^0.16.0",
+    "node-telegram-bot-api": "^0.61.0",
     "serve-favicon": "^2.5.0",
     "sherlockjs": "^1.4.2",
     "string-template": "^1.0.0",
