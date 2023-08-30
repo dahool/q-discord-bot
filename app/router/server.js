@@ -8,6 +8,9 @@ const sessions = require("express-session");
 const { db } = require('../db/db');
 const { isPresent } = require('../utils');
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 const ENV_VARS = ['CALLBACK_URL','OAUTH_URL','CLIENT_ID','SECRET_ID','SESSION_SECRET'];
 
 const oneDayInMillis = 1000 * 60 * 60 * 24;
@@ -27,7 +30,7 @@ viewRedirect = (req, res) => {
             req.session.token_expiration = DateTime.utc().plus({seconds: token.expiresIn});
             res.redirect('/');
         }).catch((e) => {
-            console.error(e);
+            logger.error(e);
             res.redirect(process.env.OAUTH_URL);
         })
     }
@@ -36,13 +39,13 @@ viewRedirect = (req, res) => {
 // '/api/user'
 viewUser = (req, res) => {
     client.getUser(req.session.token.accessToken).then((user) => {
-        console.debug(user);
+        logger.debug(user);
         res.send({
             username: user.username,
             icon: user.avatarURL({size: 128, format: 'webp'})
         })
     }).catch((e) => {
-        console.log(e);
+        logger.error(e);
         res.send({});
     })
 }
@@ -50,7 +53,7 @@ viewUser = (req, res) => {
 // '/api/servers'
 viewServers = (req, res) => {
     client.getGuilds(req.session.token.accessToken).then((guilds) => {
-        console.debug(guilds);
+        logger.debug(guilds);
         db.server.listGuilds().then((servers) => {
             res.send(guilds.filter(g => isGuildOwner(g) && servers.some(s => s.id == g.id)).map(g => {
                 return {
@@ -61,7 +64,7 @@ viewServers = (req, res) => {
             }))
         })
     }).catch((e) => {
-        console.log(e);
+        logger.error(e);
         res.send({});
     })
 }
@@ -76,7 +79,7 @@ viewGetServer = (req, res) => {
             icon: guild.iconURL({size: 128, format: 'webp'})
         })
     }).catch((e) => {
-        console.log(e);
+        logger.error(e);
         res.send({});
     })
 }
@@ -84,7 +87,7 @@ viewGetServer = (req, res) => {
 // '/api/channels/:id'
 viewChannels = (req, res) => {
     db.server.listChannels(req.params.id).then((list) => {
-        console.debug(list);
+        logger.debug(list);
         res.send(list.map(m => {
             return {
                 id: m.id,
@@ -98,7 +101,7 @@ viewChannels = (req, res) => {
 // '/api/roles/:id'
 viewRoles = (req, res) => {
     db.server.listRoles(req.params.id).then((list) => {
-        console.debug(list);
+        logger.debug(list);
         res.send(list.map(m => {
             return {
                 id: m.id,
@@ -148,7 +151,7 @@ validate_token = async (req) => {
                     req.session.token_expiration = DateTime.utc().plus({seconds: newToken.expiresIn});
                     resolve(true);
                 }).catch((e) => {
-                    console.error(e);
+                    logger.error(e);
                     resolve(false);
                 });
             } else {

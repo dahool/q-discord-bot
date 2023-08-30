@@ -12,6 +12,9 @@ const { scheduleEvent } = require("../client/events");
 
 const { find_by_name } = require('../commands/zones');
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 const MENTION_REX = /@([\[\]\w\s]+)/gm;
 
 createTerritoryContent = (data) => {
@@ -83,14 +86,14 @@ getRoles = (channel, message) => {
     let roles = [];
     if (message.description && message.description != '') {
         const msgdescription = stripHtml(message.description);
-        console.log("get roles " + msgdescription);
+        logger.debug("get roles " + msgdescription);
         const m = msgdescription.match(MENTION_REX);
-        console.log(m);
+        logger.debug(m);
         if (m) {
             m.map(v => v.substring(1).trim()).forEach(v => {
-                console.log("Lookup " + v);
+                logger.debug("Lookup " + v);
                 let role = channel.guild.roles.cache.find(r => r.name === v);
-                console.log(role);
+                logger.debug(role);
                 if (role) {
                     roles.push(asRole(role.id));
                 }
@@ -122,7 +125,7 @@ sendMessage = async (data, channel, cfgMention) => {
         var content = createEventContent(data);
     }
     const roles = getMentions(data, cfgMention).map(r => asRole(r)).join(' ') + getRoles(channel, data);
-    return channel.send({ embeds: [ embed ], content: content + ' @here ' + roles }).catch((e) => console.error(e));
+    return channel.send({ embeds: [ embed ], content: content + ' @here ' + roles }).catch((e) => logger.error(e));
 }
 
 generateSchedule = async (client) => {
@@ -135,7 +138,7 @@ generateSchedule = async (client) => {
     const events = await db.calendar.findBy(query);
     events.forEach((item) => {
         scheduleEvent(client.client.guilds.cache.get(item.guild), item.summary, '', 'general', DateTime.fromJSDate(item.start), item.duration, item.location).then((event) => {
-            console.log("Scheduled event", event.id);
+            logger.info("Scheduled event", event.id);
             db.calendar.updateOne(item._id, { eventId: event.id });
         })
     })
@@ -145,32 +148,29 @@ module.exports = {
     getRoles,
 	async execute(client, number) {
         db.calendar.readEvents({minutes: number}).then(events => {
-            console.log("Found", events);
-            db.logger.info("Found events " + JSON.stringify(events), "announcer")
+            logger.info("Found events", events);
             events.forEach(e => {
                 if (e.channel) {
                     const channel = client.client.guilds.cache.get(e.guild).channels.cache.get(e.channel);
                     if (channel) {
                         sendMessage(e, channel, null).then(() => {
-                            console.debug("Mark event", JSON.stringify(e));
+                            logger.debug("Mark event", JSON.stringify(e));
                             db.calendar.updateEvent(e);
                         });
                     } else {
-                        console.error("No channel found on guild", e.guild,"with id", e.channel);
-                        db.logger.error("No channel found on guild " + e.guild + " with id " + e.channel, "announcer");
+                        logger.error("No channel found on guild %s with id %s", e.guild, e.channel);
                     }
                 } else {
                     db.config.findOne(e.guild, e.type).then(cfg => {
                         if (cfg) {
-                            console.log(cfg);
+                            logger.debug(cfg);
                             const channel = client.client.guilds.cache.get(cfg.guild).channels.cache.get(cfg.channel);
                             if (channel) sendMessage(e, channel, cfg.mention).then(() => {
-                                                        console.debug("Mark event " + e);
+                                                        logger.debug("Mark event", e);
                                                         db.calendar.updateEvent(e);
                                                     });
                         } else {
-                            console.error("No default channel defined for", e.guild,"with id", e.channel);
-                            db.logger.error("No default channel defined for " + e.type + " on guild " + e.guild, "announcer");
+                            logger.error("No default channel defined for %s on guild %s with id %s", e.type, e.guild, e.channel);
                         }
                     })
                 }

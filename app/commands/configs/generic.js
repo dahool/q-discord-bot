@@ -1,7 +1,9 @@
 const { db } = require('../../db/db');
+const getLogger = require('../../logger')
+const logger = getLogger();
 
 getOrUpdate = async (client, key, description, args) => {
-    console.log(client);
+    logger.debug(client);
     const guild = client.guild.id;
     if ('set' in args) {
         const id = args['set']['channel']

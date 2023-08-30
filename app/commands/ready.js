@@ -1,5 +1,7 @@
 const cs = require('../values')
 const { db } = require('../db/db');
+const getLogger = require('../logger')
+const logger = getLogger();
 
 module.exports = {
 	name: 'ready',
@@ -17,9 +19,9 @@ module.exports = {
 			if (cfg) {
 				const r = await client.testChannel(client.guild.channels.cache.get(cfg.channel));
 				if (r) {
-					console.log("OK " + key);
+					logger.info("Self Check OK " + key);
 				} else {
-					console.error("NOT OK " + key);
+					logger.info("Self Check NOT OK " + key);
 					errors.add('<#' + cfg.channel + '>');
 				}
 			}

@@ -1,6 +1,9 @@
 const axios = require('axios');
 const { db } = require('../db/db');
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 const baseURL = "https://stfc.wtf/power/__data.json?server=36&sort=level&page=";
 
 function parsePlayer(data, index) {
@@ -28,7 +31,7 @@ function parseList(data) {
 function parsePage(pageNumber, totalPages) {
     if (totalPages == undefined || (totalPages != undefined && pageNumber <= totalPages)) {
         return new Promise(resolv => {
-            console.log("Requesting page " + baseURL + pageNumber);
+            logger.debug("Requesting page " + baseURL + pageNumber);
             axios.get(baseURL + pageNumber)
             .then(res => {
                 const data = res.data.nodes[1].data;
@@ -43,7 +46,7 @@ function parsePage(pageNumber, totalPages) {
                 });
             })
             .catch(err => {
-                console.log('Error: ', err.message);
+                logger.error('Error: ', err.message);
                 resolv([]);
             });
         })
@@ -55,7 +58,7 @@ function parsePage(pageNumber, totalPages) {
 
 async function insertPlayers(config, list) {
     for (gTag of config) {
-        console.log("Processing " + gTag.tag);
+        logger.debug("Processing " + gTag.tag);
         await db.player.deleteBy({guild: gTag.guild, tag: gTag.tag})
         const toInsert =  list.filter(player => player.tag == gTag.tag).map(player => Object.assign({}, player, {'guild': gTag.guild} ))
         if (toInsert.length > 0) await db.player.insertAll(toInsert);

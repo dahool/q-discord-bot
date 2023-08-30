@@ -1,6 +1,9 @@
 const { MongoClient, ObjectId }  = require('mongodb');
 const { DateTime } = require('luxon');
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 class ConnectionManager {
 
     connectListeners = [];
@@ -15,7 +18,7 @@ class ConnectionManager {
     async connect() {
         if (this._db == undefined) {
             await this.client.connect();
-            console.log("Database connected");
+            logger.info("Database connected");
             this._db = this.client.db(process.env.DBNAME);
         }
         this.connectListeners.forEach((fn) => fn(this));
@@ -359,7 +362,7 @@ let db = {}
 
 // initialize DI
 connectionManager.onConnect(function(cm) {
-    console.log('initialize DI');
+    logger.info('initialize DI');
     db.user = new UserDb(cm);
     db.alliance = new AllianceDb(cm);
     db.config = new ConfigDb(cm);

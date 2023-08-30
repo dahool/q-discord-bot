@@ -5,15 +5,18 @@ const { isPresent } = require('../utils');
 const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require('../values');
 const { crawler } = require('../functions/crawler');
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 const ENV_VARS = ['Q_TOKEN','DBCONN','DBNAME','CALENDAR_URL','DASHBOARD_URL'];
 
 notifyView = (req, resp) => {
-    console.log("notify")
+    logger.debug("notify")
     const num = req.query.number || 30;
     bot.announce(num).then(() => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
-        db.logger.error(error);
+        logger.error(error);
     });
 }
 
@@ -21,7 +24,7 @@ loadView = (req, resp) => {
     bot.loadEvents().then(() => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
-        db.logger.error(error);
+        logger.error(error);
     });
 }
 
@@ -29,7 +32,7 @@ onlineView = (req, resp) => {
     bot.online().then(() => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
-        db.logger.error(error);
+        logger.error(error);
     });
 }
 
@@ -37,7 +40,7 @@ rotateView = (req, resp) => {
     bot.rotate().then((r) => resp.send("OK " + r))
     .catch((error) => {
         resp.send(error);
-        db.logger.error(error);
+        logger.error(error);
     });
 }
 
@@ -46,12 +49,12 @@ eventsView = (req, resp) => {
     bot.events(num).then((r) => resp.send("OK"))
     .catch((error) => {
         resp.send(error);
-        db.logger.error(error);
+        logger.error(error);
     });
 }
 
 calendarView = (req, res) => {
-    console.log("Calendar get");
+    logger.debug("Calendar get");
     serveCalendar(req, res);
 }
 
@@ -67,12 +70,12 @@ clearZoneEvents = async () => {
     const today = DateTime.utc().minus({days: 1}).toJSDate();
     return new Promise((resolver) => {
         db.zoneEvents.findBy({events: {$elemMatch: {last: {$lt: today}}}}).then((zoneEvents) => {
-            console.log(zoneEvents);
+            logger.debug("ZoneEvents: %s", zoneEvents);
             zoneEvents.forEach((ze) => {
                 var newEvents = [];
                 ze.events.forEach(event => {
                     if (event.last < today) {
-                        console.log("Delete " + event.id);
+                        logger.debug("Delete", event.id);
                         db.calendar.delete({guild: ze.guild, uid: event.id, type: TERRITORY_CHANNEL});
                     } else {
                         newEvents.push(event);
@@ -98,7 +101,7 @@ clearReminders = async () => {
 
 cleanExpiredEvents = (req, resp) => {
     Promise.all([clearZoneEvents(), clearReminders()]).then((values) => {
-        console.log(values);
+        logger.debug("Values", values);
         resp.send("OK " + values);
     });    
 }

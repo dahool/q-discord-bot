@@ -9,6 +9,9 @@ const { connectionManager } = require('./db/db');
 const serverRouter = require('./router/server');
 const botRouter = require('./router/bot');
 
+const getLogger = require('./logger')
+const logger = getLogger();
+
 const app = express()
 app.use(express.json());
 app.use(favicon('public/favicon.ico'));
@@ -22,7 +25,8 @@ const port = process.env.WEB_PORT || 3000;
 const gramBot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: false});
 
 process.on('SIGINT', function() {
-    gramBot.sendMessage(process.env.TELEGRAM_ID, 'Q Bot stopped').then(() => {
+    logger.info("Shutting down");
+    gramBot.sendMessage(process.env.TELEGRAM_ID, `[${process.env.LOGGING_MES}] Q Bot stopped`).then(() => {
         gramBot.close();
     });
     bot.stop();
@@ -32,9 +36,10 @@ process.on('SIGINT', function() {
 });
 
 connectionManager.connect().then(() => {
+    logger.info("Starting bot");
     bot.start();
     app.listen(port, () => {
-        console.log("Web Listener Ready on port " + port);
-        gramBot.sendMessage(process.env.TELEGRAM_ID, 'Q Bot ready');
+        logger.info("Web Listener Ready on port " + port);
+        gramBot.sendMessage(process.env.TELEGRAM_ID, `[${process.env.LOGGING_MES}] Q Bot ready`);
     })
 })

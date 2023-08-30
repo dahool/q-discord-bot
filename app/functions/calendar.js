@@ -5,6 +5,9 @@ const ical = require('node-ical');
 const cs = require('../values');
 const generator = require('ical-generator');
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 get_duration = (ev) => {
     return Math.abs(DateTime.fromJSDate(ev.end).diff(DateTime.fromJSDate(ev.start)).as('minutes'));
 }
@@ -30,7 +33,7 @@ processRecurrentEvent = (ev) => {
 }
 
 loadEvents = async (guild, url, type) => {
-    console.log("load " + url);
+    logger.debug("load", url);
     const data = await ical.async.fromURL(url);
     
     await db.calendar.delete({guild: guild, type: type, src: 'calendar', start: {$lt: DateTime.utc().toJSDate()}});
@@ -44,12 +47,12 @@ loadEvents = async (guild, url, type) => {
                 if (ev.rrule) {
                     const events = processRecurrentEvent(ev);
                     if (events.length > 0) {
-                        console.log(events);
+                        logger.debug(events);
                         calendarEvents = calendarEvents.concat(events.map(e => Object.assign({}, e, {guild: guild, type: type, src: 'calendar'})));
                     }
                 } else {
                     if (DateTime.fromJSDate(ev.start) > DateTime.local()) {
-                        console.log(ev);
+                        logger.debug(ev);
                         const duration = get_duration(ev);
                         calendarEvents.push({guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'});
                     }
@@ -63,8 +66,8 @@ loadEvents = async (guild, url, type) => {
     const toInsertEvents = calendarEvents.filter((element) => !existingEvents.some((c) => element.uid == c.uid && element.start.getTime() == c.start.getTime() ) );
     const toDeleteEvents = existingEvents.filter((element) => !calendarEvents.some((c) => element.uid == c.uid && element.start.getTime() == c.start.getTime() ) );
 
-    console.log("Delete: %s", toDeleteEvents.map((e) => e.uid + " - " + e.start ));
-    console.log("Insert: %s", toInsertEvents.map((e) => e.uid + " - " + e.start ));
+    logger.debug("Delete: %s", toDeleteEvents.map((e) => e.uid + " - " + e.start ));
+    logger.debug("Insert: %s", toInsertEvents.map((e) => e.uid + " - " + e.start ));
 
     await db.calendar.deleteElements(toDeleteEvents);
     await db.calendar.insert(toInsertEvents);
@@ -76,7 +79,7 @@ serveCalendar = async (req, res) => {
     const guildData = await db.bot.fetchGuild(req.query.ID);
 
     if (!(guildData && guildData.token == req.query.TOKEN)) {
-        console.error("Calendar 404");
+        logger.error("Calendar 404");
         res.status(404).send('Not found');
         return;        
     }

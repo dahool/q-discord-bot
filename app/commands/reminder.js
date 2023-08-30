@@ -8,6 +8,9 @@ const { db } = require('../db/db');
 const { GENERAL_EVENTS } = require("../values");
 const { DateTime } = require('luxon');
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 class DataMap extends Map{
     getAndDelete(key) {
 		const value = super.get(key);
@@ -99,14 +102,14 @@ module.exports = {
 		const title = args.event;
 		const when = sherlock.parse(args.when);
 
-		console.log(args);
+		logger.debug(args);
 		
 		var startDate = DateTime.fromFormat(args.time.toString(),'Hmm', { zone: args.tz })
 							.set({ year: when.startDate.getFullYear(), 
 									month: when.startDate.getMonth()+1,
 									day: when.startDate.getDate() });
 
-		console.log(startDate);
+		logger.debug(startDate);
 
 		// since all time are UTC and I have no idea what timezone the user is
 		// I have to do this bs thingy to create an untouched time with correct timezone

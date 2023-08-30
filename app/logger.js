@@ -10,17 +10,20 @@ log4js.configure({
             measurement: process.env.LOGGING_MES,
             fields: ['data','fileName','lineNumber']
         },
-        dbLoggerFilter: {
+        dbLoggerFilter: { // use to filter logs
             type: "logLevelFilter",
             appender: "database",
             level: "info",
         },
         console: {
             type: "stdout",
-            pattern: "%d{yyyy-MM-dd hh:mm.ss} [%p] [%c] %m"
+            layout: {
+                type: "pattern",
+                pattern: "%d{yyyy-MM-dd hh:mm.ss} [%p] [%C] %m"
+            }
         }
     },
-    categories: { default: { appenders: ["dbLoggerFilter","console"], level: "debug", enableCallStack: true } },
+    categories: { default: { appenders: ["console","database"], level: "debug", enableCallStack: true, pm2: true } },
 });
 
 function getLogger() {

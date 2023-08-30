@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const { PermissionsBitField, ChannelType } = require('discord.js');
 const { MESSAGES } = require('../messages');
+const getLogger = require('../logger')
+const logger = getLogger();
 
 class BotClient {
 	
@@ -88,7 +90,7 @@ class BotClient {
 		r.then(m => {
 			if (!this._firstReplyMsg) this._firstReplyMsg = m; 
 		});
-		r.catch((e) => console.error(e));
+		r.catch((e) => logger.error(e));
 		return r;
 	}
 
@@ -100,7 +102,7 @@ class BotClient {
 			return this._reply_interaction(response);
 		} else {
 			if (this._firstReplyMsg) {
-				await this._firstReplyMsg.delete().catch((e) => console.error(e));
+				await this._firstReplyMsg.delete().catch((e) => logger.error(e));
 			}
 			if (doReply) {
 				return this._reply(response);
@@ -153,7 +155,7 @@ class BotClient {
 	}
 
 	sendTo = async(channel, response) => {
-		return Promise.all(this._createMessage(response).map(r => channel.send(r).catch((e) => console.error(e))));
+		return Promise.all(this._createMessage(response).map(r => channel.send(r).catch((e) => logger.error(e))));
 	}
 
 	testChannel = async(channel) => {

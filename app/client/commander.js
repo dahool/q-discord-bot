@@ -8,6 +8,9 @@ const { MESSAGES } = require('../messages');
 const { db } = require('../db/db');
 const { BotClient } = require('./botclient')
 
+const getLogger = require('../logger')
+const logger = getLogger();
+
 const REST_VERSION = '10';
 
 class BotCommander {
@@ -24,15 +27,15 @@ class BotCommander {
 		currentCommandList = currentCommandList.filter((c) => !this.commandsData.some((ca) => ca.name == c.name));
 		
 		if (currentCommandList.size > 0) {
-			console.log("Remove %s", JSON.stringify(currentCommandList))
+			logger.debug("Remove %s", JSON.stringify(currentCommandList))
 			const rest = new Discord.REST({ version: REST_VERSION }).setToken(this.tokenId);
 			return Promise.all(
 				currentCommandList.map(c => {
 					return new Promise((resolve) => {
 						rest.delete(route + `/${c.id}`)
-							.then(() => console.log(`Removed ${c.id} ${c.name}`))
+							.then(() => logger.debug(`Removed ${c.id} ${c.name}`))
 							.catch((e) => {
-								console.error(`Error removing ${c.id} ${c.name}`);
+								logger.error(`Error removing ${c.id} ${c.name}`);
 								console.error(e);
 							})
 							.finally(() => resolve());
@@ -55,12 +58,12 @@ class BotCommander {
             //await this._cleanUnusedCommands(route);
 		}
 
-		console.log("Commands for %s: %s", this.options.name, JSON.stringify(this.commandsData));
+		logger.debug("Commands for %s: %s", this.options.name, JSON.stringify(this.commandsData));
 
 		rest.put(route, { body: this.commandsData }).then(() => {
-			console.log("Commands registered")
+			logger.debug("Commands registered")
 		}).catch((e) => {
-			console.error(e);
+			logger.error(e);
 		});
 
 	}
@@ -74,7 +77,7 @@ class BotCommander {
 			for (const file of eventFiles) {
 				const event = require(`${cmdDir}/${file}`);
 				if (event.name) {
-					console.log(`Register ${file}`)
+					logger.debug(`Register ${file}`)
 					if (event.once) {
 						this.client.once(event.name, (...args) => event.execute(this.client, ...args));
 					} else {
@@ -94,7 +97,7 @@ class BotCommander {
 			}
 			this._registerAppCommands();
 			this.ready = true;
-			console.log((this.options.name || 'Bot') + ' online');
+			logger.info((this.options.name || 'Bot') + ' online');
 		});
 
 		this.client.on(Events.MessageCreate, message => {
@@ -106,7 +109,7 @@ class BotCommander {
 
 		this.client.on(Events.InteractionCreate, async (interaction) => {
 			
-            console.log(interaction);
+            logger.debug(interaction);
 
             if (interaction.isCommand()) {
 				const member = interaction.member;
@@ -139,8 +142,8 @@ class BotCommander {
     _getInteractionCommand(interaction) {
         const command = this.client.commands.get(interaction.message.interaction.commandName)
         if (!command) {
-            console.log(interaction);
-            console.error("Command " + interaction.commandName + " not found.")
+            logger.debug(interaction);
+            logger.error("Command " + interaction.commandName + " not found.")
             return;
         }
         return command;
@@ -195,7 +198,7 @@ class BotCommander {
 					}
 				}
 			} else {
-				console.log(option);
+				logger.debug(option);
 				if (args[argIndex]) {
 					let value;
 					if (argIndex == options.length-1) {
@@ -228,7 +231,7 @@ class BotCommander {
 
 	invokeCommand = async (interaction, message, commandName, args, member, guild, channel) => {
 
-		console.log("interaction %s, message %s, commandName %s, args %s, member %s, guild %s, channel %s", interaction, message, commandName, args, member, guild, channel);
+		logger.info("interaction %s, message %s, commandName %s, args %s, member %s, guild %s, channel %s", interaction, message, commandName, args, member, guild, channel);
 
 		const command = this.client.commands.get(commandName) 
 			|| this.client.commands.find(cmd => (interaction && cmd.slashName == commandName) || (!interaction && cmd.aliases && cmd.aliases.includes(commandName)));
@@ -242,7 +245,7 @@ class BotCommander {
 		const isAdmin = member.permissions.has([PermissionsBitField.Flags.Administrator, PermissionsBitField.Flags.ManageGuild]);
 		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r.id) );
 		
-    	console.debug("Command: " + commandName +  " - IsManager: " + isManager);
+    	logger.debug("Command: " + commandName +  " - IsManager: " + isManager);
 
 		const bc = new BotClient(this.client, message, member, guild, channel, isAdmin, isManager, interaction);
 
@@ -271,14 +274,13 @@ class BotCommander {
 			}
 		}
 
-		console.debug(args);
+		logger.debug(args);
 		
 		try {
 			command.execute(bc, args);
 		} catch (error) {
 			bc.reply(MESSAGES.error);
-			console.error(error);
-			db.logger.error(error);
+			logger.error(error);
 		}
 		
 	}

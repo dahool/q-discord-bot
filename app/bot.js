@@ -12,6 +12,9 @@ const UIDGenerator = require('uid-generator');
 
 const { db } = require('./db/db');
 
+const getLogger = require('./logger')
+const logger = getLogger();
+
 const INTENTS = [
 	GatewayIntentBits.Guilds,
 	GatewayIntentBits.GuildPresences,
@@ -47,7 +50,7 @@ botclient.once('ready', async () => {
 });
 
 syncGuild = async (guild) => {
-	console.log("Sync: " + guild.name);
+	logger.debug("Sync", guild.name);
 
 	updateGuildToken(guild.id);
 
@@ -76,29 +79,29 @@ updateGuildToken = (guildId) => {
 }
 
 botclient.on("guildCreate", guild => {
-    console.log("Joined: " + guild.name);
+	logger.info("Joined: " + guild.name)
 	db.bot.addGuild(guild.id, guild.name).then(() => {
 		syncGuild(guild);
 	});
 })
 
 botclient.on("guildDelete", guild => {
-    console.log("Left: " + guild.name);
+    logger.info("Left: " + guild.name);
 	db.bot.removeGuild(guild.id);
 })
 
 botclient.on("channelCreate", channel => {
-    console.debug("Created Channel: " + channel.name);
+    logger.debug("Created Channel: " + channel.name);
 	if (channel.type === ChannelType.GuildText || channel.type === ChannelType.GuildForum ) db.bot.addChannel(channel.guild.id, channel.id, channel.name, channel.parent?.name);
 })
 
 botclient.on("channelDelete", channel => {
-    console.debug("Deleted Channel: " + channel.name);
+    logger.debug("Deleted Channel: " + channel.name);
 	db.bot.removeChannel(channel.guild.id, channel.id);
 })
 
 botclient.on("channelUpdate", async (oldchannel, channel) => {
-    console.debug("Updated Channel: " + channel.name);
+    logger.debug("Updated Channel: " + channel.name);
 	if (oldchannel.type === ChannelType.GuildText || channel.type === ChannelType.GuildForum) {
 		await db.bot.removeChannel(oldchannel.guild.id, oldchannel.id);
 	}
@@ -108,23 +111,24 @@ botclient.on("channelUpdate", async (oldchannel, channel) => {
 })
 
 botclient.on("roleCreate", role => {
-    console.debug("Created role: " + role.name);
+    logger.debug("Created role: " + role.name);
 	db.bot.addRole(role.guild.id, role.id, role.name);
 })
 
 botclient.on("roleDelete", role => {
-    console.debug("Deleted Role: " + role.name);
+    logger.debug("Deleted Role: " + role.name);
 	db.bot.removeRole(role.guild.id, role.id);
 })
 
 botclient.on("roleUpdate", async (oldrole, newrole) => {
-    console.debug("Updated Role: " + newrole.name);
+    logger.debug("Updated Role: " + newrole.name);
 	await db.bot.removeRole(oldrole.guild.id, oldrole.id);
 	db.bot.addRole(newrole.guild.id, newrole.id, newrole.name);
 })
 
 botclient.on('presenceUpdate', async (oldMember, newMember) => {
 	if (!newMember.user.bot && newMember.status != 'offline') {
+		logger.debug("Presence Update: " + newMember.user.username);
 		db.members.updateOnline(newMember.guild.members.cache.get(newMember.user.id));
 	}
 })
@@ -134,7 +138,7 @@ botclient.client.on('messageCreate', async (message) => {
 		const cfg = await db.config.findBy({guild: message.guild.id, uuid: cs.WEBHOOK, channel: message.channel.id});
 		if (cfg?.length > 0) {
 			return hook.relayMessage(message, cfg);
-		}		
+		}
 	}
 });
 
@@ -159,17 +163,18 @@ module.exports = {
 	},*/
 	async announce(num) {
 		if (!botclient.ready) {
-			console.error("Not ready yet!");
+			logger.error("Not ready yet!");
 			return;
 		}
 		return announcer.execute(botclient, num);
 	},
 	async loadEvents() {
+		logger.info("Load Calendar");
 		return calendar.execute();
 	},
 	async online() {
 		if (!botclient.ready) {
-			console.error("Not ready yet!");
+			logger.error("Not ready yet!");
 			return;
 		}
 		return membersOnline.execute(botclient);
