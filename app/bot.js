@@ -5,8 +5,6 @@ const { GatewayIntentBits, ChannelType } = require('discord.js');
 const announcer = require('./functions/announcer');
 const calendar = require('./functions/calendar');
 const membersOnline = require('./functions/online');
-const hook = require('./functions/hooksender');
-const cs = require('./values')
 
 const UIDGenerator = require('uid-generator');
 
@@ -126,22 +124,6 @@ botclient.on("roleUpdate", async (oldrole, newrole) => {
 	await db.bot.removeRole(oldrole.guild.id, oldrole.id);
 	db.bot.addRole(newrole.guild.id, newrole.id, newrole.name);
 })
-
-botclient.on('presenceUpdate', async (oldMember, newMember) => {
-	if (!newMember.user.bot && newMember.status != 'offline') {
-		logger.debug("Presence Update: " + newMember.user.username);
-		db.members.updateOnline(newMember.guild.members.cache.get(newMember.user.id));
-	}
-})
-
-botclient.client.on('messageCreate', async (message) => {
-	if (!message.author.bot && !message.content.startsWith(prefix)) {
-		const cfg = await db.config.findBy({guild: message.guild.id, uuid: cs.WEBHOOK, channel: message.channel.id});
-		if (cfg?.length > 0) {
-			return hook.relayMessage(message, cfg);
-		}
-	}
-});
 
 const connectionManager = void 0;
 
