@@ -4,6 +4,9 @@ const path = require('path');
 const { db } = require('../db/db');
 const cs = require('../values')
 const { ApplicationCommandOptionType, ButtonStyle } = require('discord.js');
+const getLogger = require('../logger');
+
+const logger = getLogger();
 
 function isPromise(value) {
 	return Boolean(value && typeof value.then === 'function');
@@ -56,9 +59,12 @@ module.exports = {
 			// la primera clave es el 'comando'
 			const commandName = Object.keys(args)[0].toLowerCase();
 
+			logger.debug("Lookup for %s", commandName);
+
 			const command = commands.find(cmd => cmd.name == commandName || (cmd.aliases && cmd.aliases.includes(commandName)));
 
 			if (!command) {
+				logger.warn("%s not found in %s", commandName, JSON.stringify(commands));
 				return client.reply(`Sorry, unknown command \`${commandName}\``);
 			}
 

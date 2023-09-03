@@ -294,8 +294,8 @@ class BotCommander {
 			for (const file of commandFiles) {
 				const command = require(`${cmdDir}/${file}`);
 				if (command.name) {
-					this.client.commands.set(command.name, command);
-                    this.commandsData.push({name: command.slashName || command.name, description: command.description, options: command.options || []});
+					this.client.commands.set(command.name.toLowerCase(), command);
+                    this.commandsData.push({name: command.slashName || command.name.toLowerCase(), description: command.description, options: command.options || []});
 				}
 			}
 		}

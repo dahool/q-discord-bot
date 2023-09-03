@@ -26,9 +26,11 @@ const gramBot = new TelegramBot(process.env.TELEGRAM_TOKEN, {polling: false});
 
 process.on('SIGINT', function() {
     logger.info("Shutting down");
-    gramBot.sendMessage(process.env.TELEGRAM_ID, `[${process.env.LOGGING_MES}] Q Bot stopped`).then(() => {
-        gramBot.close();
-    });
+    if (process.env.TELEGRAM_ID) {
+        gramBot.sendMessage(process.env.TELEGRAM_ID, `[${process.env.LOGGING_MES}] Q Bot stopped`).then(() => {
+            gramBot.close();
+        });
+    }
     bot.stop();
     connectionManager.close().then(() => {
         process.exit(0);
@@ -40,6 +42,8 @@ connectionManager.connect().then(() => {
     bot.start();
     app.listen(port, () => {
         logger.info("Web Listener Ready on port " + port);
-        gramBot.sendMessage(process.env.TELEGRAM_ID, `[${process.env.LOGGING_MES}] Q Bot ready`);
+        if (process.env.TELEGRAM_ID) {
+            gramBot.sendMessage(process.env.TELEGRAM_ID, `[${process.env.LOGGING_MES}] Q Bot ready`);
+        }
     })
 })

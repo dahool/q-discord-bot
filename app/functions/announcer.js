@@ -5,7 +5,7 @@ const { DateTime } = require("luxon");
 const { db } = require('../db/db');
 
 const { randomColor, asRole, asTimeRelative } = require('../utils');
-const { TERRITORY_CHANNEL, GENERAL_EVENTS } = require("../values");
+const { TERRITORY_CHANNEL, GENERAL_EVENTS, SCHEDULED_EVENTS } = require("../values");
 
 const striptags = require("striptags");
 const { scheduleEvent } = require("../client/events");
@@ -18,7 +18,7 @@ const logger = getLogger();
 const MENTION_REX = /@([\[\]\w\s]+)/gm;
 
 createTerritoryContent = (data) => {
-    return data.summary  + ' [' + data.location + ']';
+    return data.summary + ' [' + data.location + '] @here ';
 }
 
 stripHtml = (data) => {
@@ -79,7 +79,12 @@ createEventEmbed = (data) => {
 }
 
 createEventContent = (data) => {
-    return data.summary;
+    return data.summary + ' @here ';
+}
+
+createScheduledEventContent = (data) => {
+    console.log(data);
+    return `Attention @everyone **${data.summary}** is starting soon. Join us ${data.url}`;
 }
 
 getRoles = (channel, message) => {
@@ -123,9 +128,15 @@ sendMessage = async (data, channel, cfgMention) => {
     } else if (data.type == GENERAL_EVENTS) {
         var embed = createEventEmbed(data);
         var content = createEventContent(data);
+    } else if (data.type == SCHEDULED_EVENTS) {
+        var embed = null;
+        var content = createScheduledEventContent(data);
     }
     const roles = getMentions(data, cfgMention).map(r => asRole(r)).join(' ') + getRoles(channel, data);
-    return channel.send({ embeds: [ embed ], content: content + ' @here ' + roles }).catch((e) => logger.error(e));
+    if (embed) {
+        return channel.send({ embeds: [ embed ], content: content + roles }).catch((e) => logger.error(e));    
+    }
+    return channel.send({ content: content + roles }).catch((e) => logger.error(e));
 }
 
 generateSchedule = async (client) => {

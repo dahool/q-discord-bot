@@ -22,7 +22,8 @@ const INTENTS = [
 	GatewayIntentBits.GuildMessages,
 	GatewayIntentBits.GuildWebhooks,
 	GatewayIntentBits.DirectMessages,
-	GatewayIntentBits.MessageContent
+	GatewayIntentBits.MessageContent,
+	GatewayIntentBits.GuildScheduledEvents
 ]
 
 const botclient = new BotCommander(INTENTS,
