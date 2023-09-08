@@ -54,7 +54,7 @@ loadEvents = async (guild, url, type) => {
                     if (DateTime.fromJSDate(ev.start) > DateTime.local()) {
                         logger.debug(ev);
                         const duration = get_duration(ev);
-                        calendarEvents.push({guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar'});
+                        calendarEvents.push({guild: guild, type: type, uid: ev.uid, summary: ev.summary, location: ev.location, start: ev.start, description: ev.description, notified: false, src: 'calendar', duration: duration});
                     }
                 }
             }
