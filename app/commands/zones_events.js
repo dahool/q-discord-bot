@@ -10,21 +10,47 @@ const { createURLwithParameters } = require('../utils');
 const { find_by_name } = require('./zones');
 const { deleteSchedule } = require('../client/events');
 
+const getLogger = require('../logger');
+const logger = getLogger();
+
+async function insert_calendar_event(zoneEvent, event) {
+	const e = {
+		guild: zoneEvent.guild, 
+		type: cs.TERRITORY_CHANNEL, 
+		uid: event.id, 
+		summary: event.title, 
+		location: zoneEvent.uuid, 
+		start: event.start, 
+		description: '', 
+		notified: false, 
+		mentions: event.mentions,
+		duration: event.duration
+	}
+	logger.debug("Insert %s", e);
+	return db.calendar.insert([
+		{
+			guild: zoneEvent.guild, 
+			type: cs.TERRITORY_CHANNEL, 
+			uid: event.id, 
+			summary: event.title, 
+			location: zoneEvent.uuid, 
+			start: event.start, 
+			description: '', 
+			notified: false, 
+			mentions: event.mentions,
+			duration: event.duration
+		}
+	])
+}
+
 async function create_event(client, zone, title, recurrent, mentions) {
 	const eventID = "Z" + Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
 	const location = zone.zone;
-	var time = zone.next;
-	var times = [ time.toJSDate() ];	
+	var startTime = zone.next.toJSDate();
+	var nextTime = null;
 	if (recurrent) {
-		do {
-			time = time.plus({days: 7});
-			times.push(time.toJSDate());
-		} while (times.length < 104) // 2 years events
+		nextTime = zone.next.plus({days: 7}).toJSDate();
 	}
-
-	var zoneevent = await db.zoneEvents.findOne(client.guild.id, location) || {events: []};
-	zoneevent.events.push({id: eventID, title: title, last: times[times.length-1]})
-	await db.zoneEvents.push(client.guild.id, location, zoneevent);
 
 	let duration = 60;
 	if (zone.type == 1) {
@@ -33,22 +59,12 @@ async function create_event(client, zone, title, recurrent, mentions) {
 		duration = 45;
 	}
 
-	const insertBulk = times.map((tm, index) => { 
-		return {
-			guild: client.guild.id, 
-			type: cs.TERRITORY_CHANNEL, 
-			uid: eventID, 
-			recurrence: index, 
-			summary: title, 
-			location: location, 
-			start: tm, 
-			description: '', 
-			notified: false, 
-			mentions: mentions,
-			duration: duration
-		}
-	} );
-	return db.calendar.insert(insertBulk)
+	const event = {id: eventID, title: title, start: startTime, next: nextTime, duration: duration, mentions: mentions};
+	var zoneevent = await db.zoneEvents.findOne(client.guild.id, location) || {guild: client.guild.id, uuid: location, events: []};
+	zoneevent.events.push(event);
+	await db.zoneEvents.push(client.guild.id, location, zoneevent);
+
+	return insert_calendar_event(zoneevent, event);
 }
 
 async function handle_create_event(client, zone, args) {
@@ -127,7 +143,7 @@ async function handle_remove_event(client, zone) {
 	const ze = await db.zoneEvents.findOneBy({
 		guild: client.guild.id,
 		uuid: zone.zone,
-		events: { $elemMatch: {last: { $gte: DateTime.utc().toJSDate() }} }
+		events: { $elemMatch: {start: { $gte: DateTime.utc().toJSDate() }} }
 	});
 
 	if (ze && ze.events) {
@@ -321,4 +337,5 @@ module.exports = {
 			return list_events(client, zones[0]);
 		}
     },
+	insert_calendar_event
 };

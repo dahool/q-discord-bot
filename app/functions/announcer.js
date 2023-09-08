@@ -12,7 +12,9 @@ const { scheduleEvent } = require("../client/events");
 
 const { find_by_name } = require('../commands/zones');
 
-const getLogger = require('../logger')
+const { insert_calendar_event } = require("../commands/zones_events");
+
+const getLogger = require('../logger');
 const logger = getLogger();
 
 const MENTION_REX = /@([\[\]\w\s]+)/gm;
@@ -139,6 +141,32 @@ sendMessage = async (data, channel, cfgMention) => {
     return channel.send({ content: content + roles }).catch((e) => logger.error(e));
 }
 
+generateNextEvents = async (client) => {
+
+    const today = DateTime.utc().toJSDate();
+
+    const query = {
+        events: { $elemMatch: {start: { $lt: today }, next: { $gte: today }} }
+    }
+
+    const zoneEvents = await db.zoneEvents.findBy(query);
+
+    for (zEvent of zoneEvents) {
+        for (const i in zEvent.events) {
+            const event = zEvent.events[i];
+            if (event.start < today && event.next >= today) {
+                event.start = event.next;
+                event.next = new Date(event.next);
+                event.next.setDate(event.next.getDate() + 7);
+                zEvent.events[i] = event;
+                await insert_calendar_event(zEvent, event);
+            }
+        }
+        await db.zoneEvents.push(zEvent.guild, zEvent.uuid, zEvent);
+    }
+
+}
+
 generateSchedule = async (client) => {
     const query = {
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({hours: 24}).toJSDate()},
@@ -155,11 +183,20 @@ generateSchedule = async (client) => {
     })
 }
 
+clean_old_calendar = async () => {
+    const query = {
+        start: { $lt: DateTime.utc().minus({days: 7}).toJSDate()},
+        notified: true,
+        type: 'territory'
+    }
+    return db.calendar.delete(query);
+}
+
 module.exports = {
     getRoles,
 	async execute(client, number) {
         db.calendar.readEvents({minutes: number}).then(events => {
-            logger.info("Found events", events);
+            logger.info("Found events %s", events);
             events.forEach(e => {
                 if (e.channel) {
                     const channel = client.client.guilds.cache.get(e.guild).channels.cache.get(e.channel);
@@ -188,5 +225,7 @@ module.exports = {
             });
         });
         generateSchedule(client);
+        generateNextEvents(client);
+        clean_old_calendar();
 	}
 };
