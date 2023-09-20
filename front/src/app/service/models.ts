@@ -1,3 +1,8 @@
+export class User {
+    username?: string;
+    icon?: string;
+}
+
 export class UserServer {
     id?: string;
     name?: string;
@@ -19,4 +24,29 @@ export class Server {
     id?: string;
     name?: string;
     icon?: string;
+}
+
+export class SaveResponse {
+    status?: boolean;
+    error?: string;
+}
+
+export class Config { 
+    guild?: string
+    name?: string
+    channels?: {
+        announcements?: string
+        logging?: string
+        territory?: string
+        scheduledEvents?: string
+    }
+    token?: string
+    allianceTag?: string
+    autoFollowThreadChannels?: string[]
+    newThreadAnnouncer?: [{
+        channels?: string[]
+        announceChannel?: string
+        message?: string
+    }]
+    territoyCalendar?: string
 }

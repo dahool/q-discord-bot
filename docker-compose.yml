@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  app:
+    image: 'qbot'
+    build:
+      context: .
+    container_name: qbot
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s    
+    env_file:    
+      - ./bot/.env
+    environment:
+      - TZ=Etc/UTC
+      - DASHBOARD_URL=http://localhost:3000
+    ports:
+       - "3000:3000"

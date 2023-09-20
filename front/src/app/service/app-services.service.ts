@@ -1,9 +1,9 @@
-import { Observable } from 'rxjs';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { Observable } from 'rxjs';
 import { BaseService } from './base.service';
-import { Channel, Role, Server, UserServer } from './models';
+import { Channel, Config, Role, SaveResponse, Server, User, UserServer } from './models';
 
 const API_URL = '';
 
@@ -32,19 +32,15 @@ export class AppService extends BaseService {
     return this.executeGet('server/' + id);
   }
 
-  loadConfig(server: string, configId: string): Observable<any> {
-    return this.executeGet('config/' + server + '/' + configId);
+  getConfig(server: string): Observable<Config> {
+    return this.executeGet('config/' + server);
   }
 
-  saveConfig(server: string, configId: string, data: any):  Observable<any> {
-    return this.executePut('config/' + server + '/' + configId, data);
-  }
- 
-  deleteConfig(server: string, configId: string, id: string):  Observable<any> {
-    return this.executeDelete('config/' + server + '/' + configId, id);
+  saveConfig(server: string, data: Config):  Observable<SaveResponse> {
+    return this.executePut('config/' + server, data);
   }
 
-  getProfile(): Observable<any> {
+  getProfile(): Observable<User> {
     return this.executeGet('user');
   }
 

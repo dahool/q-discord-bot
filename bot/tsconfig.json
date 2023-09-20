@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                                 /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "CommonJS",                                /* Specify what module code is generated. */
+    "rootDir": "./",
+    "outDir": "../dist",
+    "noImplicitReturns": true,
+    "strict": true,
+    "allowJs": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
+    "emitDecoratorMetadata": true,                    /* Emit design-type metadata for decorated declarations in source files. */
+    "moduleDetection": "auto",                        /* Control what method is used to detect module-format JS files. */
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "removeComments": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@data/*": ["./data/*"],
+    },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
+    "declaration": true,                              /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
+    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+    "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "sourceMap": true,
+    "baseUrl": "./",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "useDefineForClassFields": false,
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "files": [
+    "src/main.ts",
+  ],  
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+
+}

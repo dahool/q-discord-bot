@@ -1,30 +1,82 @@
-<div class="message-container text-center">
-  <alerts [config]="{timeout: 5000, dismissOnNavigate: true, dismissible: false}"></alerts>
-</div>
-
 <div class="list-group mt-5 mb-4">
-    <div class="d-flex mt-1 mb-2">
+    <div class="d-flex mt-1 mb-2" *ngIf="server">
       <img src="{{server.icon}}" width="32px" height="32px">&nbsp;
       <h5>{{server.name}}</h5>
     </div>
 
-    <a (click)="select(cfg)" *ngFor="let cfg of configTypes" class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{cfg.description}}</h5>
-      </div>
-    </a>
+    <form (ngSubmit)="trySave()" #form="ngForm">
+      <div class="card" *ngIf="config">
+          <div class="card-body">
 
-    <a (click)="select('follow')" class="list-group-item list-group-item-action">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Autofollow Threads</h5>
-      </div>
-    </a>
+              <fieldset>
+                <legend>Channels</legend>
+                <div class="form-group">
+                  <label for="announcements">Announcements</label>
+                  <select-channel-input name="announcements" [options]="channels$ | async" [(ngModel)]="config.channels.announcements"></select-channel-input>
+                </div>
+
+                <div class="form-group">
+                  <label for="territory">Territory</label>
+                  <select-channel-input (change)="printChange($event)" name="territory" [options]="channels$ | async" [(ngModel)]="config.channels.territory"></select-channel-input>
+                </div>
+
+                <div class="form-group">
+                  <label for="scheduledEvents">Scheduled Events</label>
+                  <select-channel-input name="scheduledEvents" [options]="channels$ | async" [(ngModel)]="config.channels.scheduledEvents"></select-channel-input>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <div class="form-group">
+                  <label for="alliance">Alliance Tag</label>
+                  <input name="alliance" type="text" class="form-control" [(ngModel)]="config.allianceTag">
+                </div>
+
+                <div class="form-group">
+                  <label for="calendar">External Territory Calendar Link (.ics)</label>
+                  <input name="calendar" type="text" class="form-control" [(ngModel)]="config.territoyCalendar" pattern="(https|http):\/\/.*">
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <div class="form-group">
+                  <label for="autoFollowThreadChannels">Channels to Autofollow New Threads</label>
+                  <select-channel-input name="autoFollowThreadChannels" [options]="channels$ | async" [(ngModel)]="config.autoFollowThreadChannels" [multiple]="true"></select-channel-input>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Announce New Threads
+                  <button (click)="addNewThreadAnnouncer()" type="button" class="btn btn-primary float-end"><i class="fas fa-plus"></i></button>
+                </legend>
+                <div class="container-fluid" *ngFor="let nta of config.newThreadAnnouncer">
+
+                  <div class="form-group">
+                    <label for="newThreadAnnouncerMessage">Message</label>
+                    <input name="newThreadAnnouncerMessage" type="text" class="form-control" [(ngModel)]="nta.message" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="newThreadAnnouncerAnnounceChannel">Announce in Channel</label>
+                    <select-channel-input name="newThreadAnnouncerAnnounceChannel" [options]="channels$ | async" [(ngModel)]="nta.announceChannel"></select-channel-input>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="newThreadAnnouncerChannels">Watch Channels</label>
+                    <select-channel-input name="newThreadAnnouncerChannels" [options]="channels$ | async" [(ngModel)]="nta.channels" [multiple]="true"></select-channel-input>
+                  </div>
+
+                </div>
+
+              </fieldset>
+
+          </div>
+
+          <div class="card-footer text-center">
+              <button type="submit" class="btn btn-success">Save</button>&nbsp;
+          </div>            
+        </div>
+    </form>      
 
 </div>
 
-<ng-container *ngIf="currentType">
-  <ng-container [ngSwitch]="currentType">
-      <app-config-follow-editor *ngSwitchCase="'follow'" [id]="currentId"></app-config-follow-editor>
-      <app-config-editor *ngSwitchDefault [config]="currentType" [id]="currentId"></app-config-editor>
-  </ng-container>
-</ng-container>

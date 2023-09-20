@@ -1,0 +1,209 @@
+import { createEventCalendar, findZonesByName } from "@/commands/territory";
+import { createScheduledEvent } from "@/common/discord";
+import { asRole, asTimeRelative, stripHtml } from "@/common/utils";
+import { logger } from "@/logging/logger";
+import { CalendarEvent, CalendarModel, ConfigModel, TerritoryEventModel } from "@/repository/model.schemas";
+import { Client, EmbedBuilder, GuildTextBasedChannel, MessageCreateOptions } from "discord.js";
+import { DateTime } from "luxon";
+
+export enum EVENT_TYPE {
+    TERRITORY = 'territory',
+    GENERAL = 'reminder',
+    SCHEDULED_EVENTS = 'event'
+}
+
+export const CALENDAR_SOURCE = "calendar";
+
+const MENTION_REX = /@([\[\]\w\s]+)/gm;
+
+function parseRolesFromText(channel: GuildTextBasedChannel, description: string | undefined): string[] {
+    if (description == undefined || description.length == 0) return [];
+
+    let roles: string[] = [];
+    const stripped = stripHtml(description)!;
+    logger.debug("get roles from %s", stripped);
+    
+    const m = stripped.match(MENTION_REX);
+    logger.debug("match: %o", m);
+    if (m) {
+        m.map(v => v.substring(1).trim()).forEach(v => {
+            logger.debug("Lookup for %s", v);
+            let role = channel.guild.roles.cache.find(r => r.name === v);
+            logger.debug("Found %o", role);
+            if (role) {
+                roles.push(asRole(role.id));
+            }
+        });
+    }
+    return roles;
+}
+
+function buildTerritoryAnnouncement(channel: GuildTextBasedChannel, event: CalendarEvent): MessageCreateOptions {
+
+    const startTime = DateTime.fromJSDate(event.start).setLocale('en');
+    const zones = findZonesByName(event.location);
+
+    const message = new EmbedBuilder()
+        .setColor('Random')
+        .setTitle(event.summary)
+        .setURL('https://www.timeanddate.com/countdown/generic?p0=1440&iso=' + startTime.setZone('UTC').toISO() + "&msg=" + encodeURIComponent(event.summary))
+        .setDescription(stripHtml(event.description) || ' ')
+        .setThumbnail('https://www.dropbox.com/s/6jzlixqvk4nhpg9/redalert.gif?raw=1')
+        .addFields(
+            { name: 'Zone', value: event.location },
+            { name: 'Starts', value: asTimeRelative(startTime), inline: true });
+
+    if (zones.length > 0) {
+        const zone = zones[0];
+        message.addFields({name: 'Type', value: (zone.type == 1 ? ':one:' : zone.type == 2 ? ':two:' : ':three:')})
+        message.addFields({name: 'Risk level', value: zone.type == 1 ? 'High :warning:' : 'Medium'})
+    }
+
+    
+     const roles = parseRolesFromText(channel, event.description).concat(event.pingRoles ? event.pingRoles.map(r => asRole(r)) : []);
+     if (roles.length == 0) {
+        roles.push("@here");
+     }
+     const ping = roles.join(' ');
+     return { content: `${event.summary} [${event.location}] ${ping}`, embeds: [ message ] }
+}
+
+function buildGeneralReminderAnnouncement(event: CalendarEvent): MessageCreateOptions {
+    const startTime = DateTime.fromJSDate(event.start).setLocale('en');
+
+    const message = new EmbedBuilder()
+        .setColor('Random')
+        .setTitle(event.summary)
+        .setURL('https://www.timeanddate.com/countdown/generic?p0=1440&iso=' + startTime.setZone('UTC').toISO() + "&msg=" + encodeURIComponent(event.summary))
+        .setThumbnail("https://www.dropbox.com/s/nrviw00vxo2xk3z/bell.png?raw=1")
+        .addFields(
+            { name: 'Event', value: event.summary },
+            { name: 'Starts', value: asTimeRelative(startTime), inline: true });
+
+
+    return { content: `${event.summary} @here`, embeds: [ message ] }
+}
+
+function buildScheduledEventsAnnouncement(event: CalendarEvent): MessageCreateOptions {
+    return { content: `Attention @everyone **${event.summary}** is starting soon. Join us ${event.extra}` }
+}
+
+async function postAnnouncement(event: CalendarEvent, channel: GuildTextBasedChannel): Promise<CalendarEvent> {
+    let payload: MessageCreateOptions;
+    switch(event.type) {
+        case EVENT_TYPE.TERRITORY:
+            payload = buildTerritoryAnnouncement(channel, event);
+            break;
+        case EVENT_TYPE.GENERAL:
+            payload = buildGeneralReminderAnnouncement(event);
+            break;
+        case EVENT_TYPE.SCHEDULED_EVENTS:
+            payload = buildScheduledEventsAnnouncement(event);
+            break;
+        default:
+            return Promise.reject("Unknown event type " + event.type);
+    }
+    return new Promise((reso, reje) => {
+        channel.send(payload)
+            .then(() => reso(event))
+            .catch((e: any) => {
+                logger.error(e);
+                reje(e);
+            })
+    })
+}
+
+async function rolloutEvents() {
+
+    // minimun for territory events is 30 minutes
+    const today = DateTime.utc().plus({minutes: 30}) .toJSDate();
+
+    const events = await TerritoryEventModel.find({ next: { $lt: today } }).exec();
+
+    // remove non recurrent events
+    let asyncWaiting = events.filter(e => e.recurrent === false).map(e => {
+        return new Promise<void>(resolve => {
+            e.deleteOne().then(() => resolve());
+        })
+    })
+    asyncWaiting.concat(events.filter(e => e.recurrent === true).map(e => {
+        return new Promise<void>(resolve => {
+            e.next = DateTime.fromJSDate(e.next).plus({days: 7}).toJSDate();
+            e.save().then(() => {
+                createEventCalendar(e).then(() => resolve());
+            });
+        });
+    }));
+
+    return Promise.all(asyncWaiting);
+}
+
+async function cleanUpCalendar() {
+    return CalendarModel.deleteMany({
+        start: { $lt: DateTime.utc().minus({ days: 1 }).toJSDate()},
+    }).exec();
+}
+
+async function scheduleDiscordEvents(client: Client) {
+    const query = {
+        start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({hours: 24}).toJSDate()},
+        notified: false,
+        discordEventId: null,
+        type: EVENT_TYPE.TERRITORY
+    }
+    const events = await CalendarModel.find(query);
+    return Promise.all(events.map(event => {
+        return createScheduledEvent(
+            client.guilds.cache.get(event.guild)!,
+            event.summary,
+            '',
+            'general',
+            DateTime.fromJSDate(event.start),
+            event.duration!,
+            event.location).then(dEvent => {
+                logger.info("Scheduled event %s for %s", dEvent.id, event.summary);
+                event.discordEventId = dEvent.id;
+                event.save();
+            });
+    }));
+}
+
+export async function processAnnouncements(client: Client, minutesAhead: number) {
+    
+    const events = await CalendarModel.find({
+        start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({minutes: minutesAhead}).toJSDate()},
+        notified: false
+    }).exec();
+
+    for (let event of events) {
+        let toChannel;
+        if (event.channel) {
+            toChannel = client.guilds.cache.get(event.guild)?.channels.cache.get(event.channel);
+        } else {
+            let config = await ConfigModel.findOne({guild: event.guild}).exec();
+            if (config) {
+                switch(event.type) {
+                    case EVENT_TYPE.TERRITORY:
+                        if (config.channels?.territory) {
+                            toChannel = client.guilds.cache.get(event.guild)?.channels.cache.get(config.channels.territory);
+                        }
+                }
+            }
+        }
+        if (toChannel?.isTextBased()) {
+            postAnnouncement(event, toChannel).then((ev) => {
+                ev.notified = true;
+                ev.save();
+            });
+        } else {
+            logger.error("No channel defined for event %O", event);
+        }
+    }
+    
+    return Promise.all([
+        rolloutEvents(),
+        cleanUpCalendar(),
+        scheduleDiscordEvents(client)
+    ])
+
+}

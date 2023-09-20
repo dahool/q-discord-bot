@@ -1,0 +1,10 @@
+{
+    "apps": [
+      {
+        "name": "Bot",
+        "script": "./main.js",
+        "cwd": "./",
+        "autorestart": true
+      }
+    ]
+  }

@@ -1,7 +1,7 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 
@@ -26,15 +26,12 @@ export abstract class BaseService {
 
   protected attachSpinner(ob: Observable<any>): Observable<any> {
     this.spinnerStack.push(true);
-    console.log("push");
     this.spinner.show();
     return ob.pipe(map(v => {
       console.debug("RESPONSE: " + JSON.stringify(v));
       return v;
     })).pipe(finalize(() => {
-      console.log(this.spinnerStack.length);
       this.spinnerStack.pop();
-      console.log(this.spinnerStack.length);
       if (this.spinnerStack.length == 0) {
         this.spinner.hide();
       }

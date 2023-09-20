@@ -1,0 +1,14 @@
+@import "./bootstrap";
+@import "@ng-select/ng-select/scss/default.theme";
+
+fieldset {
+    @extend .border;
+    @extend .border-light;
+    @extend .rounded;
+    @extend .p-3;
+    @extend .m-2;
+}
+
+select option:disabled {
+    background: none;
+}

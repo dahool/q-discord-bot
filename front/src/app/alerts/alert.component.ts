@@ -1,16 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Alert } from './alert.service';
 
 @Component({
   selector: 'alert-item',
-  template: `
-    <div *ngIf="alert" class="alert alert-{{alert.type}} show" role="alert" [ngClass]="{'alert-dismissible': alert.config?.dismissible}">
-      {{alert.message}}
-      <button *ngIf="alert.config?.dismissible" (click)="doClose()" type="button" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  `
+  templateUrl: 'alert.component.html'
 })
 export class AlertComponent implements OnInit {
 

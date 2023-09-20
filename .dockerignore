@@ -1,5 +1,9 @@
 **/node_modules/*
 **/.env
+**/dist/*
+**/scripts/*
 .vscode
 .github
 .git
+docker-compose.yml
+Dockerfile

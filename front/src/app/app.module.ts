@@ -8,9 +8,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { AlertModule } from './alerts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ConfigEditorComponent } from './config-editor/config-editor.component';
-import { ConfigFollowEditorComponent } from './config-editor/config-follow-editor.component';
 import { ConfigManComponent } from './config-man/config-man.component';
+import { SelectChannelInputComponent } from './inputs/select-channel-input';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { ServerSelectionComponent } from './server-selection/server-selection.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
@@ -20,8 +19,6 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     AppComponent,
     ServerSelectionComponent,
     ConfigManComponent,
-    ConfigEditorComponent,
-    ConfigFollowEditorComponent,
     UserProfileComponent
   ],
   imports: [
@@ -31,7 +28,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     FormsModule,
     HttpClientModule,
     AlertModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    SelectChannelInputComponent
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],
   bootstrap: [AppComponent],

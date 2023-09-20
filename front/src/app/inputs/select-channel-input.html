@@ -1,0 +1,23 @@
+
+<!--
+<select 
+    [id]="formControlName"
+    class="form-select"
+    [multiple]="isMultiple"
+    [size]="isMultiple ? 5 : 1">
+    <option value="" [disabled]="isMultiple">...</option>
+    <ng-container *ngFor="let c of options | keyvalue">
+        <optgroup label="{{c.key}}">
+            <option *ngFor="let o of $any(c.value)" [value]="o.id" [selected]="isSelected(o.id)">{{o.name}}</option>
+        </optgroup>
+    </ng-container>
+</select>
+-->
+
+<ng-select [id]="formControlName" [(ngModel)]="model" [multiple]="isMultiple" (change)="onValueUpdate($event)">
+    <ng-container *ngFor="let c of options | keyvalue">
+        <optgroup label="{{c.key}}">
+            <ng-option *ngFor="let o of $any(c.value)" [value]="o.id">{{o.name}}</ng-option>
+        </optgroup>
+    </ng-container>
+ </ng-select>

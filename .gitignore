@@ -1,2 +1,3 @@
 appdeploy.zip
-deploy.env
+/**/deploy.env
+**/dist/*
