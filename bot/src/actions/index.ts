@@ -6,7 +6,10 @@ export async function createOrUpdateWebhooks(client: Client, guild: Guild, confi
     if (config == undefined || config == null) config = await ConfigModel.findOne({guild: guild.id}).exec();
     if (config?.channels) {
         for (let [configKey, chId] of Object.entries(config.channels)) {
-            if (chId != undefined) createWebhook(client, guild.channels.cache.get(chId)).catch(e => logger.error("Error config %s: %s", configKey, e));
+            try {
+                if (chId != undefined) await createWebhook(client, guild.channels.cache.get(chId)).catch(e => logger.error("Error config %s: %s", configKey, e));
+            } catch(e: any) {
+            }
         }
     }
     return true;

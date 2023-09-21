@@ -1,4 +1,5 @@
 import { AllianceCommand } from "./commands/alliance.command";
+import { ConfigCommand } from "./commands/config.command";
 import { PublishCommand } from "./commands/publish.command";
 import { ReadyCommand } from "./commands/ready.command";
 import { TerritoryEventAdd, TerritoryEventDelete, TerritoryEventList, TerritoyInfoCommand } from "./commands/territory";
@@ -22,6 +23,7 @@ application.register(TerritoryEventAdd);
 application.register(TerritoryEventList);
 application.register(TerritoryEventDelete);
 application.register(AllianceCommand);
+application.register(ConfigCommand);
 
 /* events */
 application.register(ReadyListener);

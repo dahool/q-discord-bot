@@ -5,24 +5,24 @@
     </div>
 
     <form (ngSubmit)="trySave()" #form="ngForm">
-      <div class="card" *ngIf="config">
+      <div class="card" *ngIf="isReady">
           <div class="card-body">
 
               <fieldset>
                 <legend>Channels</legend>
                 <div class="form-group">
                   <label for="announcements">Announcements</label>
-                  <select-channel-input name="announcements" [options]="channels$ | async" [(ngModel)]="config.channels.announcements"></select-channel-input>
+                  <select-channel-input name="announcements" [options]="channels" [(ngModel)]="config.channels.announcements"></select-channel-input>
                 </div>
 
                 <div class="form-group">
                   <label for="territory">Territory</label>
-                  <select-channel-input (change)="printChange($event)" name="territory" [options]="channels$ | async" [(ngModel)]="config.channels.territory"></select-channel-input>
+                  <select-channel-input (change)="printChange($event)" name="territory" [options]="channels" [(ngModel)]="config.channels.territory"></select-channel-input>
                 </div>
 
                 <div class="form-group">
                   <label for="scheduledEvents">Scheduled Events</label>
-                  <select-channel-input name="scheduledEvents" [options]="channels$ | async" [(ngModel)]="config.channels.scheduledEvents"></select-channel-input>
+                  <select-channel-input name="scheduledEvents" [options]="channels" [(ngModel)]="config.channels.scheduledEvents"></select-channel-input>
                 </div>
               </fieldset>
 
@@ -41,7 +41,7 @@
               <fieldset>
                 <div class="form-group">
                   <label for="autoFollowThreadChannels">Channels to Autofollow New Threads</label>
-                  <select-channel-input name="autoFollowThreadChannels" [options]="channels$ | async" [(ngModel)]="config.autoFollowThreadChannels" [multiple]="true"></select-channel-input>
+                  <select-channel-input name="autoFollowThreadChannels" [options]="channels" [(ngModel)]="config.autoFollowThreadChannels" [multiple]="true"></select-channel-input>
                 </div>
               </fieldset>
 
@@ -49,21 +49,22 @@
                 <legend>Announce New Threads
                   <button (click)="addNewThreadAnnouncer()" type="button" class="btn btn-primary float-end"><i class="fas fa-plus"></i></button>
                 </legend>
-                <div class="container-fluid" *ngFor="let nta of config.newThreadAnnouncer">
+                <div class="container-fluid border p-2 rounded" *ngFor="let nta of config.newThreadAnnouncer; index as i" ngModelGroup="ntaGroup_{{i}}">
 
                   <div class="form-group">
                     <label for="newThreadAnnouncerMessage">Message</label>
                     <input name="newThreadAnnouncerMessage" type="text" class="form-control" [(ngModel)]="nta.message" required>
+                    <p>Available placeholders: <span class="badge bg-secondary">&#123;channel&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;user&#125;</span> <span class="badge bg-secondary">&#123;title&#125;</span></p>
                   </div>
 
                   <div class="form-group">
                     <label for="newThreadAnnouncerAnnounceChannel">Announce in Channel</label>
-                    <select-channel-input name="newThreadAnnouncerAnnounceChannel" [options]="channels$ | async" [(ngModel)]="nta.announceChannel"></select-channel-input>
+                    <select-channel-input name="newThreadAnnouncerAnnounceChannel" [options]="channels" [(ngModel)]="nta.announceChannel"></select-channel-input>
                   </div>
 
                   <div class="form-group">
                     <label for="newThreadAnnouncerChannels">Watch Channels</label>
-                    <select-channel-input name="newThreadAnnouncerChannels" [options]="channels$ | async" [(ngModel)]="nta.channels" [multiple]="true"></select-channel-input>
+                    <select-channel-input name="newThreadAnnouncerChannels" [options]="channels" [(ngModel)]="nta.channels" [multiple]="true"></select-channel-input>
                   </div>
 
                 </div>

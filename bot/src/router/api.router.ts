@@ -61,7 +61,7 @@ export class ApiController {
     @Get("/user")
     getUser(@Req() req: Request, @Res() res: Response) {
         oClient.getUser(req.session.token!).then((user) => {
-            logger.debug(user);
+            logger.debug("%O", user);
             res.send({
                 username: user.username,
                 icon: user.avatarURL({size: 128, format: 'webp'})

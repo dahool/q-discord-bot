@@ -5,7 +5,7 @@ FROM node:18 AS build
 COPY . /usr/build
 
 # build dashboard
-WORKDIR /usr/build/front
+WORKDIR /usr/build/web
 RUN npm install \
     && npm run build
 

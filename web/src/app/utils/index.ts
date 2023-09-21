@@ -1,4 +1,4 @@
-export function GroupBy<T, K extends keyof T>(array: T[], key: K) {
+export function GroupBy<T, K extends keyof T>(array: T[], key: K): Map<T[K], T[]> {
 	let map = new Map<T[K], T[]>();
 	array.forEach(item => {
 		let itemKey = item[key];

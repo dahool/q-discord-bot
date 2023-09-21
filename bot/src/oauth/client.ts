@@ -36,7 +36,8 @@ export class OAuthClient {
 
     _post(data: any): Promise<any> {
         return new Promise((resolve, reject) => {
-            logger.debug("Posting %O", data);
+            const {client_secret, ...dData} = data;
+            logger.debug("Posting %O", dData);
             this.axiosClient.post('/oauth2/token', data)
             .then(response => {
                 logger.debug("Response status %d", response.status);
@@ -83,6 +84,7 @@ export class OAuthClient {
 
     getUser(token: OAuthToken): Promise<OAuthUser> {
         return new Promise((resolve, reject) => {
+            logger.debug("getUser");
             this.axiosClient.get('/users/@me', {headers: {Authorization: `Bearer ${token.accessToken}`}})
                 .then(response => {
                     if (response.status < 200 || response.status > 299) {
@@ -98,6 +100,7 @@ export class OAuthClient {
 
     getGuilds(token: OAuthToken): Promise<OAuthGuild[]> {
         return new Promise((resolve, reject) => {
+            logger.debug("getGuilds");
             this.axiosClient.get('/users/@me/guilds', {headers: {Authorization: `Bearer ${token.accessToken}`}})
                 .then(response => {
                     if (response.status < 200 || response.status > 299) {

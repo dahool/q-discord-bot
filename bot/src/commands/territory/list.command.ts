@@ -17,9 +17,9 @@ import { Territory, findZonesByName } from ".";
 	options: [
 		{
 			name: 'zone',
-			description: 'Territory Name (use * for all)',
+			description: 'Territory Name',
 			type: ApplicationCommandOptionType.String,
-			required: true
+			required: false
 		}
 	],	
 })
@@ -122,7 +122,7 @@ export class TerritoryEventList implements DiscordCommand {
 
 		await interaction.deferReply();
 
-		if (args.zone == '*') {
+		if (args.zone == undefined || args.zone == '*') {
 			return this.listAllEvents(interaction);
 		}
 		

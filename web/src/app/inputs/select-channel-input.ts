@@ -20,7 +20,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 export class SelectChannelInputComponent implements ControlValueAccessor, OnInit {
 
   //@ts-ignore
-  @Input() options: Map<any[], any[]>;
+  @Input() options: Map<any | undefined, any[]>;
   @Input() formControlName: string = '';
   @Input("multiple") isMultiple: boolean = false;
   @Input("ngModel") model: any;

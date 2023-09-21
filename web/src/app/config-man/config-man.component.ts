@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { AlertService } from '../alerts';
 import { AppService } from '../service/app-services.service';
-import { Server } from '../service/models';
+import { Channel, Config, EMPTY_CONFIG, Role, Server } from '../service/models';
 import { GroupBy } from '../utils';
 
 @Component({
@@ -15,13 +15,15 @@ export class ConfigManComponent implements OnInit {
 
   guildId?: string | null;
   server?: Server;
-  config?: any;
+  config!: Config;
+  
+  isReady = false;
 
   @ViewChild("form", { static: true })
   form!: NgForm;
 
-  channels$: BehaviorSubject<any> = new BehaviorSubject([]);
-  roles$: BehaviorSubject<any> = new BehaviorSubject([]);
+  channels: Map<string | undefined, Channel[]> = new Map();
+  roles: Role[] = [];
 
   constructor(
       private router: Router,
@@ -35,21 +37,35 @@ export class ConfigManComponent implements OnInit {
       if (!this.guildId) {
         this.router.navigateByUrl('/');
       } else {
-        this.service.getServer(this.guildId).subscribe(s => this.server = s);
-        this.service.listChannels(this.guildId).subscribe(l => {
-          this.channels$.next(GroupBy(l, "parent"))
+        forkJoin({
+          server: this.service.getServer(this.guildId),
+          channels: this.service.listChannels(this.guildId),
+          roles: this.service.listRoles(this.guildId),
+          config: this.service.getConfig(this.guildId)  
+        }).subscribe(result => {
+          this.server = result.server;
+          this.channels = GroupBy(result.channels, "parent");
+          this.roles = result.roles;
+          this.config = Object.assign(EMPTY_CONFIG, result.config) as Config;
+          this.isReady = true;
+        }, error => {
+          console.error(error);
+          this.toast.error("Ups, something went wrong. Try reloading");
         });
-        this.service.listRoles(this.guildId).subscribe(l => this.roles$.next(l));
-        this.service.getConfig(this.guildId).subscribe(c => this.config = c);
       }
     })
   }
 
   addNewThreadAnnouncer() {
-    if (this.config.newThreadAnnouncer == undefined) {
-      this.config.newThreadAnnouncer = [{}];
+    const EMPTY = {
+        channels: [],
+        announceChannel: '',
+        message: ''   
+    }
+    if (this.config!.newThreadAnnouncer == undefined) {
+      this.config!.newThreadAnnouncer = [EMPTY];
     } else {
-      this.config.newThreadAnnouncer.push({})
+      this.config!.newThreadAnnouncer.push(EMPTY)
     }
   }
 
@@ -66,7 +82,7 @@ export class ConfigManComponent implements OnInit {
 
       console.debug(this.config);
 
-      this.service.saveConfig(this.guildId!, this.config).subscribe((s:any) => {
+      this.service.saveConfig(this.guildId!, this.config!).subscribe((s:any) => {
         if (s.status) {
           this.toast.success("Saved")
         } else {

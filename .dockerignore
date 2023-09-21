@@ -1,9 +1,10 @@
-**/node_modules/*
+**/node_modules
 **/.env
-**/dist/*
-**/scripts/*
-.vscode
-.github
-.git
+**/dist
+**/scripts
+**/.angular
+**/.vscode
+**/.github
+**/.git
 docker-compose.yml
-Dockerfile
+Dockerfile*

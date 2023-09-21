@@ -61,12 +61,12 @@ function parsePage(pageNumber: number, totalPages: number | undefined): Promise<
 
 async function insertPlayers(guildId: string, tag: string, list: any[]): Promise<any> {
     logger.debug("Processing tag %s", tag);
-    await PlayerInfoModel.deleteMany({'guild': guildId}).exec();
     const toInsert =  list.filter(player => player.tag == tag.toUpperCase()).map(player => {
         player['guild'] = guildId;
         return player;
     });
     if (toInsert.length) {
+        await PlayerInfoModel.deleteMany({'guild': guildId}).exec();
         logger.debug("Insert %O", toInsert);
         return PlayerInfoModel.insertMany(toInsert);
     }
