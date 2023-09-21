@@ -22,8 +22,6 @@ RUN cp -R /usr/build/bot/public /usr/build/dist/ \
 # server
 FROM node:18-alpine
 
-ENV NODE_ENV production
-
 RUN npm install -g pm2@latest
 
 RUN mkdir /usr/app \

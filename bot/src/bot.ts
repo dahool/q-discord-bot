@@ -42,7 +42,6 @@ export class BotCommander {
 
     defaultGuild?: string;
 
-    // TODO
     constructor(name: string, guild?: string, ops?: ActivityOps) {
         this._initialize();
         this.options = ops;
@@ -61,6 +60,11 @@ export class BotCommander {
             });
         })        
     }
+
+	stop(): Promise<void> {
+		if (this.client) return this.client.destroy();
+		return Promise.resolve();
+	}
     
     _initialize() {
         this._prepareCommands();

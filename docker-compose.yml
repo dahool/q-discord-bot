@@ -22,5 +22,6 @@ services:
     environment:
       - TZ=Etc/UTC
       - DASHBOARD_URL=http://localhost:3000
+      - NODE_ENV=dev
     ports:
        - "3000:3000"
