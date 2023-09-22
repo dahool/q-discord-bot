@@ -22,14 +22,13 @@ const ConfigSchema = new Schema<Config>({
 }, { collection: 'guild_config' })
 
 const PlayerInfoSchema = new Schema<PlayerInfo>({
-    guild: String,
     name: String,
     level: Number,
     tag: String,
     power: Number,
     pd: Number,
     rss: Number
-}, { collection: 'guild_playerinfo'})
+}, { collection: 'playerinfo'})
 
 const CalendarSchema = new Schema<CalendarEvent>({
     guild: { type: String, required: true },

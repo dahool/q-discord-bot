@@ -1,7 +1,7 @@
 import { safeNull } from "@/common/utils";
 import { environment } from "@/env/environment";
 import { logger } from "@/logging/logger";
-import { ConfigModel, PlayerInfoModel } from "@/repository/model.schemas";
+import { PlayerInfoModel } from "@/repository/model.schemas";
 import axios from 'axios';
 
 function parsePlayer(data: any[], index: number): any {
@@ -59,7 +59,10 @@ function parsePage(pageNumber: number, totalPages: number | undefined): Promise<
     });
 }
 
-async function insertPlayers(guildId: string, tag: string, list: any[]): Promise<any> {
+async function insertPlayers(guildId: string, tag: string | undefined, list: any[]): Promise<any> {
+    if (tag == undefined || tag == '') {
+        return PlayerInfoModel.deleteMany({'guild': guildId}).exec();
+    } 
     logger.debug("Processing tag %s", tag);
     const toInsert =  list.filter(player => player.tag == tag.toUpperCase()).map(player => {
         player['guild'] = guildId;
@@ -73,11 +76,23 @@ async function insertPlayers(guildId: string, tag: string, list: any[]): Promise
     return Promise.resolve();
 }
 
-export async function executeCrawler(): Promise<any> {
-    let configs = await ConfigModel.find({"allianceTag":{$ne:null}}).exec();
-    if (configs.length) {
-        const playersList = await parsePage(0, undefined);
-        return Promise.all(configs.map(cfg => insertPlayers(cfg.guild!, cfg.allianceTag!, playersList)));
+
+async function insertAllPlayers(list: any[]): Promise<any> {
+    if (list.length) {
+        await PlayerInfoModel.deleteMany({}).exec();
+        logger.debug("Insert %d players", list.length);
+        return PlayerInfoModel.insertMany(list);
     }
     return Promise.resolve();
+}
+
+export async function executeCrawler(): Promise<any> {
+    /*let configs = await ConfigModel.find({"allianceTag":{$ne:null}}).exec();
+    if (configs.length) {
+        const playersList = await parsePage(0, undefined);
+        return Promise.all(configs.map(cfg => insertPlayers(cfg.guild!, cfg.allianceTag, playersList)));
+    }
+    return Promise.resolve();*/
+    const playersList = await parsePage(0, undefined);
+    return insertAllPlayers(playersList);
 }

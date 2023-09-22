@@ -21,7 +21,6 @@ export interface Config extends Document {
 }
 
 export interface PlayerInfo extends Document {
-    guild: string,
     name: string,
     level: number,
     tag: string,
