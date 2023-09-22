@@ -4,10 +4,6 @@
 name: Deploy qBot
 
 on:
-  push:
-    branches:
-      - deploy
-      - master
   workflow_dispatch:
 
 jobs:
