@@ -1,34 +1,34 @@
-export class User {
-    username?: string;
-    icon?: string;
+export interface User {
+    username: string;
+    icon: string;
 }
 
-export class UserServer {
-    id?: string;
-    name?: string;
-    icon?: string;
+export interface UserServer {
+    id: string;
+    name: string;
+    icon: string;
 }
 
-export class Channel {
-    id?: string;
-    name?: string;
-    parent?: string;
+export interface Channel {
+    id: string;
+    name: string;
+    parent: string;
 }
 
-export class Role {
-    id?: string;
-    name?: string;
+export interface Role {
+    id: string;
+    name: string;
 }
 
-export class Server {
-    id?: string;
-    name?: string;
-    icon?: string;
+export interface Server {
+    id: string;
+    name: string;
+    icon: string;
 }
 
-export class SaveResponse {
-    status?: boolean;
-    error?: string;
+export interface SaveResponse {
+    status: boolean;
+    error: string;
 }
 
 export interface Config { 

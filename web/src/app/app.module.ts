@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AlertModule } from './alerts';
 import { AppRoutingModule } from './app-routing.module';
@@ -13,6 +14,7 @@ import { SelectChannelInputComponent } from './inputs/select-channel-input';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { ServerSelectionComponent } from './server-selection/server-selection.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+
 
 @NgModule({
   declarations: [
@@ -29,7 +31,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     HttpClientModule,
     AlertModule,
     NgxSpinnerModule,
-    SelectChannelInputComponent
+    SelectChannelInputComponent,
+    NgSelectModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],
   bootstrap: [AppComponent],

@@ -1,23 +1,17 @@
-
-<!--
-<select 
-    [id]="formControlName"
-    class="form-select"
+ <ng-select
+    [items]="channelList"
     [multiple]="isMultiple"
-    [size]="isMultiple ? 5 : 1">
-    <option value="" [disabled]="isMultiple">...</option>
-    <ng-container *ngFor="let c of options | keyvalue">
-        <optgroup label="{{c.key}}">
-            <option *ngFor="let o of $any(c.value)" [value]="o.id" [selected]="isSelected(o.id)">{{o.name}}</option>
-        </optgroup>
-    </ng-container>
-</select>
--->
+    bindLabel="name"
+    groupBy="parent"
+    [selectableGroup]="false"
+    [selectableGroupAsModel]="false"
+    [closeOnSelect]="!isMultiple"
+    bindValue="id"
+    (change)="onValueUpdate($event)"
+    #inputField>
 
-<ng-select [id]="formControlName" [(ngModel)]="model" [multiple]="isMultiple" (change)="onValueUpdate($event)">
-    <ng-container *ngFor="let c of options | keyvalue">
-        <optgroup label="{{c.key}}">
-            <ng-option *ngFor="let o of $any(c.value)" [value]="o.id">{{o.name}}</ng-option>
-        </optgroup>
-    </ng-container>
- </ng-select>
+    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <input id="item-{{formControlName}}-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.name }}
+    </ng-template>
+
+</ng-select>

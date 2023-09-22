@@ -5,7 +5,6 @@ import { forkJoin } from 'rxjs';
 import { AlertService } from '../alerts';
 import { AppService } from '../service/app-services.service';
 import { Channel, Config, EMPTY_CONFIG, Role, Server } from '../service/models';
-import { GroupBy } from '../utils';
 
 @Component({
   selector: 'app-config-man',
@@ -22,7 +21,8 @@ export class ConfigManComponent implements OnInit {
   @ViewChild("form", { static: true })
   form!: NgForm;
 
-  channels: Map<string | undefined, Channel[]> = new Map();
+  //channels: Map<string | undefined, Channel[]> = new Map();
+  channels: Channel[] = [];
   roles: Role[] = [];
 
   constructor(
@@ -44,7 +44,8 @@ export class ConfigManComponent implements OnInit {
           config: this.service.getConfig(this.guildId)  
         }).subscribe(result => {
           this.server = result.server;
-          this.channels = GroupBy(result.channels, "parent");
+          //this.channels = GroupBy(result.channels, "parent");
+          this.channels = result.channels;
           this.roles = result.roles;
           this.config = Object.assign(EMPTY_CONFIG, result.config) as Config;
           this.isReady = true;
@@ -67,6 +68,10 @@ export class ConfigManComponent implements OnInit {
     } else {
       this.config!.newThreadAnnouncer.push(EMPTY)
     }
+  }
+
+  removeThreadAnnouncer(index: number) {
+    this.config.newThreadAnnouncer.splice(index, 1);
   }
 
   printChange(e: any) {

@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, forwardRef } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild, forwardRef } from "@angular/core";
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { NgSelectModule } from '@ng-select/ng-select';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'select-channel-input',
@@ -15,20 +15,23 @@ import { NgSelectModule } from '@ng-select/ng-select';
       useExisting: forwardRef(() => SelectChannelInputComponent),
       multi: true,
     },
-  ],  
+  ],    
 })
-export class SelectChannelInputComponent implements ControlValueAccessor, OnInit {
+export class SelectChannelInputComponent implements  ControlValueAccessor, OnInit {
 
-  //@ts-ignore
-  @Input() options: Map<any | undefined, any[]>;
   @Input() formControlName: string = '';
+  @Input("options") channelList: any[] = [];
   @Input("multiple") isMultiple: boolean = false;
-  @Input("ngModel") model: any;
-  @Output("ngModelChange") modelChange = new EventEmitter<any>();
+  
   @Output("change") onChange = new EventEmitter<any>();
+
+  @ViewChild('inputField', { static: true })
+  field!: NgSelectComponent;
 
   _onChange = (_: any ) => {};
   _onTouched = () => {};
+
+  constructor(private injector: Injector) {}
 
   ngOnInit(): void {
       if (this.formControlName == '' || this.formControlName == undefined) {
@@ -37,13 +40,18 @@ export class SelectChannelInputComponent implements ControlValueAccessor, OnInit
   }
   
   onValueUpdate(value: any) {
-    this.onChange.emit(value);
-    this.modelChange.emit(value);
-    this._onChange(value);
+    let publish;
+    if (Array.isArray(value)) {
+      publish = value.map(v => v.id);
+    } else if (value) {
+      publish = value.id;
+    }
+    this.onChange.emit(publish);
+    this._onChange(publish);
   }  
 
   writeValue(obj: any) {
-    this.model = obj;
+    this.field.writeValue(obj);
   }
 
   registerOnChange(fn: any): void {
@@ -54,6 +62,8 @@ export class SelectChannelInputComponent implements ControlValueAccessor, OnInit
     this._onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {}
-
+  setDisabledState?(isDisabled: boolean): void {
+    this.field.setDisabledState(isDisabled);
+  }
+  
 }
