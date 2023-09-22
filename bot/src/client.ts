@@ -1,5 +1,6 @@
-import { APIMessage, MessagePayload, WebhookClient, WebhookMessageCreateOptions } from "discord.js";
-import { Config, ConfigModel, LocalGuildChannel, LocalGuildChannelModel, LocalGuildRole, LocalGuildRoleModel, WebhookModel } from "./repository";
+import { Client, MessagePayload, WebhookMessageCreateOptions } from "discord.js";
+import { TYPES, container } from "./ic.config";
+import { Config, ConfigModel, LocalGuildChannel, LocalGuildChannelModel, LocalGuildRole, LocalGuildRoleModel } from "./repository";
 
 export class LocalChannelManager {
 
@@ -9,13 +10,19 @@ export class LocalChannelManager {
         this.channel = channel;
     }
 
-    async send(options: string | MessagePayload | WebhookMessageCreateOptions): Promise<APIMessage> {
-        const whConfig = await WebhookModel.findOne({guild: this.channel.guild, channelId: this.channel.channelId}).exec();
+    async send(options: string | MessagePayload | WebhookMessageCreateOptions): Promise<any> {
+        const client = container.get(TYPES.Bot).client as Client;
+        const gChannel = client.guilds.cache.get(this.channel.guild)?.channels.cache.get(this.channel.channelId);
+        if (gChannel && gChannel.isTextBased()) {
+            return gChannel.send(options);
+        }
+        return Promise.reject("Channel not found!");
+        /*const whConfig = await WebhookModel.findOne({guild: this.channel.guild, channelId: this.channel.channelId}).exec();
         if (whConfig) {
             const webClient = new WebhookClient({ id: whConfig.webhookId, token: whConfig.webhookToken});
             return webClient.send(options);
         }
-        return Promise.reject("Webhook not found!");
+        return Promise.reject("Webhook not found!");*/
     }
 
 }
