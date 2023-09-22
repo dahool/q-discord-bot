@@ -36,9 +36,11 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v4
         with:
-          file: ${{ inputs.buildFile }}
+          file: "Dockerfile"
           push: true
-          tags: ${{ inputs.tag }}
+          tags: |
+            ${{ vars.DOCKER_NAME }}:latest
+            ${{ vars.DOCKER_NAME }}:${{ github.run_number }}
       -
         name: Build Failed
         if: ${{ failure() }}
