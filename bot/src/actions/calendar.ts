@@ -1,3 +1,5 @@
+import { deleteScheduledEvent } from "@/common/discord";
+import { TYPES, container } from "@/ic.config";
 import { logger } from "@/logging/logger";
 import { CalendarEvent, CalendarModel, Config, ConfigModel } from "@/repository";
 import { Request, Response } from "express";
@@ -43,7 +45,7 @@ async function loadEvents(config: Config) {
     logger.debug("load %s", config.territoyCalendar);
     const data = await ical.async.fromURL(config.territoyCalendar!);
     
-    await CalendarModel.deleteMany({guild: config.guild, src: CALENDAR_SOURCE}).exec();
+    await CalendarModel.deleteMany({guild: config.guild, src: CALENDAR_SOURCE, start: {$lt: DateTime.utc().toJSDate()}}).exec();
 
     let calendarEvents: CalendarEvent[] = [];
 
@@ -67,10 +69,26 @@ async function loadEvents(config: Config) {
         }
     }
 
-    logger.debug("Insert %d events", calendarEvents.length);
+    // esto es para mantener los eventos de discord ya creados
+    const existingEvents = await CalendarModel.find({guild: config.guild, src: CALENDAR_SOURCE});
 
-    if (calendarEvents.length > 0) {
-        await CalendarModel.insertMany(calendarEvents.map(e => Object.assign({}, e, {guild: config.guild})))
+    const toInsertEvents = calendarEvents.filter((element) => !existingEvents.some((c) => element.parentId == c.parentId && element.start.getTime() == c.start.getTime() ) );
+    const toRemoveEvents = existingEvents.filter((element) => !calendarEvents.some((c) => element.parentId == c.parentId && element.start.getTime() == c.start.getTime() ) );
+
+    logger.debug("Insert %d events", toInsertEvents.length);
+    logger.debug("Remove %d events", toRemoveEvents.length);
+
+    if (toInsertEvents.length > 0) {
+        await CalendarModel.insertMany(toInsertEvents.map(e => Object.assign({}, e, {guild: config.guild})))
+    }
+    if (toRemoveEvents.length > 0) {
+        toRemoveEvents.forEach(event => {
+            if (event.discordEventId) {
+                const guild = container.get(TYPES.Bot).client.guild.cache.get(event.guild);
+                if (guild) deleteScheduledEvent(guild, event.discordEventId);
+            }
+            CalendarModel.deleteOne({_id: event._id}).exec();
+        })
     }
 
 }
@@ -110,7 +128,7 @@ export async function serveCalendar(req: Request, res: Response) {
 }
 
 export async function loadCalendarEvents() {
-    const configs = await ConfigModel.find({"territoyCalendar":{$ne:null}}).exec();
+    const configs = await ConfigModel.find({"territoyCalendar":{$nin:[null,""]}}).exec();
     return Promise.all([
         configs.map(c => loadEvents(c))
     ]).then((r) => {
