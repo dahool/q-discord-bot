@@ -32,6 +32,7 @@ export class ConfigManComponent implements OnInit {
       private toast: AlertService) {}
 
   ngOnInit(): void {
+    this.config = EMPTY_CONFIG;
     this.route.paramMap.subscribe(params => {
       this.guildId = params.get('id');
       if (!this.guildId) {
