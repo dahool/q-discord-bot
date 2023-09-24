@@ -1,11 +1,11 @@
 import { LocalChannelManager, LocalGuildClient } from "@/client";
 import { createEventCalendar, findZonesByName } from "@/commands/territory";
 import { createScheduledEvent } from "@/common/discord";
-import { asRole, asTimeRelative, stripHtml } from "@/common/utils";
+import { asTimeRelative, stripHtml } from "@/common/utils";
 import { TYPES, container } from "@/ic.config";
 import { logger } from "@/logging/logger";
 import { CalendarEvent, CalendarModel, TerritoryEventModel } from "@/repository";
-import { Client, EmbedBuilder, MessageCreateOptions } from "discord.js";
+import { Client, EmbedBuilder, MessageCreateOptions, roleMention } from "discord.js";
 import { DateTime } from "luxon";
 
 export enum EVENT_TYPE {
@@ -34,7 +34,7 @@ async function parseRolesFromText(channel: LocalChannelManager, description: str
             let role = guildRoles.find(r => r.name === v);
             logger.debug("Found %o", role);
             if (role) {
-                roles.push(asRole(role.id));
+                roles.push(roleMention(role.roleId));
             }
         });
     }
@@ -63,7 +63,7 @@ async function buildTerritoryAnnouncement(channel: LocalChannelManager, event: C
     }
 
     const parsedRoles = await parseRolesFromText(channel, event.description);
-    const roles = parsedRoles.concat(event.pingRoles ? event.pingRoles.map(r => asRole(r)) : []);
+    const roles = parsedRoles.concat(event.pingRoles ? event.pingRoles.map(r => roleMention(r)) : []);
     if (roles.length == 0) {
        roles.push("@here");
     }
