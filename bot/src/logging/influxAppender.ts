@@ -1,6 +1,7 @@
 import { InfluxDBClient, Point } from '@influxdata/influxdb3-client';
 import { Appender, BaseAppender, LogEvent } from "@tsed/logger";
 import * as _ from 'lodash';
+import { setTimeout } from 'timers/promises';
 
 @Appender({name: "influxAppender", defaultLayout: "messagePassThrough"})
 export class InfluxAppender extends BaseAppender {
@@ -12,7 +13,7 @@ export class InfluxAppender extends BaseAppender {
         measurement: undefined,
         fields: ['data'],
         tags: ['level', 'fileName'],
-        maxBatchSize: 1
+        maxBatchSize: 10
     }
 
     buffer: any[] = [];
@@ -50,9 +51,9 @@ export class InfluxAppender extends BaseAppender {
                 } else {
                     console.debug('cannot connect, waiting 100ms to retry');
                     this.shutdownAttempts--;
-                    setTimeout(() => {
+                    setTimeout(100).then(() => {
                         this.shutdown().then(() => resolve());
-                    }, 100);
+                    })
                 }
             } else {
                 this.isConnected = false;
@@ -119,9 +120,9 @@ export class InfluxAppender extends BaseAppender {
             }
         } else {
             // buffer blocked, wait and retry
-            setTimeout(() => {
-                this.write(loggingEvent)
-            }, 100);
+            setTimeout(100).then(() => {
+                this.write(loggingEvent);
+            })
         }
     }
 
