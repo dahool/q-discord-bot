@@ -30,15 +30,15 @@ process.on('SIGINT', function() {
     })
 });
 
-createDatabaseConnection(environment.database.url!).then(() => {
+createDatabaseConnection(environment.database.url!).then(mongo => {
     
     bot.login(environment.discord.token!).then(() => {
        sendMessage(`[${process.env.LOGGING_MES}] Q Bot ready`);
     });
 
     container.set(TYPES.Bot, bot);
-    
-    initializeWebListener();
+
+    initializeWebListener(mongo.connection.getClient());
     
 }).catch(error => {
     console.error(error);

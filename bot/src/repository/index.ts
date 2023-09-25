@@ -1,9 +1,9 @@
 export * from "./model.interfaces";
 export * from "./model.schemas";
 
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
-export function createDatabaseConnection(url: string): Promise<any> {
+export function createDatabaseConnection(url: string): Promise<Mongoose> {
     return mongoose.connect(url);
 }
 
