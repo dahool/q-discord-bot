@@ -39,9 +39,31 @@
               </fieldset>
 
               <fieldset>
-                <div class="form-group">
-                  <label for="autoFollowThreadChannels">Channels to Autofollow New Threads</label>
-                  <select-channel-input name="autoFollowThreadChannels" [options]="channels" [(ngModel)]="config.autoFollowThreadChannels" [multiple]="true"></select-channel-input>
+                <legend>Autofollow New Threads
+                  <button (click)="addNewThreadFollow()" type="button" class="btn btn-primary float-end"><i class="fas fa-plus"></i></button>
+                </legend>
+
+                <div class="container-fluid border p-2 rounded mb-2" *ngFor="let nta of config.autoFollowThreadChannels; index as i" ngModelGroup="followGroup_{{i}}">
+
+                  <div class="clearfix">
+                    <button (click)="removeThreadFollow(i)" type="button" class="btn btn-danger float-end"><i class="fas fa-minus"></i></button>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-10">
+                      <div class="form-group">
+                        <label for="autoFollowThreadChannel{{i}}">Channel</label>
+                        <select-channel-input name="autoFollowThreadChannel{{i}}" [options]="channels" [(ngModel)]="nta.channel"></select-channel-input>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="form-group">
+                        <label for="autoFollowThreadSilent{{i}}">Silent</label>
+                        <toggle-switch-input class="d-block" name="autoFollowThreadSilent{{i}}" [(ngModel)]="nta.silent"></toggle-switch-input>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </fieldset>
 

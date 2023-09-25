@@ -5,6 +5,7 @@ import { logger } from "@/logging/logger";
 import { ConfigModel } from "@/repository";
 import { Client, Events, GuildTextBasedChannel, ThreadChannel } from "discord.js";
 import format from 'string-template';
+import { setTimeout } from "timers/promises";
 
 @EventListener({
     event: Events.ThreadCreate
@@ -15,12 +16,19 @@ export class NewTheadFollowerListener implements DiscordEventListener {
         if (isNew && thread.invitable == null && thread.parent) {
             logger.debug("New Thread Created %s", thread.name);
             const config = await ConfigModel.findOne({guild: thread.guildId});
-            if (config?.autoFollowThreadChannels && config?.autoFollowThreadChannels.includes(thread.parentId!)) {
-                logger.debug("Adding members to %s", thread.name);
-                for (const [id, member] of thread.parent?.members!) {
-                    if (!member.user.bot) await thread.members.add(id);
+            let memberstoAdd = thread.parent?.members.filter(member => !member.user.bot).map(member => member.id);
+            config?.autoFollowThreadChannels?.filter(cfg => cfg.channel == thread.parentId).forEach(cfg => {
+                if (memberstoAdd.length > 0) {
+                    logger.debug("Adding %d members to %s", memberstoAdd.length, thread.name);
+                    if (cfg.silent) {
+                        thread.send(memberstoAdd.map(id => asUser(id)).join(' ')).then(message => {
+                            setTimeout(100).then(() => message.delete());
+                        })
+                    } else {
+                        memberstoAdd.forEach(id => thread.members.add(id));
+                    }
                 }
-            }
+            })
 		}
         return Promise.resolve();
         

@@ -13,7 +13,10 @@ const ConfigSchema = new Schema<Config>({
     token: String,
     allianceTag: String,
     territoyCalendar: String,
-    autoFollowThreadChannels: [String], // auto following threads channels
+    autoFollowThreadChannels: [{
+        channel: String,
+        silent: Boolean
+    }], // auto following threads channels
     newThreadAnnouncer: [{
         channels: [String],
         announceChannel: String,

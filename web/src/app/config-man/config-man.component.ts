@@ -58,21 +58,37 @@ export class ConfigManComponent implements OnInit {
     })
   }
 
+  addNewThreadFollow() {
+    const EMPTY_FOLLOW = {
+      channel: '',
+      silent: false
+    }
+    if (this.config!.autoFollowThreadChannels == undefined) {
+      this.config!.autoFollowThreadChannels = [EMPTY_FOLLOW];
+    } else {
+      this.config!.autoFollowThreadChannels.push(EMPTY_FOLLOW)
+    }
+  }
+
+  removeThreadFollow(index: number) {
+    this.config.autoFollowThreadChannels?.splice(index, 1);
+  }
+
   addNewThreadAnnouncer() {
-    const EMPTY = {
-        channels: [],
-        announceChannel: '',
-        message: ''   
+    const EMPTY_ANNOUNCER = {
+      channels: [],
+      announceChannel: '',
+      message: ''   
     }
     if (this.config!.newThreadAnnouncer == undefined) {
-      this.config!.newThreadAnnouncer = [EMPTY];
+      this.config!.newThreadAnnouncer = [EMPTY_ANNOUNCER];
     } else {
-      this.config!.newThreadAnnouncer.push(EMPTY)
+      this.config!.newThreadAnnouncer.push(EMPTY_ANNOUNCER)
     }
   }
 
   removeThreadAnnouncer(index: number) {
-    this.config.newThreadAnnouncer.splice(index, 1);
+    this.config.newThreadAnnouncer?.splice(index, 1);
   }
 
   printChange(e: any) {
@@ -87,6 +103,8 @@ export class ConfigManComponent implements OnInit {
       }
 
       console.debug(this.config);
+
+      // TODO validations
 
       this.service.saveConfig(this.guildId!, this.config!).subscribe((s:any) => {
         if (s.status) {

@@ -42,8 +42,11 @@ export interface Config {
     }
     token: string
     allianceTag: string
-    autoFollowThreadChannels: string[]
-    newThreadAnnouncer: [{
+    autoFollowThreadChannels?: [{
+        channel: string,
+        silent: boolean
+    }]
+    newThreadAnnouncer?: [{
         channels: string[]
         announceChannel: string
         message: string
@@ -62,11 +65,7 @@ export const EMPTY_CONFIG: Config = {
     },
     token: '',
     allianceTag: '',
-    autoFollowThreadChannels: [],
-    newThreadAnnouncer: [{
-        channels: [],
-        announceChannel: '',
-        message: ''
-    }],
+    autoFollowThreadChannels: undefined,
+    newThreadAnnouncer: undefined,
     territoyCalendar: ''
 }

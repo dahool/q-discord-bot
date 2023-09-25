@@ -11,7 +11,10 @@ export interface Config extends Document {
     },
     token?: string,
     allianceTag?: string,
-    autoFollowThreadChannels?: string[],
+    autoFollowThreadChannels?: [{
+        channel: string,
+        silent: boolean
+    }],
     newThreadAnnouncer?: [{
         channels: string[],
         announceChannel: string,
