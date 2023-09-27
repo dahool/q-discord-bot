@@ -56,7 +56,7 @@ export interface TerritoryEvent extends Document {
     next: Date,
     recurrent: Boolean,
     duration: Number,
-    ping?: string,
+    ping?: string[],
 }
 
 export interface WebHookChannel extends Document {

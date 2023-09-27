@@ -57,7 +57,7 @@ const TerritoryEventSchema = new Schema<TerritoryEvent>({
     next: { type: Date, required: true },
     recurrent: { type: Boolean, required: true },
     duration: { type: Number, required: true },
-    ping: String
+    ping: [String]
 }, { collection: 'territory_events'})
 
 const WebHookChannelSchema = new Schema<WebHookChannel>({

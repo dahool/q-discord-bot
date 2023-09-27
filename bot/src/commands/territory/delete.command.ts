@@ -1,12 +1,11 @@
+import { Territory, TerritoryEvents } from "@/api";
 import { Command } from "@/common/decorators";
-import { deleteScheduledEvent } from "@/common/discord";
 import { DiscordCommand } from "@/common/schemas";
 import { highlightText, safeLower } from "@/common/utils";
 import { logger } from "@/logging/logger";
-import { CalendarModel, TerritoryEventModel } from "@/repository";
+import { TerritoryEventModel } from "@/repository";
 import { ActionRowBuilder, ApplicationCommandOptionType, BaseInteraction, Client, CommandInteraction, StringSelectMenuBuilder, StringSelectMenuInteraction } from "discord.js";
 import { DateTime } from "luxon";
-import { Territory, findZonesByName } from ".";
 
 @Command({
     name: 'tcevent-delete',
@@ -22,23 +21,11 @@ import { Territory, findZonesByName } from ".";
 })
 export class TerritoryEventDelete implements DiscordCommand {
 
-	async removeCalendar(interaction: BaseInteraction, eventId: string) {
-		logger.debug("Remove calendar entries for %s", eventId);
-		const calendarEvents = await CalendarModel.find({parentId: eventId}).exec();
-		await Promise.all(
-			calendarEvents
-			.filter(e => e.discordEventId != undefined && e.discordEventId != '')
-			.map(e => deleteScheduledEvent(interaction.guild!, e.discordEventId!))
-		)
-		return CalendarModel.deleteMany({parentId: eventId}).exec();
-	}
-
-	async executeDelete(interaction: BaseInteraction, eventId: string) {
-		await this.removeCalendar(interaction, eventId);
-		return TerritoryEventModel.findByIdAndDelete(eventId).exec();
+	async executeDelete(eventId: string) {
+		return TerritoryEvents.deleteTerritoryEvent(eventId);
 	}
 	
-	async askForDelete(interaction: CommandInteraction, zone: Territory) {
+	async askForDelete(interaction: CommandInteraction, zone: Territory.Zone) {
 
 		const events = await TerritoryEventModel.find({
 							guild: interaction.guildId,
@@ -67,7 +54,7 @@ export class TerritoryEventDelete implements DiscordCommand {
 				if (selection.customId == 'remove-event') {
 					const selectInteraction = (selection as StringSelectMenuInteraction);
 					logger.debug("Selected %O", selectInteraction.values);
-					const removed = await this.executeDelete(selection, selectInteraction.values[0]);
+					const removed = await this.executeDelete(selectInteraction.values[0]);
 					if (removed) return selection.update({ content: 'Removed event ' + highlightText(removed.title), components: [] });
 					else return selection.update({ content: 'Removed event', components: [] });
 				} else {
@@ -86,7 +73,7 @@ export class TerritoryEventDelete implements DiscordCommand {
 		
 		if (interaction.isChatInputCommand()) {
 			const lookupName = safeLower(args.zone);
-			let zones = findZonesByName(lookupName);
+			let zones = Territory.findZonesByName(lookupName);
 			if (zones.length == 1) {
 				return this.askForDelete(interaction, zones[0]);
 			} else if (zones.length > 1) {

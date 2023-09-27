@@ -1,4 +1,5 @@
-import { createOrUpdateWebhooks } from "@/actions";
+
+import { Webhook } from "@/api";
 import { channelAcceptFilter, createOrUpdateChannel } from "@/common/channels";
 import { EventListener } from "@/common/decorators";
 import { createOrUpdateRole, roleAcceptFilter } from "@/common/roles";
@@ -69,7 +70,7 @@ export class ReadyListener implements DiscordEventListener {
                 updateGuildToken(guild),
                 syncChannels(client, guild),
                 syncRoles(client, guild),
-                createOrUpdateWebhooks(client, guild)
+                Webhook.createOrUpdateAll(client, guild)
             ]);
         }
         logger.debug("Sync completed.");

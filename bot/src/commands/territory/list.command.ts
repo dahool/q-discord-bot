@@ -1,5 +1,6 @@
 import { CALENDAR_SOURCE } from "@/actions/calendar";
 import { EVENT_TYPE } from "@/actions/notification";
+import { Territory } from "@/api";
 import { Colors } from "@/common/colors";
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
@@ -7,9 +8,10 @@ import { asTimeFormat, createURLwithParameters, groupBy, highlightText, safeLowe
 import { environment } from "@/env/environment";
 import { logger } from "@/logging/logger";
 import { CalendarModel, ConfigModel, TerritoryEventModel } from "@/repository";
+
 import { ApplicationCommandOptionType, Client, CommandInteraction, EmbedBuilder } from "discord.js";
 import { DateTime } from "luxon";
-import { Territory, findZonesByName } from ".";
+
 
 @Command({
     name: 'tcevent-list',
@@ -25,7 +27,7 @@ import { Territory, findZonesByName } from ".";
 })
 export class TerritoryEventList implements DiscordCommand {
 
-	async listEvents(interaction: CommandInteraction, zone: Territory) {
+	async listEvents(interaction: CommandInteraction, zone: Territory.Zone) {
 
 		let tcEvents = await TerritoryEventModel.find({
 			guild: interaction.guildId,
@@ -127,7 +129,7 @@ export class TerritoryEventList implements DiscordCommand {
 		}
 		
 		const lookupName = safeLower(args.zone);
-		let zones = findZonesByName(lookupName);
+		let zones = Territory.findZonesByName(lookupName);
 		if (zones.length == 1) {
 			return this.listEvents(interaction, zones[0]);
 		} else if (zones.length > 1) {

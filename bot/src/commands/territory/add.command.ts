@@ -1,11 +1,10 @@
+import { Territory, TerritoryEvents } from "@/api";
 import { Colors } from "@/common/colors";
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
 import { asRole, asTimeFormat, safeLower } from "@/common/utils";
 import { logger } from "@/logging/logger";
-import { TerritoryEventModel } from "@/repository";
 import { ApplicationCommandOptionType, Client, CommandInteraction, EmbedBuilder } from "discord.js";
-import { Territory, createEventCalendar, findZonesByName } from ".";
 
 @Command({
     name: 'tcevent-add',
@@ -36,27 +35,15 @@ import { Territory, createEventCalendar, findZonesByName } from ".";
 })
 export class TerritoryEventAdd implements DiscordCommand {
 
-	async createEvent(interaction: CommandInteraction, zone: Territory, args: any) {
+	async createEvent(interaction: CommandInteraction, zone: Territory.Zone, args: any) {
 		
-		let duration = 60;
-		if (zone.type == 1) {
-			duration = 30;
-		} else if (zone.type == 2) {
-			duration = 45;
-		}
-
-		const model = new TerritoryEventModel({
-			guild: interaction.guildId,
-			zone: zone.zone,
-			title: args.title,
-			next:  zone.next.toJSDate(),
-			recurrent: args.recurrent || false,
-			duration: duration,
-			ping: args.mention
-		})
-		
-		await model.save();
-		await createEventCalendar(model);
+		let model = await TerritoryEvents.createNewEvent(interaction.guildId!, zone, 
+			{
+				title: args.title,
+				recurrent: args.recurrent || false,
+				ping: args.mention ? [ args.mention ] : undefined
+			}
+		)
 		
 		const msgEmbed = new EmbedBuilder()
 			.setColor(Colors.Green)
@@ -85,7 +72,7 @@ export class TerritoryEventAdd implements DiscordCommand {
 		logger.info("Zone: %s", args.zone);
 		await interaction.deferReply();
 		const lookupName = safeLower(args.zone);
-		let zones = findZonesByName(lookupName);
+		let zones = Territory.findZonesByName(lookupName);
 		if (zones.length == 1) {
 			return this.createEvent(interaction, zones[0], args);
 		} else if (zones.length > 1) {

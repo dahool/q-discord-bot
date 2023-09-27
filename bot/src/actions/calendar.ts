@@ -1,4 +1,4 @@
-import { deleteScheduledEvent } from "@/common/discord";
+import { DiscordSchedule } from "@/api/events";
 import { TYPES, container } from "@/ic.config";
 import { logger } from "@/logging/logger";
 import { CalendarEvent, CalendarModel, Config, ConfigModel } from "@/repository";
@@ -85,7 +85,7 @@ async function loadEvents(config: Config) {
         toRemoveEvents.forEach(event => {
             if (event.discordEventId) {
                 const guild = container.get(TYPES.Bot).client.guild.cache.get(event.guild);
-                if (guild) deleteScheduledEvent(guild, event.discordEventId);
+                if (guild) DiscordSchedule.deleteScheduledEvent(guild, event.discordEventId);
             }
             CalendarModel.deleteOne({_id: event._id}).exec();
         })

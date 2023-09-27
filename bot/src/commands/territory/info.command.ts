@@ -1,9 +1,15 @@
+import { Territory } from "@/api";
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
 import { asTimeFormat, asTimeRelative, safeLower } from "@/common/utils";
 import { logger } from "@/logging/logger";
+import rssData from '@data/rss.json';
 import { ApplicationCommandOptionType, Client, CommandInteraction, EmbedBuilder } from "discord.js";
-import { findZonesByName, findZonesByParticle, rssMap } from ".";
+
+const zoneResourceMap = new Map();
+rssData.forEach(item => {
+	zoneResourceMap.set(item.id, item.icon)
+})
 
 @Command({
     name: 'tcinfo',
@@ -26,9 +32,9 @@ export class TerritoyInfoCommand implements DiscordCommand {
 
 		const lookupName = safeLower(args.name);
 		
-		let zones = findZonesByName(lookupName);
+		let zones = Territory.findZonesByName(lookupName);
 		if (!zones.length) {
-			zones = findZonesByParticle(lookupName);
+			zones = Territory.findZonesByParticle(lookupName);
 		}
 		if (!zones.length) {
 			return interaction.editReply(`No zones found matching \`${args.name}\``);
@@ -44,9 +50,9 @@ export class TerritoyInfoCommand implements DiscordCommand {
 			.setTitle("Territory");
 
 		zones.sort((a: any,b: any) => a.next - b.next).forEach(z => {
-			var content = "`Particle:` <" + rssMap.get(z.particle) + "> " + z.particle + "\n";
+			var content = "`Particle:` <" + zoneResourceMap.get(z.particle) + "> " + z.particle + "\n";
 			content+= "`Type:` " + z.type + "\n";
-			content+= "`Resources:` " + z.rss.map(i => '<' + rssMap.get(i) + '>').join(' ') + "\n";
+			content+= "`Resources:` " + z.rss.map(i => '<' + zoneResourceMap.get(i) + '>').join(' ') + "\n";
 			content+= "`Connected:` *" + z.paths.join(', ') + "*\n";
             content+= "`Takeover Time:` " + asTimeFormat(z.next) + "\n"; 
 			content+= "`Next:` **" + asTimeRelative(z.next) + "**";

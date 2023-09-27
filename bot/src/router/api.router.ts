@@ -1,4 +1,4 @@
-import { createOrUpdateWebhooks } from '@/actions';
+import { Webhook } from '@/api';
 import { environment } from '@/env/environment';
 import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
@@ -167,7 +167,7 @@ export class ApiController {
     _postConfigUpdate(updated: Config) {
         const client = container.get(TYPES.Bot).client;
         const guild = client.guilds.cache.get(updated.guild);
-        return createOrUpdateWebhooks(container.get(TYPES.Bot).client, guild, updated);
+        return Webhook.createOrUpdateAll(container.get(TYPES.Bot).client, guild, updated);
     }
 
 }

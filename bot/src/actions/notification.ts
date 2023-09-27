@@ -1,6 +1,5 @@
+import { DiscordSchedule, Territory, TerritoryEvents } from "@/api";
 import { LocalChannelManager, LocalGuildClient } from "@/client";
-import { createEventCalendar, findZonesByName } from "@/commands/territory";
-import { createScheduledEvent } from "@/common/discord";
 import { asTimeRelative, stripHtml } from "@/common/utils";
 import { TYPES, container } from "@/ic.config";
 import { logger } from "@/logging/logger";
@@ -44,7 +43,7 @@ async function parseRolesFromText(channel: LocalChannelManager, description: str
 async function buildTerritoryAnnouncement(channel: LocalChannelManager, event: CalendarEvent): Promise<MessageCreateOptions> {
 
     const startTime = DateTime.fromJSDate(event.start).setLocale('en');
-    const zones = findZonesByName(event.location);
+    const zones = Territory.findZonesByName(event.location);
 
     const message = new EmbedBuilder()
         .setColor('Random')
@@ -133,7 +132,7 @@ async function rolloutEvents() {
         return new Promise<void>(resolve => {
             e.next = DateTime.fromJSDate(e.next).plus({days: 7}).toJSDate();
             e.save().then(() => {
-                createEventCalendar(e).then(() => resolve());
+                TerritoryEvents.createCalendarEntry(e).then(() => resolve());
             });
         });
     }));
@@ -157,7 +156,7 @@ async function scheduleDiscordEvents(client: Client) {
     const events = await CalendarModel.find(query);
     
     return Promise.all(events.map(event => {
-        return createScheduledEvent(
+        return DiscordSchedule.createScheduledEvent(
             client.guilds.cache.get(event.guild)!,
             event.summary,
             '',
