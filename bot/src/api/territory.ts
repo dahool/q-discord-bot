@@ -1,13 +1,27 @@
 import { EVENT_TYPE } from '@/actions/notification';
 import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
-import { CalendarModel, TerritoryEvent, TerritoryEventModel } from '@/repository';
+import { CalendarEvent, CalendarModel, TerritoryEvent, TerritoryEventModel } from '@/repository';
 import zonesData from '@data/zones.json';
 import { Client } from 'discord.js';
 import { DateTime } from 'luxon';
 import { DiscordSchedule } from './events';
 
 export namespace TerritoryEvents {
+
+    export function listCalendarEntries(guildId: string, days: number): Promise<CalendarEvent[]> {
+		
+        const fromDate = DateTime.utc().toJSDate();
+		const toDate = DateTime.utc().endOf('day').plus({days: days}).toJSDate();
+	
+		return CalendarModel.find({
+			guild: guildId,
+			type: EVENT_TYPE.TERRITORY,
+			notified: false,
+			start: { $gte: fromDate, $lte: toDate }
+		}).sort({ start: 1 }).allowDiskUse(true).exec();
+        
+    }
 
     export async function createNewEvent(guildId: string, zone: Territory.Zone, ops: {title: string, recurrent?: boolean, ping?: string[]}): Promise<TerritoryEvent> {
         
@@ -36,6 +50,14 @@ export namespace TerritoryEvents {
 
     export async function createCalendarEntry(event: TerritoryEvent) {
         logger.debug("Create calendar entry for %O", event);
+        let ping: string[] = [];
+        if (event.ping) {
+            if (Array.isArray(event.ping)) {
+                ping = event.ping;
+            } else {
+                ping = [ event.ping ];
+            }
+        }
         return CalendarModel.create({
             guild: event.guild,
             type: EVENT_TYPE.TERRITORY,
@@ -45,7 +67,7 @@ export namespace TerritoryEvents {
             duration: event.duration,
             parentId: event._id,
             notified: false,
-            pingRoles: event.ping ? [ event.ping ] : []
+            pingRoles: ping
         })
     }
 
@@ -70,6 +92,7 @@ export namespace TerritoryEvents {
         let eventModel = await TerritoryEventModel.findById(eventId).exec();
         if (eventModel) {
             await deleteCalendarEntry(eventModel);
+            logger.debug("Remove territory event %O", eventModel);
             await eventModel.deleteOne();
         }
         return eventModel;
@@ -114,6 +137,12 @@ export namespace Territory {
     export function findZonesByName(name: string): Zone[] {
         return zonesData
             .filter(z => z.zone.toLowerCase().includes(name.toLowerCase()))
+            .map(z => Object.assign({next: getNextExecution(z)}, z));
+    }
+
+    export function listAll(): Zone[] {
+        return zonesData
+            .sort((a, b) => a.zone.localeCompare(b.zone) )
             .map(z => Object.assign({next: getNextExecution(z)}, z));
     }
 

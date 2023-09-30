@@ -1,6 +1,6 @@
 import { CALENDAR_SOURCE } from "@/actions/calendar";
 import { EVENT_TYPE } from "@/actions/notification";
-import { Territory } from "@/api";
+import { Territory, TerritoryEvents } from "@/api";
 import { Colors } from "@/common/colors";
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
@@ -73,16 +73,8 @@ export class TerritoryEventList implements DiscordCommand {
 	}
 
 	async listAllEvents(interaction: CommandInteraction) {
-
-		const fromDate = DateTime.utc().toJSDate();
-		const toDate = DateTime.utc().endOf('day').plus({days: 7}).toJSDate();
 	
-		let events = await CalendarModel.find({
-			guild: interaction.guildId,
-			type: EVENT_TYPE.TERRITORY,
-			notified: false,
-			start: { $gte: fromDate, $lte: toDate }
-		}).sort({ start: 1 }).allowDiskUse(true).exec();
+		let events = await TerritoryEvents.listCalendarEntries(interaction.guildId!, 7);
 	
 		const guildConfig = await ConfigModel.findOne({ guild: interaction.guildId }).exec();
 

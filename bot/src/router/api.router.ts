@@ -1,10 +1,10 @@
-import { Webhook } from '@/api';
+import { Territory, TerritoryEvents, Webhook } from '@/api';
 import { environment } from '@/env/environment';
 import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
 import { OAuthClient, OAuthGuild, OAuthToken } from '@/oauth';
-import { Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel } from '@/repository';
-import { Body, Controller, Get, Param, Put, Query, Req, Res } from 'decorators-express';
+import { CalendarModel, Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel } from '@/repository';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res } from 'decorators-express';
 import { PermissionsBitField } from 'discord.js';
 import { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
@@ -162,6 +162,83 @@ export class ApiController {
                 res.send({status: false, error: e});
             })        
 
+    }
+
+    @Get("/zones")
+    listZones(@Res() res: Response) {
+        res.send(Territory.listAll());
+    }
+
+    @Get("/events/:id")
+    listEvents(@Param("id") id: string, @Res() res: Response) {
+        TerritoryEvents.listCalendarEntries(id, 30).then(events => {
+            logger.debug("Events: %O", events);
+            res.send(events.map(e => {
+                return Object.assign({}, e.toObject(), {
+                    start: undefined,
+                    id: e._id,
+                    dtStart: DateTime.fromJSDate(e.start).toISO(),
+                    dtEnd: DateTime.fromJSDate(e.start).plus({minutes: e.duration}).toISO()
+                })
+            }));
+        });
+    }    
+
+    @Post("newEvent/:id")
+    saveNewEvent(@Param("id") id: string, @Body() payload: {[key:string]: any}, @Res() res: Response) {
+        const zone = Territory.findZonesByName(payload.zone);
+        if (zone.length > 0) {
+            TerritoryEvents.createNewEvent(id, zone[0], {
+                title: payload.title,
+                recurrent: payload.recurrent,
+                ping: payload.ping
+            }).then(e => {
+                res.send({status: true})
+            }).catch(e => {
+                logger.error(e);
+                res.send({status: false, error: e});
+            })
+        } else {
+            res.send({status: false, error: "Zone " + payload.zone + " not found."});
+        }
+    }
+
+    @Put("event/:id")
+    async saveEvent(@Param("id") id: string, @Body() payload: {[key:string]: any}, @Res() res: Response) {
+        const zone = Territory.findZonesByName(payload.zone);
+        if (zone.length > 0) {
+            let calendar = await CalendarModel.findById(id).exec();
+            if (calendar && calendar.parentId) {
+                await TerritoryEvents.deleteTerritoryEvent(calendar.parentId);
+            } else {
+                logger.debug("Remove calendar entry %O", calendar);
+                await calendar?.deleteOne();
+            }
+            TerritoryEvents.createNewEvent(calendar?.guild!, zone[0], {
+                title: payload.title,
+                recurrent: payload.recurrent,
+                ping: payload.ping
+            }).then(e => {
+                res.send({status: true})
+            }).catch(e => {
+                logger.error(e);
+                res.send({status: false, error: e});
+            })
+        } else {
+            res.send({status: false, error: "Zone " + payload.zone + " not found."});
+        }
+    }
+
+    @Delete("event/:id")
+    async deleteEvent(@Param("id") id: string, @Body() payload: {[key:string]: any}, @Res() res: Response) {
+        let calendar = await CalendarModel.findById(id).exec();
+        if (calendar && calendar.parentId) {
+            await TerritoryEvents.deleteTerritoryEvent(calendar.parentId);
+        } else {
+            logger.debug("Remove calendar entry %O", calendar);
+            await calendar?.deleteOne();
+        }
+        res.send({status: true});
     }
 
     _postConfigUpdate(updated: Config) {
