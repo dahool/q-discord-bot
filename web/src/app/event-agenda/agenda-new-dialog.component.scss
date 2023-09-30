@@ -1,0 +1,13 @@
+@import "../../styles/variables";
+/*
+dialog {
+    border: none;
+    min-width: 500px;
+    &::backdrop {
+        background-color: $modal-content-bg;
+    }
+}
+*/
+.form-group {
+    padding-top: 20px;
+}

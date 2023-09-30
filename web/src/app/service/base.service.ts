@@ -1,4 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { DateTime } from 'luxon';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
@@ -37,6 +38,7 @@ export abstract class BaseService {
       }
     }))
   }
+
   protected executePost(url: string, input: any): Observable<any> {
     console.debug('POST /' + url + ': ' + JSON.stringify(input));
     let ob = this.http.post(ROOT_API + this.servicePath + url, input, httpOptions);
@@ -77,6 +79,16 @@ export abstract class BaseService {
       ob = this.http.delete(ROOT_API + this.servicePath + idUrl, httpOptions);
     }
     return this.attachSpinner(ob);
+  }
+
+  protected parseDate(data: any, ...properties: string[]): any {
+    properties.forEach(name => {
+      let value = data[name];
+      if (value != undefined && value != null && value != '') {
+        data[name] = DateTime.fromISO(value);
+      }
+    })
+    return data;
   }
 
 }

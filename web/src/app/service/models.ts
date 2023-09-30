@@ -1,3 +1,24 @@
+import { DateTime } from "luxon";
+
+export interface Territory {
+    zone: string,
+    next: DateTime,
+    weekday: number
+}
+
+export interface Schedule {
+    id: string;
+    dtStart: DateTime;
+    dtEnd: DateTime;
+    summary: string;
+    type: string;
+    location?: string;
+    parentId?: string;
+    src?: string;
+    recurrent?: boolean;
+    pingRoles?: string[];
+}
+
 export interface User {
     username: string;
     icon: string;
@@ -20,7 +41,7 @@ export interface Role {
     name: string;
 }
 
-export interface Server {
+export interface Guild {
     id: string;
     name: string;
     icon: string;

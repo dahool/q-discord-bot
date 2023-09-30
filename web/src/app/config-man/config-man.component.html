@@ -1,8 +1,6 @@
+<server-menu server="server"></server-menu>
+
 <div class="list-group mt-5 mb-4">
-    <div class="d-flex mt-1 mb-2" *ngIf="server">
-      <img src="{{server.icon}}" width="32px" height="32px">&nbsp;
-      <h5>{{server.name}}</h5>
-    </div>
 
     <form (ngSubmit)="trySave()" #form="ngForm">
       <div class="card" *ngIf="isReady">
@@ -11,7 +9,7 @@
               <fieldset>
                 <legend>Channels</legend>
                 <div class="form-group">
-                  <label for="announcements">Announcements</label>
+                  <label for="announcements" class="form-label">Announcements</label>
                   <select-channel-input name="announcements" [options]="channels" [(ngModel)]="config.channels.announcements"></select-channel-input>
                 </div>
 
@@ -80,7 +78,7 @@
                   <div class="form-group">
                     <label for="newThreadAnnouncerMessage">Message</label>
                     <input name="newThreadAnnouncerMessage" type="text" class="form-control" [(ngModel)]="nta.message" required>
-                    <p>Available placeholders: <span class="badge bg-secondary">&#123;channel&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;user&#125;</span> <span class="badge bg-secondary">&#123;title&#125;</span></p>
+                    <p class="form-text">Available placeholders: <span class="badge bg-secondary">&#123;channel&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;user&#125;</span> <span class="badge bg-secondary">&#123;title&#125;</span></p>
                   </div>
 
                   <div class="form-group">

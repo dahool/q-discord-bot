@@ -1,0 +1,81 @@
+$primary-color: rgb(26,115,232);
+$secondary-color: rgb(95,99,104);
+$on-primary: #fff;
+$primary-high: rgb(66,133,244);
+$high-light: rgb(218,220,224);
+$type-general: $secondary-color;
+$type-territory: #43b53f;
+$row-light: rgb(241,243,244);
+
+body {
+  font-family: Roboto,Arial,sans-serif;
+  font-size: 16px;
+  color: $secondary-color;
+}
+
+.list-group {
+  color: $secondary-color;
+}
+
+.event-summary {
+  font-weight: bold;
+  padding-right: 15px;
+}
+
+.event-date {
+  border-radius: 100%;
+  width: 36px;
+  line-height: 36px;
+  height: 36px;  
+  display: inline-block;
+  text-indent: -1.8px;
+  text-align: center;
+  letter-spacing: -1px;
+  &:hover {
+    background-color: $high-light;
+  }
+  &.current {
+    color: $on-primary;
+    background-color: $primary-color;
+    &:hover {
+      background-color: $primary-high;
+    }
+  }
+}
+
+.event-day {
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.event-list {
+  ul {
+    border-radius: 5px;
+    &.editable {
+      cursor: pointer;
+      &:hover {
+        background-color: $row-light;
+      }
+    }
+  }
+}
+
+.circle {
+  border-radius: 50%;
+  height: 12px;
+  width: 12px;
+  display: inline-block;
+  margin-right: 5px;
+  &.general {
+    background-color: $type-general;
+  }  
+  &.territory {
+    background-color: $type-territory;
+  }  
+  &.calendar {
+    background-color: $type-general;
+  }
+}
+
+
+

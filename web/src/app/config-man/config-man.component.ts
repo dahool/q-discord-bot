@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AlertService } from '../alerts';
 import { AppService } from '../service/app-services.service';
-import { Channel, Config, EMPTY_CONFIG, Role, Server } from '../service/models';
+import { LocalService } from '../service/local.service';
+import { Channel, Config, EMPTY_CONFIG, Guild, Role } from '../service/models';
 
 @Component({
   selector: 'app-config-man',
@@ -12,8 +13,7 @@ import { Channel, Config, EMPTY_CONFIG, Role, Server } from '../service/models';
 })
 export class ConfigManComponent implements OnInit {
 
-  guildId?: string | null;
-  server?: Server;
+  server?: Guild;
   config!: Config;
   
   isReady = false;
@@ -21,7 +21,6 @@ export class ConfigManComponent implements OnInit {
   @ViewChild("form", { static: true })
   form!: NgForm;
 
-  //channels: Map<string | undefined, Channel[]> = new Map();
   channels: Channel[] = [];
   roles: Role[] = [];
 
@@ -29,33 +28,27 @@ export class ConfigManComponent implements OnInit {
       private router: Router,
       private route: ActivatedRoute,
       private service: AppService,
+      private local: LocalService,
       private toast: AlertService) {}
 
   ngOnInit(): void {
     this.config = EMPTY_CONFIG;
-    this.route.paramMap.subscribe(params => {
-      this.guildId = params.get('id');
-      if (!this.guildId) {
-        this.router.navigateByUrl('/');
-      } else {
-        forkJoin({
-          server: this.service.getServer(this.guildId),
-          channels: this.service.listChannels(this.guildId),
-          roles: this.service.listRoles(this.guildId),
-          config: this.service.getConfig(this.guildId)  
-        }).subscribe(result => {
-          this.server = result.server;
-          //this.channels = GroupBy(result.channels, "parent");
-          this.channels = result.channels;
-          this.roles = result.roles;
-          this.config = Object.assign(EMPTY_CONFIG, result.config) as Config;
-          this.isReady = true;
-        }, error => {
-          console.error(error);
-          this.toast.error("Ups, something went wrong. Try reloading");
-        });
-      }
-    })
+    this.server = this.local.getServer()!;
+    
+    forkJoin({
+      channels: this.service.listChannels(this.server.id),
+      //roles: this.service.listRoles(this.guildId),
+      config: this.service.getConfig(this.server.id)  
+    }).subscribe(result => {
+      this.channels = result.channels;
+      //this.roles = result.roles;
+      this.config = Object.assign(EMPTY_CONFIG, result.config) as Config;
+      this.isReady = true;
+    }, error => {
+      console.error(error);
+      this.toast.error("Ups, something went wrong. Try reloading");
+    });
+    
   }
 
   addNewThreadFollow() {
@@ -106,7 +99,7 @@ export class ConfigManComponent implements OnInit {
 
       // TODO validations
 
-      this.service.saveConfig(this.guildId!, this.config!).subscribe((s:any) => {
+      this.service.saveConfig(this.server!.id, this.config!).subscribe((s:any) => {
         if (s.status) {
           this.toast.success("Saved")
         } else {

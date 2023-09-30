@@ -1,0 +1,30 @@
+<server-menu server="server"></server-menu>
+
+<div class="container">
+  
+  <nav class="navbar flex-row-reverse">
+    <button type="button" class="btn btn-primary" (click)="createNew()">Create</button>
+  </nav>
+  
+  <div class="container border rounded bg-light-subtle p-3">
+    <li class="list-group">
+      <ul class="row border-bottom" *ngFor="let item of schedule | keyvalue">
+        <div class="col-1 col-sm-2 col-md-2"><h4 class="event-date" [ngClass]="{'current': isCurrent(item.key)}">{{item.key|dateTimeToFormat:'dd'}}</h4>&nbsp;<span class="event-day">{{item.key|dateTimeToFormat:'LLL, EEE'}}</span></div>
+        <li class="list-group col event-list">
+          <ng-container *ngFor="let dayItem of $any(item.value)">
+            <ul class="row pb-1 pt-1" [ngClass]="{'editable': isEditable(dayItem)}" (click)='isEditable(dayItem) ? edit(dayItem) : false'>
+              <div class="col-6 col-sm-4 col-md-2"><i class="circle {{dayItem.type}} {{dayItem.src}}"></i>{{dayItem.dtStart|dateTimeToFormat:'HH:mm'}}-{{dayItem.dtEnd|dateTimeToFormat:'HH:mm'}}</div>
+              <div class="col"><span class="event-summary">{{dayItem.summary}}</span><span class="event-location" *ngIf="dayItem.location">[{{dayItem.location}}]</span></div>        
+            </ul>
+          </ng-container>
+        </li>
+      </ul>
+    </li>
+  </div>
+
+</div>
+
+<dialog-agenda-new *ngIf="server" [guildId]="server.id" (save)="loadEvents()" #dialog></dialog-agenda-new>
+
+
+

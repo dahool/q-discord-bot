@@ -1,0 +1,30 @@
+<div class="server-menu">
+  <input id="menu__toggle" type="checkbox" />
+  <label class="menu__btn" for="menu__toggle">
+    <span></span>
+  </label>
+
+  <ul class="menu__box">
+    <li>
+      <div class="menu__item">
+        <button [routerLink]="'/config'" class="border rounded shadow-lg">
+            <img src="/assets/cog.svg" width="128px" height="128px">
+          <p>Settings</p>
+        </button>
+      </div>      
+    </li>
+    <li>
+      <div class="menu__item">
+        <button [routerLink]="'/events'" class="border rounded- shadow-lg">
+            <img src="/assets/agenda.svg" width="128px" height="128px">
+            <p>Events</p>
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div class="d-flex mt-1 mb-2" *ngIf="server">
+  <img src="{{server.icon}}" width="32px" height="32px">&nbsp;
+  <h5>{{server.name}}</h5>
+</div>

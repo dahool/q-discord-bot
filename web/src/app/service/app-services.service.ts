@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BaseService } from './base.service';
-import { Channel, Config, Role, SaveResponse, Server, User, UserServer } from './models';
+import { Channel, Config, Guild, Role, SaveResponse, Schedule, Territory, User, UserServer } from './models';
 
 const API_URL = '';
 
@@ -28,8 +29,20 @@ export class AppService extends BaseService {
     return this.executeGet('roles/' + id);
   }
 
-  getServer(id: string): Observable<Server> {
-    return this.executeGet('server/' + id);
+  getEvents(id: string): Observable<Schedule[]> {
+    return this.executeGet('events/' + id).pipe(map(v => v.map((vin: any) => this.parseDate(vin, 'dtStart', 'dtEnd'))))
+  }
+
+  getServer(id: string): Observable<Guild> {
+    let stored = sessionStorage.getItem('server-' + id);
+    if (stored) {
+      return of(JSON.parse(stored));
+    } else {
+      return this.executeGet('server/' + id).pipe(map(r => {
+        sessionStorage.setItem('server-' + id, JSON.stringify(r));
+        return r;
+      }));
+    }
   }
 
   getConfig(server: string): Observable<Config> {
@@ -42,6 +55,22 @@ export class AppService extends BaseService {
 
   getProfile(): Observable<User> {
     return this.executeGet('user');
+  }
+
+  listZones(): Observable<Territory[]> {
+    return this.executeGet('zones').pipe(map(v => v.map((vin: any) => this.parseDate(vin, 'next'))))    
+  }
+  
+  saveNewEvent(guild: string, data: any): Observable<SaveResponse> {
+    return this.executePost('newEvent/' + guild, data);
+  }
+  
+  updateEvent(id: string, data: any): Observable<SaveResponse> {
+    return this.executePut('event/' + id, data);
+  }
+
+  deleteEvent(id: string): Observable<SaveResponse> {
+    return this.executeDelete('event', id);
   }
 
 }
