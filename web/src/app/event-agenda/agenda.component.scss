@@ -76,9 +76,10 @@ body {
   &.calendar {
     background-color: $type-general;
   }
-  &.recurrent {
-    background-color: $type-territory;
-  }    
+}
+
+.fa-repeat {
+  margin-left: 10px;
 }
 
 
