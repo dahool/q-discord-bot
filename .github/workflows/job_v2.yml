@@ -6,7 +6,7 @@ name: Build qBot Image
 on:
   push:
     branches:
-      - v2
+      - master
   workflow_dispatch:
 
 jobs:
