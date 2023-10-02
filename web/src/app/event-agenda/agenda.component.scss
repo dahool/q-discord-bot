@@ -66,6 +66,7 @@ body {
   width: 12px;
   display: inline-block;
   margin-right: 5px;
+  background-color: $type-general;
   &.general {
     background-color: $type-general;
   }  
@@ -75,6 +76,9 @@ body {
   &.calendar {
     background-color: $type-general;
   }
+  &.recurrent {
+    background-color: $type-territory;
+  }    
 }
 
 
