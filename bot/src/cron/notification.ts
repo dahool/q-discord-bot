@@ -119,8 +119,8 @@ export async function rolloutEvents() {
 
     logger.debug("Running rolloutEvents");
 
-    // minimun for territory events is 30 minutes
-    const today = DateTime.utc().plus({minutes: 30}) .toJSDate();
+    // minimun for territory events is 35 minutes
+    const today = DateTime.utc().plus({minutes: 35}) .toJSDate();
 
     const events = await TerritoryEventModel.find({ next: { $lt: today } }).exec();
 
