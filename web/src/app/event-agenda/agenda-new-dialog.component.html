@@ -24,7 +24,14 @@
 
                     <div class="form-group">
                         <label for="next" class="form-label">Next Schedule</label>
-                        <input name="next" class="form-control" type="text" [value]="event.next | dateTimeFromIso | dateTimeToLocal | dateTimeToLocaleString:dtFormat" readonly/>
+                        <input name="next" class="form-control" type="text" [value]="diplayEventDate()" readonly/>
+                        <div class="d-flex justify-content-center">
+                            <div class="btn-group" role="group">
+                                <button [disabled]="step == 0" (click)="step=step-1" type="button" class="btn btn-secondary"><i class="fa-solid fa-backward"></i></button>
+                                <button [disabled]="step == 0" type="button" (click)="step=0" class="btn btn-secondary"><i class="fa-solid fa-rotate-left"></i></button>
+                                <button type="button" (click)="step=step+1" class="btn btn-secondary"><i class="fa-solid fa-forward"></i></button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">

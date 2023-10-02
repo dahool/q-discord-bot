@@ -191,7 +191,8 @@ export class ApiController {
             TerritoryEvents.createNewEvent(id, zone[0], {
                 title: payload.title,
                 recurrent: payload.recurrent,
-                ping: payload.ping
+                ping: payload.ping,
+                nextDt: payload.next
             }).then(e => {
                 res.send({status: true})
             }).catch(e => {
@@ -217,7 +218,8 @@ export class ApiController {
             TerritoryEvents.createNewEvent(calendar?.guild!, zone[0], {
                 title: payload.title,
                 recurrent: payload.recurrent,
-                ping: payload.ping
+                ping: payload.ping,
+                nextDt: payload.next
             }).then(e => {
                 res.send({status: true})
             }).catch(e => {

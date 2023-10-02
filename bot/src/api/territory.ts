@@ -23,7 +23,7 @@ export namespace TerritoryEvents {
         
     }
 
-    export async function createNewEvent(guildId: string, zone: Territory.Zone, ops: {title: string, recurrent?: boolean, ping?: string[]}): Promise<TerritoryEvent> {
+    export async function createNewEvent(guildId: string, zone: Territory.Zone, ops: {title: string, nextDt?: string, recurrent?: boolean, ping?: string[]}): Promise<TerritoryEvent> {
         
         let duration = 60;
 		if (zone.type == 1) {
@@ -36,7 +36,7 @@ export namespace TerritoryEvents {
 			guild: guildId,
 			zone: zone.zone,
 			title: ops.title,
-			next:  zone.next.toJSDate(),
+			next:  ops.nextDt != undefined ? DateTime.fromISO(ops.nextDt).toJSDate() : zone.next.toJSDate(),
 			recurrent: ops.recurrent || false,
 			duration: duration,
 			ping: ops.ping

@@ -50,7 +50,9 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
   // @ts-ignore
   event: Event;
   editable?: Schedule;
-  
+
+  step: number = 0;
+
   constructor(
       private router: Router,
       private service: AppService,
@@ -63,6 +65,7 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
   }
 
   open(editable?: Schedule): void {
+    this.step = 0;
     if (editable) {
       this.editable = editable;
       this.event = {
@@ -102,6 +105,11 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
     })
   }
   
+  diplayEventDate() {
+    return DateTime.fromISO(this.event.next).plus({days: 7 * this.step}).toLocal().toLocaleString(this.dtFormat);
+    //event.next | dateTimeFromIso | dateTimeToLocal | dateTimeToLocaleString:dtFormat
+  }
+
   saveEvent(form: NgForm) {
 
     if (form.invalid) {
@@ -109,13 +117,15 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
       return;
     }
 
-    console.debug(this.event);
+    let data = Object.assign({}, this.event, {next: DateTime.fromISO(this.event.next).plus({days: 7 * this.step}).toISO()});
+
+    console.debug(data);
 
     let ob: Observable<any>;
     if (this.editable) {
-      ob = this.service.updateEvent(this.editable.id, this.event);
+      ob = this.service.updateEvent(this.editable.id, data);
     } else {
-      ob = this.service.saveNewEvent(this.guildId!, this.event);
+      ob = this.service.saveNewEvent(this.guildId!, data);
     }
 
     ob.subscribe((s:any) => {
