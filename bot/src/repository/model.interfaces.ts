@@ -47,6 +47,7 @@ export interface CalendarEvent extends Document {
     notified: boolean,
     channel?: string,
     extra?: string,
+    recurrent?: boolean
 }
 
 export interface TerritoryEvent extends Document {

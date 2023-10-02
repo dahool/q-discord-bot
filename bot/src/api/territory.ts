@@ -67,7 +67,8 @@ export namespace TerritoryEvents {
             duration: event.duration,
             parentId: event._id,
             notified: false,
-            pingRoles: ping
+            pingRoles: ping,
+            recurrent: event.recurrent
         })
     }
 

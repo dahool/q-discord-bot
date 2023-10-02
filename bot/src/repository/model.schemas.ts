@@ -47,7 +47,8 @@ const CalendarSchema = new Schema<CalendarEvent>({
     src: String,
     notified: Boolean,
     channel: String,
-    extra: String
+    extra: String,
+    recurrent: Boolean
 }, { collection: 'guild_calendar'})
 
 const TerritoryEventSchema = new Schema<TerritoryEvent>({
