@@ -1,6 +1,6 @@
-import { EVENT_TYPE } from "@/actions/notification";
 import { EventListener } from "@/common/decorators";
 import { DiscordEventListener } from "@/common/schemas";
+import { EVENT_TYPE } from "@/cron/notification";
 import { logger } from "@/logging/logger";
 import { CalendarModel } from "@/repository";
 import { Client, Events, GatewayIntentBits, GuildScheduledEvent } from "discord.js";

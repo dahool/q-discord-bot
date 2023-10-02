@@ -7,7 +7,8 @@ export interface Config extends Document {
         announcements?: string,
         logging?: string,
         territory?: string,
-        scheduledEvents?: string        
+        scheduledEvents?: string,
+        dailyTerritory?: string
     },
     token?: string,
     allianceTag?: string,
@@ -19,7 +20,7 @@ export interface Config extends Document {
         channels: string[],
         announceChannel: string,
         message: string
-    }]
+    }],
     territoyCalendar?: string
 }
 

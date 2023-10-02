@@ -14,3 +14,11 @@ export enum Colors {
     Purple = '#800080',
     Yellow = '#FFFF00'
 }
+
+export function randomizeColor(): string {
+    const enumValues = Object.keys(Colors) as Array<keyof Colors>; 
+    const randomIndex = Math.floor(Math.random() * enumValues.length);
+    const randomEnumKey = enumValues[randomIndex];
+    // @ts-ignore
+    return Colors[randomEnumKey];
+}

@@ -60,6 +60,7 @@ export interface Config {
         logging: string
         territory: string
         scheduledEvents: string
+        dailyTerritory: string
     }
     token: string
     allianceTag: string
@@ -83,6 +84,7 @@ export const EMPTY_CONFIG: Config = {
         logging: '',
         territory: '',
         scheduledEvents: '',
+        dailyTerritory: ''
     },
     token: '',
     allianceTag: '',

@@ -1,10 +1,10 @@
 import { DiscordSchedule, Territory, TerritoryEvents } from "@/api";
 import { LocalChannelManager, LocalGuildClient } from "@/client";
-import { asTimeRelative, stripHtml } from "@/common/utils";
+import { asTimeFormat, asTimeRelative, groupBy, stripHtml } from "@/common/utils";
 import { TYPES, container } from "@/ic.config";
 import { logger } from "@/logging/logger";
-import { CalendarEvent, CalendarModel, TerritoryEventModel } from "@/repository";
-import { Client, EmbedBuilder, MessageCreateOptions, roleMention } from "discord.js";
+import { CalendarEvent, CalendarModel, ConfigModel, TerritoryEventModel } from "@/repository";
+import { EmbedBuilder, MessageCreateOptions, roleMention, time } from "discord.js";
 import { DateTime } from "luxon";
 
 export enum EVENT_TYPE {
@@ -115,7 +115,9 @@ async function postAnnouncement(event: CalendarEvent, channel: LocalChannelManag
     })
 }
 
-async function rolloutEvents() {
+export async function rolloutEvents() {
+
+    logger.debug("Running rolloutEvents");
 
     // minimun for territory events is 30 minutes
     const today = DateTime.utc().plus({minutes: 30}) .toJSDate();
@@ -140,13 +142,19 @@ async function rolloutEvents() {
     return Promise.all(asyncWaiting);
 }
 
-async function cleanUpCalendar() {
+export async function cleanUpCalendar() {
+    logger.debug("Running cleanUpCalendar");
     return CalendarModel.deleteMany({
         start: { $lt: DateTime.utc().minus({ days: 1 }).toJSDate()},
     }).exec();
 }
 
-async function scheduleDiscordEvents(client: Client) {
+export async function scheduleDiscordEvents() {
+
+    logger.debug("Running scheduleDiscordEvents");
+    
+    const client = container.get(TYPES.Bot).client;
+    
     const query = {
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({hours: 24}).toJSDate()},
         notified: false,
@@ -156,23 +164,31 @@ async function scheduleDiscordEvents(client: Client) {
     const events = await CalendarModel.find(query);
     
     return Promise.all(events.map(event => {
-        return DiscordSchedule.createScheduledEvent(
-            client.guilds.cache.get(event.guild)!,
-            event.summary,
-            '',
-            'general',
-            DateTime.fromJSDate(event.start),
-            event.duration!,
-            event.location).then(dEvent => {
-                logger.info("Scheduled event %s for %s", dEvent.id, event.summary);
-                event.discordEventId = dEvent.id;
-                event.save();
-            });
+        const guild = client.guilds.cache.get(event.guild);
+        if (guild) {
+            return DiscordSchedule.createScheduledEvent(
+                guild,
+                event.summary,
+                '',
+                'general',
+                DateTime.fromJSDate(event.start),
+                event.duration!,
+                event.location).then(dEvent => {
+                    logger.info("Scheduled event %s for %s", dEvent.id, event.summary);
+                    event.discordEventId = dEvent.id;
+                    event.save();
+                });
+        }
+        logger.debug("Guild with id %s not found", event.guild);
+        return Promise.resolve();
     }));
+    
 }
 
-export async function processAnnouncements(minutesAhead: number) {
-    
+export async function processAnnouncements(minutesAhead: number = 30) {
+
+    logger.debug("Running processAnnouncements");
+
     const events = await CalendarModel.find({
         start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({minutes: minutesAhead}).toJSDate()},
         $or: [ { notified: false }, { notified: null } ]
@@ -211,11 +227,53 @@ export async function processAnnouncements(minutesAhead: number) {
             logger.error("No channel defined for event %O", event);
         }
     }
-    
-    return Promise.all([
-        rolloutEvents(),
-        cleanUpCalendar(),
-        scheduleDiscordEvents(container.get(TYPES.Bot).client)
-    ])
 
+}
+
+export async function postDailyEvents() {
+
+    logger.debug("Running postDailyEvents");
+
+    const client = container.get(TYPES.Bot).client;
+
+    const fromDate = DateTime.utc().toJSDate();
+    const toDate = DateTime.utc().plus({days: 1}).toJSDate();
+
+    let allEvents = await CalendarModel.find({
+        type: EVENT_TYPE.TERRITORY,
+        notified: false,
+        start: { $gte: fromDate, $lte: toDate }
+    }).sort({ start: 1 }).allowDiskUse(true).exec();
+
+    logger.debug("Events %O, %O", { $gte: fromDate, $lte: toDate }, allEvents);
+
+    groupBy(allEvents, (e: any) => e.guild).forEach(async (events, guildId) => {
+
+        const guildConfig = await ConfigModel.findOne({ guild: guildId }).exec();
+        if (guildConfig?.channels?.dailyTerritory) {
+
+            const guild = client.guilds.cache.get(guildId);
+            const localGuild = new LocalGuildClient(guildId);
+            const localChannel = await localGuild.getChannel(guildConfig.channels.dailyTerritory);
+
+            const msgEmbed = new EmbedBuilder()
+                .setColor('Random')
+                .setThumbnail(guild ? guild.iconURL() : client.user.avatarURL())
+                .setTitle("Territory Events from " + time(fromDate) + " to " + time(toDate));
+        
+            groupBy(events, (e: any) => e.location).forEach((values, key) => {
+                values.sort((a: any, b: any) => a.start - b.start);
+                msgEmbed.addFields({name: key, value: values.map((ev: any) => {
+                    const start = DateTime.fromJSDate(ev.start).setZone('UTC');
+                    const ob = '`' + ev.summary + '` on ' + asTimeFormat(start);
+                    return ob;
+                }).join('\n')});
+            })
+
+            localChannel?.send({ content: "@here", embeds: [msgEmbed]});
+        }
+        
+    });
+
+    
 }

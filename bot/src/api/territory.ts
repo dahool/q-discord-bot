@@ -1,4 +1,4 @@
-import { EVENT_TYPE } from '@/actions/notification';
+import { EVENT_TYPE } from '@/cron/notification';
 import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
 import { CalendarEvent, CalendarModel, TerritoryEvent, TerritoryEventModel } from '@/repository';

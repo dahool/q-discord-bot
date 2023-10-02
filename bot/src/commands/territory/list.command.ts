@@ -1,10 +1,10 @@
-import { CALENDAR_SOURCE } from "@/actions/calendar";
-import { EVENT_TYPE } from "@/actions/notification";
 import { Territory, TerritoryEvents } from "@/api";
 import { Colors } from "@/common/colors";
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
 import { asTimeFormat, createURLwithParameters, groupBy, highlightText, safeLower } from "@/common/utils";
+import { CALENDAR_SOURCE } from "@/cron/calendar";
+import { EVENT_TYPE } from "@/cron/notification";
 import { environment } from "@/env/environment";
 import { logger } from "@/logging/logger";
 import { CalendarModel, ConfigModel, TerritoryEventModel } from "@/repository";

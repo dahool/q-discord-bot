@@ -8,7 +8,8 @@ const ConfigSchema = new Schema<Config>({
         announcements: String,
         logging: String,
         territory: String,
-        scheduledEvents: String
+        scheduledEvents: String,
+        dailyTerritory: String
     },
     token: String,
     allianceTag: String,
