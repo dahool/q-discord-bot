@@ -185,12 +185,15 @@ export async function scheduleDiscordEvents() {
     
 }
 
-export async function processAnnouncements(minutesAhead: number = 30) {
+export async function processAnnouncements(minutesAhead: number = 35) {
 
-    logger.debug("Running processAnnouncements");
+    const fromDate = DateTime.utc().toJSDate();
+    const toDate = DateTime.utc().plus({minutes: minutesAhead}).toJSDate();
+
+    logger.debug("Running processAnnouncements between %s and %s", fromDate, toDate);
 
     const events = await CalendarModel.find({
-        start: { $gt: DateTime.utc().toJSDate(), $lte: DateTime.utc().plus({minutes: minutesAhead}).toJSDate()},
+        start: { $gt: fromDate, $lte: toDate},
         $or: [ { notified: false }, { notified: null } ]
     }).exec();
 
@@ -232,12 +235,12 @@ export async function processAnnouncements(minutesAhead: number = 30) {
 
 export async function postDailyEvents() {
 
-    logger.debug("Running postDailyEvents");
-
     const client = container.get(TYPES.Bot).client;
 
     const fromDate = DateTime.utc().toJSDate();
     const toDate = DateTime.utc().plus({days: 1}).toJSDate();
+
+    logger.debug("Running postDailyEvents between %s and %s", fromDate, toDate);
 
     let allEvents = await CalendarModel.find({
         type: EVENT_TYPE.TERRITORY,
@@ -245,7 +248,7 @@ export async function postDailyEvents() {
         start: { $gte: fromDate, $lte: toDate }
     }).sort({ start: 1 }).allowDiskUse(true).exec();
 
-    logger.debug("Events %O, %O", { $gte: fromDate, $lte: toDate }, allEvents);
+    logger.debug("Events %O", allEvents);
 
     groupBy(allEvents, (e: any) => e.guild).forEach(async (events, guildId) => {
 
