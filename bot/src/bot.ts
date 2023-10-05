@@ -171,6 +171,7 @@ export class BotCommander {
 		let route;
 		const clientId = this.client.user?.id!;
 		if (this.defaultGuild) {
+			logger.info("RUNNING IN TEST MODE");
 			route = Routes.applicationGuildCommands(clientId, this.defaultGuild);
 		} else {
 			route = Routes.applicationCommands(clientId);

@@ -9,7 +9,8 @@ export const environment = {
     },
     discord: {
         token: process.env.Q_TOKEN,
-        test: process.env.TEST_SERVER
+        test: process.env.TEST_SERVER,
+        name: process.env.NAME
     },
     api: {
         sessionSecret: process.env.SESSION_SECRET,

@@ -9,7 +9,7 @@ import { logger } from "./logging/logger";
 import { initializeWebListener } from "./web";
 
 const gramBot = new TelegramBot(environment.telegram.token || '', {polling: false});
-const bot = new BotCommander("TEST", environment.discord.test);
+const bot = new BotCommander(environment.discord.name!, environment.discord.test);
 
 function sendMessage(message: string): Promise<any> {
     if (environment.telegram.recipientId) {
