@@ -63,17 +63,18 @@ async function updateGuildToken(guild: Guild): Promise<any> {
 export class ReadyListener implements DiscordEventListener {
 
     async onEvent(client: Client, ...args: any): Promise<any> {
-        const guilds = client.guilds.cache;// .filter(c => c.channels);
-        for (const [guildId, guild] of guilds) {
+        const guilds = client.guilds.cache;
+        for (let [guildId, guild] of guilds) {
             logger.debug("Sync %s", guild.name);
-            await Promise.all([
+            Promise.all([
                 updateGuildToken(guild),
                 syncChannels(client, guild),
                 syncRoles(client, guild),
                 Webhook.createOrUpdateAll(client, guild)
-            ]);
+            ]).then(() => {
+                logger.info("Sync of %s completed", guild.name);
+            });
         }
-        logger.debug("Sync completed.");
         return true;
     }
     

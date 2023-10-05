@@ -18,7 +18,7 @@ export namespace Webhook {
     }
     
     export async function createOrUpdateOne(client: Client, channel: GuildBasedChannel | undefined): Promise<void> {
-        return new Promise((reso, reje) => {
+        return new Promise((reso) => {
             if (channel && channel?.isTextBased()) {
                 WebhookModel.findOne({guild: channel.guildId, channelId: channel.id}).exec().then(r => {
                     if (!r) {
@@ -32,12 +32,13 @@ export namespace Webhook {
                             reso();
                         }).catch((e) => {
                             logger.error(e);
-                            reje(e);
+                            reso(e);
                         })
                     }
                 })
             } else {
-                reje("Channel invalid or not Text " + channel);
+                logger.warn("Channel invalid or not Text %s", channel);
+                reso();
             }
         })
     }
