@@ -100,6 +100,11 @@ async function postAnnouncement(event: CalendarEvent, channel: LocalChannelManag
             payload = buildGeneralReminderAnnouncement(event);
             break;
         case EVENT_TYPE.SCHEDULED_EVENTS:
+            // check if there's a channel
+            let eventChannel = await channel.guild.getChannel(event.location);
+            if (eventChannel) {
+                channel = eventChannel;
+            }
             payload = buildScheduledEventsAnnouncement(event);
             break;
         default:

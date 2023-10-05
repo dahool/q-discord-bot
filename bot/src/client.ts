@@ -6,7 +6,10 @@ export class LocalChannelManager {
 
     channel: LocalGuildChannel;
 
-    constructor(channel: LocalGuildChannel) {
+    guild: LocalGuildClient;
+
+    constructor(guild: LocalGuildClient, channel: LocalGuildChannel) {
+        this.guild = guild;
         this.channel = channel;
     }
 
@@ -45,7 +48,7 @@ export class LocalGuildClient {
                     if (list.length == 0) {
                         resolve([]);
                     } else {
-                        resolve(list.map(ch => new LocalChannelManager(ch)));
+                        resolve(list.map(ch => new LocalChannelManager(this, ch)));
                     }
                 })
         })
@@ -58,7 +61,7 @@ export class LocalGuildClient {
                     if (!r) {
                         resolve(null)
                     } else {
-                        resolve(new LocalChannelManager(r));
+                        resolve(new LocalChannelManager(this, r));
                     }
                 })
         })

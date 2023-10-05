@@ -73,7 +73,8 @@ const LocalGuildChannelSchema = new Schema<LocalGuildChannel>({
     guild: { type: String, required: true },
     channelId: { type: String, required: true },
     name: { type: String, required: true },
-    category: String
+    category: String,
+    type: String
 }, { collection: 'guild_channels'})
 
 const LocalGuildRoleSchema = new Schema<LocalGuildRole>({

@@ -3,11 +3,11 @@ import { LocalGuildChannelModel } from "@/repository";
 import { Channel, ChannelType, GuildChannel } from "discord.js";
 
 export function channelAcceptFilter(channel: Channel | null): boolean {
-    return channel != null && (ChannelType.GuildText === channel?.type || ChannelType.GuildForum === channel?.type );
+    return channel != null && (ChannelType.GuildText === channel?.type || ChannelType.GuildForum === channel?.type || ChannelType.GuildVoice === channel.type );
 }
 
 export async function createOrUpdateChannel(channel: GuildChannel | null): Promise<any> {
-    let chData = { name: channel?.name };
+    let chData = { name: channel?.name, type: channel?.type };
     if (channel?.parent) {
         Object.assign(chData, { category: channel.parent.name });
     }

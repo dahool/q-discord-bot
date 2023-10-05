@@ -5,7 +5,7 @@ import { logger } from '@/logging/logger';
 import { OAuthClient, OAuthGuild, OAuthToken } from '@/oauth';
 import { CalendarModel, Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel } from '@/repository';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res } from 'decorators-express';
-import { PermissionsBitField } from 'discord.js';
+import { ChannelType, PermissionsBitField } from 'discord.js';
 import { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
 
@@ -112,7 +112,7 @@ export class ApiController {
 
     @Get("/channels/:id")
     listChannels(@Param("id") id: string, @Req() req: Request, @Res() res: Response) {
-        LocalGuildChannelModel.find({guild: id}).exec().then(list => {
+        LocalGuildChannelModel.find({guild: id, type: { $ne: ChannelType.GuildVoice }}).exec().then(list => {
             res.send(list.map(c => {
                 return {
                     id: c.channelId,

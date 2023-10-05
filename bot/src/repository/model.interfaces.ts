@@ -72,7 +72,8 @@ export interface LocalGuildChannel extends Document {
     guild: string,
     channelId: string,
     name: string,
-    category?: string
+    category?: string,
+    type?: string
 }
 
 export interface LocalGuildRole extends Document {
