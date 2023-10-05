@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: 'qbot'
+    image: 'dahool/qbot:latest'
     build:
       context: .
     container_name: qbot
