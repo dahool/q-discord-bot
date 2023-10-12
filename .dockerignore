@@ -6,6 +6,7 @@
 **/.vscode
 **/.github
 **/.git
+**/package-lock.json
 docker-compose.yml
 Dockerfile*
 secrets
