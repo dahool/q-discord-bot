@@ -13,7 +13,7 @@
         <li class="list-group col event-list">
           <ng-container *ngFor="let dayItem of $any(item.value)">
             <ul class="row pb-1 pt-1" [ngClass]="{'editable': isEditable(dayItem)}" (click)='isEditable(dayItem) ? edit(dayItem) : false'>
-              <div class="col-9 col-sm-4 col-md-3"><i class="circle {{dayItem.type}}"></i>{{dayItem.dtStart|dateTimeToLocaleString:timeFormat}}-{{dayItem.dtEnd|dateTimeToLocaleString:timeFormat}}<i class="fa-solid fa-repeat" *ngIf="dayItem.recurrent" title="Recurrent"></i></div>
+              <div class="col-9 col-sm-7 col-md-5 col-lg-4 col-xl-3"><i class="circle {{dayItem.type}}"></i>{{dayItem.dtStart|dateTimeToLocaleString:timeFormat}}-{{dayItem.dtEnd|dateTimeToLocaleString:timeFormat}}<i class="fa-solid fa-repeat" *ngIf="dayItem.recurrent" title="Recurrent"></i></div>
               <div class="col"><span class="event-summary">{{dayItem.summary}}</span><span class="event-location" *ngIf="dayItem.location">[{{dayItem.location}}]</span></div>
             </ul>
           </ng-container>
