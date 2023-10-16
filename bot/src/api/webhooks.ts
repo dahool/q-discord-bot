@@ -37,7 +37,7 @@ export namespace Webhook {
                     }
                 })
             } else {
-                logger.warn("Channel invalid or not Text %s", channel);
+                if (channel != undefined) logger.warn("Channel for WebHook invalid or not type Text %s", channel);
                 reso();
             }
         })

@@ -1,5 +1,5 @@
 import { Routes } from "discord-api-types/v10";
-import { ActivityType, ApplicationCommandOptionType, BaseInteraction, Client, Collection, CommandInteractionOptionResolver, Events, GatewayIntentBits, Partials, REST } from "discord.js";
+import { ActivityType, ApplicationCommandOptionType, BaseInteraction, Client, Collection, CommandInteractionOptionResolver, Events, GatewayIntentBits, Partials, PermissionFlagsBits, REST } from "discord.js";
 import { application } from "./app";
 import { CommandMetadata } from "./common/decorators";
 import { DiscordCommand } from "./common/schemas";
@@ -131,7 +131,8 @@ export class BotCommander {
             this.commandsDefinition.push({
                 name: attrs.name,
                 description: attrs.description,
-                options: attrs.options || []
+                options: attrs.options || [],
+				default_member_permissions: attrs.defaultPermissions != undefined ? attrs.defaultPermissions.toString() : PermissionFlagsBits.UseApplicationCommands.toString()
             })
         }
     }
@@ -237,7 +238,13 @@ export class BotCommander {
         const command = this.commands.get(commandName);
 
 		if (!command) return;
+/*
+		const isAdmin = interaction.memberPermissions?.has([PermissionsBitField.Flags.Administrator, PermissionsBitField.Flags.ManageGuild]);
 
+		if ((command.admin && !isAdmin) || (command.permission && !member.permissions.has(command.permission || []))) {
+			return bc.reply(MESSAGES.denied);
+		}
+*/
 		if (interaction.isChatInputCommand()) {
 			const args = this._parseOptions(interaction.options, Reflect.getMetadata(CommandMetadata, Object.getPrototypeOf(command)).options);
 			logger.debug("Calling %s with args %s", commandName, args);
@@ -245,13 +252,13 @@ export class BotCommander {
 		} else {
 			logger.debug("Calling %s", commandName);
 			command.run(this.client, interaction, {});
-		}
-        
+		}		
+
 /*
         if (!interaction && !command.plain === true) return;
 
 		const roles = (await db.config.findOne(guild.id, "roles", "roles")) || [];
-		const isAdmin = member.permissions.has([PermissionsBitField.Flags.Administrator, PermissionsBitField.Flags.ManageGuild]);
+
 		const isManager = isAdmin || member.roles.cache.some( r => roles.includes(r.id) );
 		
     	logger.debug("Command: " + commandName +  " - IsManager: " + isManager);

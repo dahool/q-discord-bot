@@ -1,12 +1,13 @@
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
 import { environment } from "@/env/environment";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, CommandInteraction, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 
 @Command({
     name: 'config',
     admin: true,
     description: 'Settings of the Continuum',
+    defaultPermissions: PermissionFlagsBits.ManageGuild | PermissionFlagsBits.Administrator
 })
 export class ConfigCommand implements DiscordCommand {
     async run(client: Client, interaction: CommandInteraction): Promise<void> {

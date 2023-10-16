@@ -37,6 +37,7 @@ export interface CommandAttributes {
     admin?: boolean;
     options?: CommandOptions[];
     requiresIntents?: GatewayIntentBits[];
+    defaultPermissions?: bigint;
 }
 
 export interface ListenerAttributes {

@@ -1,3 +1,4 @@
+import { AddRoleCommand } from "./commands/addrole.command";
 import { AllianceCommand } from "./commands/alliance.command";
 import { ConfigCommand } from "./commands/config.command";
 import { PublishCommand } from "./commands/publish.command";
@@ -24,6 +25,7 @@ application.register(TerritoryEventList);
 application.register(TerritoryEventDelete);
 application.register(AllianceCommand);
 application.register(ConfigCommand);
+application.register(AddRoleCommand);
 
 /* events */
 application.register(ReadyListener);
