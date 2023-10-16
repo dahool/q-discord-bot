@@ -1,6 +1,7 @@
 import { AddRoleCommand } from "./commands/addrole.command";
 import { AllianceCommand } from "./commands/alliance.command";
 import { ConfigCommand } from "./commands/config.command";
+import { DelRoleCommand } from "./commands/delrole.command";
 import { PublishCommand } from "./commands/publish.command";
 import { ReadyCommand } from "./commands/ready.command";
 import { TerritoryEventAdd, TerritoryEventDelete, TerritoryEventList, TerritoyInfoCommand } from "./commands/territory";
@@ -26,6 +27,7 @@ application.register(TerritoryEventDelete);
 application.register(AllianceCommand);
 application.register(ConfigCommand);
 application.register(AddRoleCommand);
+application.register(DelRoleCommand);
 
 /* events */
 application.register(ReadyListener);
