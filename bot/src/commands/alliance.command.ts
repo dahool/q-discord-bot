@@ -27,7 +27,7 @@ export class AllianceCommand implements DiscordCommand {
 	async run(client: Client, interaction: ChatInputCommandInteraction, args: any): Promise<any> {
 		
 		await interaction.deferReply();
-		""
+		
 		const config = await ConfigModel.findOne({guild: interaction.guildId}).exec();
 
 		let tag = args.tag ? args.tag : config?.allianceTag;
@@ -55,7 +55,6 @@ export class AllianceCommand implements DiscordCommand {
 	
 		let attach = new AttachmentBuilder(Buffer.from(content, 'utf-8'), {name: 'alliance.csv'});
 
-		//await interaction.channel?.send({ files: [ attach ]});
 		return interaction.editReply({ content: `Here it is ${list.length} players`, files: [ attach ] });
 	}
 
