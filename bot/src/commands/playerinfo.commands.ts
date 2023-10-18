@@ -3,6 +3,9 @@ import { DiscordCommand } from "@/common/schemas";
 import { PlayerInfoModel } from "@/repository";
 import { ApplicationCommandOptionType, ChatInputCommandInteraction, Client, EmbedBuilder } from "discord.js";
 
+const AVATAR_URL = 'https://ui-avatars.com/api/?name='
+//https://robohash.org/
+
 interface PlayerQuery {
 	name: any,
 	tag?: string
@@ -49,7 +52,7 @@ export class PlayerInfoCommand implements DiscordCommand {
 
         const msgEmbed = new EmbedBuilder()
             .setColor('Random')
-            .setThumbnail('https://robohash.org/' + encodeURIComponent(player.name))
+			.setThumbnail(AVATAR_URL + encodeURIComponent(player.name))
             .setTitle((player.tag ? `[${player.tag}] ` : ' ') + player.name)
 			.addFields(
 				{ name: 'Level', value: player.level.toString() },
