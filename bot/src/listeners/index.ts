@@ -1,4 +1,5 @@
 export * from './channel-update.listeners'
+export * from './member.listeners'
 export * from './newthread.listener'
 export * from './ready-sync.listener'
 export * from './role-update.listeners'

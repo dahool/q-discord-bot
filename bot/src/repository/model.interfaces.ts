@@ -88,3 +88,14 @@ export interface GuildWebhook extends Document {
     webhookId: string,
     webhookToken: string
 }
+
+export interface Member extends Document {
+    guild: string,
+    memberId: string,
+    username: string,
+    avatar: string,
+    join?: Date,
+    lastSeen?: Date,
+    left?: Date,
+    alias: string[]
+}
