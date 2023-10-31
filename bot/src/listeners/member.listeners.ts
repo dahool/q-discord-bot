@@ -14,7 +14,7 @@ export class GuildMemberRemoveListener implements DiscordEventListener {
         let model = await GuildMemberModel.findOne({guild: member.guild, memberId: member.id}).exec();
         if (model == null) {
             model = new GuildMemberModel({
-                guild: member.guild,
+                guild: member.guild.id,
                 memberId: member.id,
                 username: member.user.username,
                 avatar: member.displayAvatarURL(),
@@ -37,7 +37,7 @@ export class GuildMemberUpdateListener implements DiscordEventListener {
         let model = await GuildMemberModel.findOne({guild: member.guild, memberId: member.id}).exec();
         if (model == null) {
             model = new GuildMemberModel({
-                guild: member.guild,
+                guild: member.guild.id,
                 memberId: member.id,
                 username: member.user.username,
                 lastSeen: new Date(),
@@ -64,7 +64,7 @@ export class GuildMemberAddListener implements DiscordEventListener {
         logger.debug("Joined: %s", member.user.username)
         if (model == null) {
             model = new GuildMemberModel({
-                guild: member.guild,
+                guild: member.guild.id,
                 memberId: member.id,
                 username: member.user.username,
                 join: new Date(),
@@ -93,7 +93,7 @@ export class GuildMemberPresenceUpdateListener implements DiscordEventListener {
         logger.debug("Updated: %s", newPre.member?.user.username)
         if (model == null) {
             model = new GuildMemberModel({
-                guild: newPre.guild,
+                guild: newPre.guild?.id,
                 memberId: newPre.member?.id,
                 username: newPre.member?.user.username,
                 alias: [ newPre.member?.displayName ]

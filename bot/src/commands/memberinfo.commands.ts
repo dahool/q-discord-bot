@@ -23,6 +23,7 @@ export class MemberInfoCommand implements DiscordCommand {
 		await interaction.deferReply();
 		
 		let query = {
+			guild: interaction.guildId,
 			username: {'$regex': `.*${args.name}.*`, "$options": "i" }
 		}
 
