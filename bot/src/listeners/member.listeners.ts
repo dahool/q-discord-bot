@@ -4,6 +4,19 @@ import { logger } from "@/logging/logger";
 import { GuildMemberModel } from "@/repository";
 import { Client, Events, GuildMember, Presence } from "discord.js";
 
+async function getOrCreateMember(member: GuildMember) {
+    let model = await GuildMemberModel.findOne({guild: member.guild.id, memberId: member.id}).exec();
+    if (model == null) {
+        model = new GuildMemberModel({
+            guild: member.guild.id,
+            memberId: member.id,
+            username: member.user.username,
+            avatar: member.displayAvatarURL(),
+            alias: [ member.displayName ]
+        });
+    }
+    return model;
+}
 
 @EventListener({
     event: Events.GuildMemberRemove
@@ -11,17 +24,8 @@ import { Client, Events, GuildMember, Presence } from "discord.js";
 export class GuildMemberRemoveListener implements DiscordEventListener {
 
     async onEvent(client: Client, member: GuildMember): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: member.guild.id, memberId: member.id}).exec();
-        if (model == null) {
-            model = new GuildMemberModel({
-                guild: member.guild.id,
-                memberId: member.id,
-                username: member.user.username,
-                avatar: member.displayAvatarURL(),
-                alias: [ member.displayName ]
-            });
-        }
-        logger.debug("Removed: %s", member.user.username)
+        logger.debug("%s has left", member.user.username);
+        let model = await getOrCreateMember(member);
         model.left = new Date();
         return model.save();
     }
@@ -34,21 +38,12 @@ export class GuildMemberRemoveListener implements DiscordEventListener {
 export class GuildMemberUpdateListener implements DiscordEventListener {
 
     async onEvent(client: Client, oldMember: GuildMember, member: GuildMember): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: member.guild.id, memberId: member.id}).exec();
-        if (model == null) {
-            model = new GuildMemberModel({
-                guild: member.guild.id,
-                memberId: member.id,
-                username: member.user.username,
-                lastSeen: new Date(),
-                alias: [ oldMember.displayName, member.displayName ]
-            });
-        }
-        let aliases = new Set(model.alias);
-        aliases.add(member.displayName);
+        let model = await getOrCreateMember(member);
+        let aliases = new Set([...model.alias, oldMember.displayName, member.displayName]);
+        model.lastSeen = new Date();
         model.alias = Array.from(aliases);
         model.avatar = member.displayAvatarURL();
-        logger.debug("Updated: %s [%s]", member.user.username, model.alias);
+        logger.debug("Updated: %s [%s]", member.user.username, model.alias);        
         return model.save();
     }
     
@@ -60,24 +55,14 @@ export class GuildMemberUpdateListener implements DiscordEventListener {
 export class GuildMemberAddListener implements DiscordEventListener {
 
     async onEvent(client: Client, member: GuildMember): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: member.guild.id, memberId: member.id}).exec();
-        logger.debug("Joined: %s", member.user.username)
-        if (model == null) {
-            model = new GuildMemberModel({
-                guild: member.guild.id,
-                memberId: member.id,
-                username: member.user.username,
-                join: new Date(),
-                lastSeen: new Date(),
-                avatar: member.displayAvatarURL(),
-                alias: [ member.displayName ]
-            });
-        } else {
-            logger.debug("%s joined again", member.user.username);
-        }
+        logger.debug("Join: %s", member.user.username)
+        let model = await getOrCreateMember(member);
         model.join = new Date();
         model.lastSeen = new Date();
-        model.left = undefined;
+        if (model.left) {
+            logger.info("%s has joined again. Last time left %s", member.user.username, model.left);
+            model.left = undefined;
+        }
         return model.save();
     }
     
@@ -89,16 +74,8 @@ export class GuildMemberAddListener implements DiscordEventListener {
 export class GuildMemberPresenceUpdateListener implements DiscordEventListener {
 
     async onEvent(client: Client, oldPre: Presence, newPre: Presence): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: newPre.guild?.id, memberId: newPre.member?.id}).exec();
-        logger.debug("Updated: %s", newPre.member?.user.username)
-        if (model == null) {
-            model = new GuildMemberModel({
-                guild: newPre.guild?.id,
-                memberId: newPre.member?.id,
-                username: newPre.member?.user.username,
-                alias: [ newPre.member?.displayName ]
-            });
-        }
+        let model = await getOrCreateMember(newPre.member!);
+        logger.debug("Updated: %s", model.username)
         model.lastSeen = new Date();
         if (newPre.member) model.avatar = newPre.member.displayAvatarURL();
         return model.save();
