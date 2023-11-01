@@ -11,7 +11,7 @@ import { Client, Events, GuildMember, Presence } from "discord.js";
 export class GuildMemberRemoveListener implements DiscordEventListener {
 
     async onEvent(client: Client, member: GuildMember): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: member.guild, memberId: member.id}).exec();
+        let model = await GuildMemberModel.findOne({guild: member.guild.id, memberId: member.id}).exec();
         if (model == null) {
             model = new GuildMemberModel({
                 guild: member.guild.id,
@@ -34,7 +34,7 @@ export class GuildMemberRemoveListener implements DiscordEventListener {
 export class GuildMemberUpdateListener implements DiscordEventListener {
 
     async onEvent(client: Client, oldMember: GuildMember, member: GuildMember): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: member.guild, memberId: member.id}).exec();
+        let model = await GuildMemberModel.findOne({guild: member.guild.id, memberId: member.id}).exec();
         if (model == null) {
             model = new GuildMemberModel({
                 guild: member.guild.id,
@@ -60,7 +60,7 @@ export class GuildMemberUpdateListener implements DiscordEventListener {
 export class GuildMemberAddListener implements DiscordEventListener {
 
     async onEvent(client: Client, member: GuildMember): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: member.guild, memberId: member.id}).exec();
+        let model = await GuildMemberModel.findOne({guild: member.guild.id, memberId: member.id}).exec();
         logger.debug("Joined: %s", member.user.username)
         if (model == null) {
             model = new GuildMemberModel({
@@ -89,7 +89,7 @@ export class GuildMemberAddListener implements DiscordEventListener {
 export class GuildMemberPresenceUpdateListener implements DiscordEventListener {
 
     async onEvent(client: Client, oldPre: Presence, newPre: Presence): Promise<any> {
-        let model = await GuildMemberModel.findOne({guild: newPre.guild, memberId: newPre.member?.id}).exec();
+        let model = await GuildMemberModel.findOne({guild: newPre.guild?.id, memberId: newPre.member?.id}).exec();
         logger.debug("Updated: %s", newPre.member?.user.username)
         if (model == null) {
             model = new GuildMemberModel({
