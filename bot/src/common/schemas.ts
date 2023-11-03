@@ -1,4 +1,4 @@
-import { BaseInteraction, Client, ClientEvents, GatewayIntentBits } from "discord.js";
+import { ApplicationCommandType, BaseInteraction, Client, ClientEvents, GatewayIntentBits } from "discord.js";
 
 export const Type = Function;
 
@@ -33,7 +33,8 @@ export interface CommandOptions {
 
 export interface CommandAttributes {
     name: string;
-    description: string;
+    description?: string;
+    type?: ApplicationCommandType;
     admin?: boolean;
     options?: CommandOptions[];
     requiresIntents?: GatewayIntentBits[];

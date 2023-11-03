@@ -132,6 +132,7 @@ export class BotCommander {
                 name: attrs.name,
                 description: attrs.description,
                 options: attrs.options || [],
+				type: attrs.type,
 				default_member_permissions: attrs.defaultPermissions != undefined ? attrs.defaultPermissions.toString() : PermissionFlagsBits.UseApplicationCommands.toString()
             })
         }
