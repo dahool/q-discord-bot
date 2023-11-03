@@ -60,7 +60,7 @@ export class TranslateCommand implements DiscordCommand {
 }
 
 @Command({
-	name: 'translate',
+	name: 'Translate',
     type: ApplicationCommandType.Message
 })
 export class TranslateContextCommand implements DiscordCommand {
@@ -82,6 +82,37 @@ export class TranslateContextCommand implements DiscordCommand {
             const response = await translator.translate(text, translateTo, lang);
             interaction.targetMessage.reply({ content: response.text, flags: MessageFlags.SuppressNotifications });
             return interaction.editReply({ content: (translateTo == 'es' ? 'Traducido desde ' : 'Translated from ') + '`'+lang+'`'});
+        } catch (error) {
+            logger.error(error);
+            return interaction.editReply({ content: "Sorry, there was an error processing your request" });
+        }
+
+	}
+
+}
+
+@Command({
+	name: 'TranslatePrivate',
+    type: ApplicationCommandType.Message
+})
+export class TranslatePrivateContextCommand implements DiscordCommand {
+
+	async run(client: Client, interaction: MessageContextMenuCommandInteraction): Promise<any> {
+		
+		await interaction.deferReply({ephemeral: true});
+
+        const translator = new TranslatorClient();
+
+        logger.debug("Context translation %O", interaction.targetMessage);
+
+        const text = interaction.targetMessage.content;
+
+        const lang = await translator.detectLanguage(text);
+        let translateTo = lang != 'es' ? 'es' : 'en';
+
+        try {
+            const response = await translator.translate(text, translateTo, lang);
+            return interaction.editReply({ content: response.text });
         } catch (error) {
             logger.error(error);
             return interaction.editReply({ content: "Sorry, there was an error processing your request" });
