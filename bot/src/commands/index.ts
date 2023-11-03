@@ -7,4 +7,4 @@ export * from './playerinfo.commands'
 export * from './publish.command'
 export * from './ready.command'
 export * from './territory'
-
+export * from './translate.command'

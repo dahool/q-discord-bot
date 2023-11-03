@@ -34,6 +34,11 @@ export const environment = {
         token: process.env.LOGGING_TOKEN,
         logLevel: process.env.LOGGING_LEVEL || 'debug'
     },
+    translator: {
+        endpoint: process.env.TRANSLATOR_ENDPOINT || 'https://api.cognitive.microsofttranslator.com/',
+        apiKey: process.env.TRANSLATOR_API_KEY,
+        region: process.env.TRANSLATOR_REGION
+    },
     timeZone: process.env.ZONE,
     defaultTZ: process.env.TZ,
     secret: process.env.SECRET,
