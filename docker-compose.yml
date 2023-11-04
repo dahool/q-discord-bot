@@ -5,6 +5,7 @@ services:
     image: 'dahool/qbot:latest'
     build:
       context: .
+      dockerfile: ./Dockerfile
     container_name: qbot
     restart: on-failure
     deploy:

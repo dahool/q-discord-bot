@@ -6,6 +6,7 @@ import { closeDatabaseConnection, createDatabaseConnection } from "./repository"
 import TelegramBot from "node-telegram-bot-api";
 import { TYPES, container } from "./ic.config";
 import { logger } from "./logging/logger";
+import { updateTranslationMetrics } from "./metrics";
 import { initializeWebListener } from "./web";
 
 const gramBot = new TelegramBot(environment.telegram.token || '', {polling: false});
@@ -31,6 +32,8 @@ process.on('SIGINT', function() {
 });
 
 createDatabaseConnection(environment.database.url!).then(mongo => {
+    
+    updateTranslationMetrics(0);
     
     bot.login(environment.discord.token!).then(() => {
        sendMessage(`[${process.env.LOGGING_MES}] Q Bot ready`);

@@ -1,4 +1,5 @@
 import { logger } from '@/logging/logger';
+import { countAndUpdateWords } from '@/metrics';
 import axios, { AxiosInstance } from 'axios';
 import { environment } from "../env/environment";
 
@@ -34,6 +35,7 @@ export class TranslatorClient {
     }
 
     async translate(text: string, toLanguage: string, fromLanguage?: string): Promise<TranslationResponse> {
+        countAndUpdateWords(text);
         let apiUrl = `translate?api-version=3.0&to=${toLanguage}`;
         if (fromLanguage) apiUrl = apiUrl.concat(`&from=${fromLanguage}`)
         let response = await this.instance.post(apiUrl, [{'Text': text}]);
