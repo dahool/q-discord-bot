@@ -33,7 +33,7 @@ process.on('SIGINT', function() {
 
 createDatabaseConnection(environment.database.url!).then(mongo => {
     
-    updateTranslationMetrics(0);
+    updateTranslationMetrics(0, 0);
     
     bot.login(environment.discord.token!).then(() => {
        sendMessage(`[${process.env.LOGGING_MES}] Q Bot ready`);

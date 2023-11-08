@@ -4,21 +4,25 @@ import mongoose, { Document, Schema } from 'mongoose'
 import { logger } from './logging/logger'
 
 interface Metrics extends Document {
-    translatedWords: number
+    translatedWords: number,
+    translatedChars: number
 }
 
 interface MetricsMontly extends Document {
     month: string,
-    translatedWords: number
+    translatedWords: number,
+    translatedChars: number
 }
 
 const MetricsSchema = new Schema<Metrics>({
-    translatedWords: Number
+    translatedWords: Number,
+    translatedChars: Number
 }, { collection: 'bot_metrics'})
 
 const MetricsMontlySchema = new Schema<MetricsMontly>({
     month: String,
-    translatedWords: Number
+    translatedWords: Number,
+    translatedChars: Number
 }, { collection: 'bot_metrics_month'})
 
 export const MetricsModel = mongoose.model<Metrics>('MetricsModel', MetricsSchema);
@@ -33,12 +37,21 @@ const translationMetrics = {
     }),
     totalSession: io.metric({
         name: 'Total translated words (session)'
-    })    
+    }),
+    totalChars: io.metric({
+        name: 'Total translated characters'
+    }),
+    totalMonthChars: io.metric({
+        name: 'Total translated characters (month)',
+    }),
 }
+
 
 translationMetrics.total.set(0);
 translationMetrics.totalMonth.set(0);
 translationMetrics.totalSession.set(0);
+translationMetrics.totalChars.set(0);
+translationMetrics.totalMonthChars.set(0);
 
 function getCurrentMonth(): string {
     const today = DateTime.utc();
@@ -54,31 +67,37 @@ function countWords(s: string): number {
 };
 
 export async function countAndUpdateWords(s: string) {
-    updateTranslationMetrics(countWords(s));
+    updateTranslationMetrics(countWords(s), s.length);
 }
 
-export async function updateTranslationMetrics(numberWords: number) {
+export async function updateTranslationMetrics(numberWords: number, characters: number) {
     let metrics = await MetricsModel.findOne().exec();
     if (metrics == undefined) {
         metrics = await MetricsModel.create({
-            translatedWords: numberWords
+            translatedWords: numberWords,
+            translatedChars: characters
         })
     } else {
         metrics.translatedWords += numberWords;
+        metrics.translatedChars += characters;
         metrics.save();
     }
     let monthMetrics = await MetricsMontlyModel.findOne({month: getCurrentMonth()}).exec();
     if (monthMetrics == undefined) {
         monthMetrics = await MetricsMontlyModel.create({
             month: getCurrentMonth(),
-            translatedWords: 0
+            translatedWords: 0,
+            translatedChars: 0
         })
     } else {
         monthMetrics.translatedWords += numberWords;
+        monthMetrics.translatedChars += characters;
         monthMetrics.save();
     }
     logger.debug("Translated %d words", numberWords);
     translationMetrics.total.set(metrics.translatedWords);
     translationMetrics.totalMonth.set(monthMetrics.translatedWords);
     translationMetrics.totalSession.set(translationMetrics.totalSession.val() + numberWords);
+    translationMetrics.totalChars.set(metrics.translatedChars);
+    translationMetrics.totalMonthChars.set(monthMetrics.translatedChars);
 }
