@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { CalendarEvent, Config, GuildWebhook, LocalGuildChannel, LocalGuildRole, Member, PlayerInfo, TerritoryEvent, WebHookChannel } from "./model.interfaces";
+import { CalendarEvent, Config, GuildWebhook, LocalGuildChannel, LocalGuildRole, Member, PlayerInfo, TemporalRoles, TerritoryEvent, WebHookChannel } from "./model.interfaces";
 
 const ConfigSchema = new Schema<Config>({
     guild: { type: String, required: true },
@@ -22,7 +22,21 @@ const ConfigSchema = new Schema<Config>({
         channels: [String],
         announceChannel: String,
         message: String
-    }] // new threads announcements
+    }], // new threads announcements
+    welcomeBye: {
+        join: {
+            channel: String,
+            active: Boolean,
+            message: String,
+            message2: String,
+            roles: [String]
+        },
+        leaves: {
+            channel: String,
+            active: Boolean,
+            message: String
+        }
+    }    
 }, { collection: 'guild_config' })
 
 const PlayerInfoSchema = new Schema<PlayerInfo>({
@@ -101,6 +115,12 @@ const GuildMemberSchema = new Schema<Member>({
     alias: [String]
 }, { collection: 'guild_members'})
 
+const TemporalRolesSchema = new Schema<TemporalRoles>({
+    guild: { type: String, required: true },
+    memberId: { type: String, required: true },
+    roleId: { type: String, required: true },
+    created: { type: Date, required: true }
+}, { collection: 'guild_temp_roles'})
 
 export const ConfigModel = mongoose.model<Config>('ConfigModel', ConfigSchema);
 export const PlayerInfoModel = mongoose.model<PlayerInfo>('PlayerInfoModel', PlayerInfoSchema);
@@ -111,3 +131,4 @@ export const LocalGuildRoleModel = mongoose.model<LocalGuildRole>('LocalGuildRol
 export const LocalGuildChannelModel = mongoose.model<LocalGuildChannel>('LocalGuildChannelModel', LocalGuildChannelSchema); 
 export const WebhookModel = mongoose.model<GuildWebhook>('WebhookModel', WebhookSchema);
 export const GuildMemberModel = mongoose.model<Member>('GuildMemberModel', GuildMemberSchema);
+export const TemporalRolesModel = mongoose.model<TemporalRoles>('TemporalRolesModel', TemporalRolesSchema);

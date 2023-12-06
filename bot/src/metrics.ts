@@ -74,14 +74,16 @@ export async function updateTranslationMetrics(numberWords: number, characters: 
     let metrics = await MetricsModel.findOne().exec();
     if (metrics == undefined) {
         metrics = await MetricsModel.create({
-            translatedWords: numberWords,
-            translatedChars: characters
+            translatedWords: 0,
+            translatedChars: 0
         })
-    } else {
-        metrics.translatedWords += numberWords;
-        metrics.translatedChars += characters;
-        metrics.save();
     }
+    metrics.translatedWords += numberWords;
+    if (metrics.translatedChars == undefined) {
+        metrics.translatedChars = 0;
+    }
+    metrics.translatedChars += characters;
+    metrics.save();
     let monthMetrics = await MetricsMontlyModel.findOne({month: getCurrentMonth()}).exec();
     if (monthMetrics == undefined) {
         monthMetrics = await MetricsMontlyModel.create({
@@ -89,11 +91,10 @@ export async function updateTranslationMetrics(numberWords: number, characters: 
             translatedWords: 0,
             translatedChars: 0
         })
-    } else {
-        monthMetrics.translatedWords += numberWords;
-        monthMetrics.translatedChars += characters;
-        monthMetrics.save();
     }
+    monthMetrics.translatedWords += numberWords;
+    monthMetrics.translatedChars += characters;
+    monthMetrics.save();
     logger.debug("Translated %d words", numberWords);
     translationMetrics.total.set(metrics.translatedWords);
     translationMetrics.totalMonth.set(monthMetrics.translatedWords);

@@ -61,7 +61,6 @@ export class GuildMemberAddListener implements DiscordEventListener {
         model.lastSeen = new Date();
         if (model.left) {
             logger.info("%s has joined again. Last time left %s", member.user.username, model.left);
-            model.left = undefined;
         }
         return model.save();
     }

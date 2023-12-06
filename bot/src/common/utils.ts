@@ -60,6 +60,10 @@ export function isEmpty(obj: any){
     return (Object.keys(obj).length === 0 && JSON.stringify(obj) === JSON.stringify({}));
 }
 
+export function isNotBlank(obj: string | undefined) {
+    return obj !== undefined && safeTrim(obj).length > 0;
+}
+
 export function createURLwithParameters(baseURL: string, parameters: any): string {
     if(!isEmpty(parameters)){
         var obj = parameters;

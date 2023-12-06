@@ -21,7 +21,21 @@ export interface Config extends Document {
         announceChannel: string,
         message: string
     }],
-    territoyCalendar?: string
+    territoyCalendar?: string,
+    welcomeBye?: {
+        join?: {
+            channel: string,
+            active: boolean,
+            message: string,
+            message2?: string,
+            roles?: Types.Array<string>
+        },
+        leaves?: {
+            channel: string,
+            active: boolean,
+            message: string
+        }
+    }
 }
 
 export interface PlayerInfo extends Document {
@@ -98,4 +112,11 @@ export interface Member extends Document {
     lastSeen?: Date,
     left?: Date,
     alias: string[]
+}
+
+export interface TemporalRoles extends Document {
+    guild: string,
+    memberId: string,
+    roleId: string,
+    created: Date
 }
