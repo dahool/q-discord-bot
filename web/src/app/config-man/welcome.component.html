@@ -15,7 +15,7 @@
                 <ng-container *ngIf="config.welcomeBye.join.active">
                   <div class="form-group">
                     <label for="welcomeChannel" class="form-label">Channel</label>
-                    <select-channel-input name="welcomeChannel" [options]="channels" [(ngModel)]="config.welcomeBye.join.channel"></select-channel-input>
+                    <select-channel-input name="welcomeChannel" [options]="channels" [(ngModel)]="config.welcomeBye.join.channel" required></select-channel-input>
                   </div>
               
                   <div class="form-group">
@@ -26,7 +26,7 @@
 
                   <div class="form-group">
                     <label for="welcomeMessage2">Message for returning members</label>
-                    <input name="welcomeMessage2" type="text" class="form-control" [(ngModel)]="config.welcomeBye.join.message2" required>
+                    <input name="welcomeMessage2" type="text" class="form-control" [(ngModel)]="config.welcomeBye.join.message2">
                     <p class="form-text">Available placeholders: <span class="badge bg-secondary">&#123;user&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;server&#125;</span></p>
                   </div>
 
@@ -58,7 +58,7 @@
                 <ng-container *ngIf="config.welcomeBye.leaves.active">
                   <div class="form-group">
                     <label for="goodbyeChannel" class="form-label">Channel</label>
-                    <select-channel-input name="welcomeChannel" [options]="channels" [(ngModel)]="config.welcomeBye.leaves.channel"></select-channel-input>
+                    <select-channel-input name="goodbyeChannel" [options]="channels" [(ngModel)]="config.welcomeBye.leaves.channel" required></select-channel-input>
                   </div>
               
                   <div class="form-group">
