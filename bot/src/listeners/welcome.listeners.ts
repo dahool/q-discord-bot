@@ -1,10 +1,25 @@
 import { EventListener } from "@/common/decorators";
 import { DiscordEventListener } from "@/common/schemas";
 import { asUser, isNotBlank } from "@/common/utils";
+import { TYPES, container } from "@/ic.config";
 import { logger } from "@/logging/logger";
 import { Config, ConfigModel, GuildMemberModel, TemporalRolesModel } from "@/repository";
 import { Client, Events, GuildMember, GuildTextBasedChannel } from "discord.js";
+import { DateTime } from "luxon";
 import format from 'string-template';
+
+export async function cleanupTempRoles(): Promise<any> {
+    const client = container.get(TYPES.Bot).client as Client;
+    const memberList = await TemporalRolesModel.find({created: {$lt: DateTime.now().minus({hours: 24})}}).exec();
+    return Promise.all(
+        memberList.map(tempRole => {
+        let member = client.guilds.cache.get(tempRole.guild)?.members.cache.get(tempRole.memberId)
+        if (member) {
+            member.roles.remove(tempRole.roleId);
+        }
+        return tempRole.deleteOne();
+    }))
+}
 
 async function getConfig(member: GuildMember): Promise<Config | null> {
     return ConfigModel.findOne({guild: member.guild.id}).exec();

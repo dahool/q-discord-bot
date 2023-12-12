@@ -1,4 +1,5 @@
 import { cleanUpCalendar, postDailyEvents, processAnnouncements, rolloutEvents, scheduleDiscordEvents } from "@/cron/notification"
+import { cleanupTempRoles } from "@/listeners"
 import { loadCalendarEvents } from "./calendar"
 import { executeCrawler } from "./crawler"
 
@@ -11,7 +12,8 @@ export const FREQ_TASKS = [
 export const DAILY_TASKS = [
     cleanUpCalendar,
     executeCrawler,
-    loadCalendarEvents
+    loadCalendarEvents,
+    cleanupTempRoles
 ]
 
 export const MID_DAILY_TASKS = [
