@@ -13,6 +13,8 @@ export class WelcomeConfigComponent extends ConfigManComponent {
         active: false,
         roles: []
       }
+    } else if (this.config.welcomeBye.join.roles === undefined) {
+      this.config.welcomeBye.join.roles = [];
     }
     if (this.config.welcomeBye.leaves === undefined) {
       this.config.welcomeBye.leaves = {

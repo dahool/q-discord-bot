@@ -53,7 +53,7 @@ export class WelcomeMemberListener implements DiscordEventListener {
                 message = config.welcomeBye.join.message2!;
             }
             sendMessage(member, config.welcomeBye.join.channel, message);
-            if (config.welcomeBye.join.roles) {
+            if (config.welcomeBye.join.roles !== undefined) {
                 config.welcomeBye.join.roles.forEach(roleId => {
                     const role = member.guild.roles.cache.get(roleId);
                     if (role) {
