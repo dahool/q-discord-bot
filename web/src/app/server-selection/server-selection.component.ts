@@ -19,7 +19,13 @@ export class ServerSelectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.local.setServer(null);
-    this.service.listServers().subscribe(l => this.servers = l);
+    this.service.listServers().subscribe(l => {
+      if (l && Array.isArray(l)) {
+        this.servers = l
+      } else {
+        this.servers = [];
+      }
+    });
   }
 
   navigateTo(server: Guild) {

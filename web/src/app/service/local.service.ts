@@ -25,6 +25,7 @@ export class LocalService {
   setServer(server: Guild | null) {
     if (server == null) {
       sessionStorage.removeItem('server');
+      this.serverSubject.next(null);
     } else {
       sessionStorage.setItem('server', JSON.stringify(server));
       this.serverSubject.next(server);

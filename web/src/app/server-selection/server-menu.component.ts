@@ -29,7 +29,6 @@ export class ServerMenuComponent implements OnInit {
   
   ngOnInit(): void {
     this.server$ = this.local.getServerSubject();
-    this.service.listServers().subscribe(l => this.servers = l);
     this.server$.subscribe(() => {
       if (this.servers.length == 0) this.service.listServers().subscribe(l => this.servers = l);
     })
