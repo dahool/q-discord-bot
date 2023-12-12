@@ -1,0 +1,75 @@
+<div class="list-group mt-5 mb-4">
+
+    <form (ngSubmit)="trySave()" #form="ngForm">
+      <div class="card" *ngIf="isReady">
+          <div class="card-body">
+
+              <fieldset>
+                <legend>Welcome</legend>
+              
+                <div class="d-flex justify-content-end form-group">
+                  <label for="welcomeActive">Enable Welcome Message</label>
+                  <toggle-switch-input class="d-block" name="welcomeActive" [(ngModel)]="config.welcomeBye.join.active"></toggle-switch-input>
+                </div>
+
+                <ng-container *ngIf="config.welcomeBye.join.active">
+                  <div class="form-group">
+                    <label for="welcomeChannel" class="form-label">Channel</label>
+                    <select-channel-input name="welcomeChannel" [options]="channels" [(ngModel)]="config.welcomeBye.join.channel"></select-channel-input>
+                  </div>
+              
+                  <div class="form-group">
+                    <label for="welcomeMessage">Message</label>
+                    <input name="welcomeMessage" type="text" class="form-control" [(ngModel)]="config.welcomeBye.join.message" required>
+                    <p class="form-text">Available placeholders: <span class="badge bg-secondary">&#123;user&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;server&#125;</span></p>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="welcomeMessage">Message for returning members</label>
+                    <input name="welcomeMessage" type="text" class="form-control" [(ngModel)]="config.welcomeBye.join.message2" required>
+                    <p class="form-text">Available placeholders: <span class="badge bg-secondary">&#123;user&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;server&#125;</span></p>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="roles" class="form-label">Add Temporary Roles (roles will be removed automatically)</label>
+                    <select-role-input name="roles" [options]="roles" [(ngModel)]="config.welcomeBye.join.roles" [multiple]="true"></select-role-input>
+                  </div>
+
+                </ng-container>
+
+              </fieldset>
+
+              <fieldset>
+                <legend>Goodbye</legend>
+              
+                <div class="d-flex justify-content-end form-group">
+                  <label for="goodbyeActive">Enable Goodbye Message</label>
+                  <toggle-switch-input class="d-block" name="goodbyeActive" [(ngModel)]="config.welcomeBye.leaves.active"></toggle-switch-input>
+                </div>
+
+                <ng-container *ngIf="config.welcomeBye.leaves.active">
+                  <div class="form-group">
+                    <label for="goodbyeChannel" class="form-label">Channel</label>
+                    <select-channel-input name="welcomeChannel" [options]="channels" [(ngModel)]="config.welcomeBye.leaves.channel"></select-channel-input>
+                  </div>
+              
+                  <div class="form-group">
+                    <label for="goodbyeMessage">Message</label>
+                    <input name="goodbyeMessage" type="text" class="form-control" [(ngModel)]="config.welcomeBye.leaves.message" required>
+                    <p class="form-text">Available placeholders: <span class="badge bg-secondary">&#123;user&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;server&#125;</span></p>
+                  </div>
+
+                </ng-container>
+
+              </fieldset>
+
+          </div>
+
+          <div class="card-footer text-center">
+              <button type="submit" class="btn btn-success">Save</button>&nbsp;
+          </div>            
+        </div>
+    </form>      
+
+</div>
+

@@ -1,0 +1,23 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar">
+  <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <svg class="bi me-2" width="40" height="32">
+      <use xlink:href="#bootstrap"></use>
+    </svg>
+    <span class="fs-4">Sidebar</span>
+  </a>
+  <hr>
+  <ul class="nav nav-pills flex-column mb-auto">
+    <li class="nav-item">
+      <a [routerLink]="'/config'" class="nav-link text-white" aria-current="page">
+        <i class="fa-solid fa-gear"></i> Settings
+      </a>
+    </li>
+    <li class="nav-item">
+      <a [routerLink]="'/events'" class="nav-link text-white" aria-current="page">
+        <i class="fa-regular fa-calendar-days"></i> Events
+      </a>
+    </li>
+  </ul>
+  <hr>
+  <app-user-profile></app-user-profile>
+</div>

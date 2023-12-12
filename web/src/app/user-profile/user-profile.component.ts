@@ -8,6 +8,7 @@ import { AppService } from '../service/app-services.service';
 export class UserProfileComponent implements OnInit {
 
   user: any = null;
+  openMenu = false;
 
   constructor(private service: AppService) { }
 

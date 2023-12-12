@@ -1,6 +1,9 @@
 import { Injectable, NgModule, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterModule, RouterStateSnapshot, Routes, UrlTree } from '@angular/router';
 import { ConfigManComponent } from './config-man/config-man.component';
+import { ThreadFollowConfigComponent } from './config-man/threadfollow.component';
+import { ThreadPingConfigComponent } from './config-man/threadping.component';
+import { WelcomeConfigComponent } from './config-man/wlecome.component';
 import { AgendaListComponent } from './event-agenda/agenda.component';
 import { MenuComponent } from './server-selection/menu-selection.component';
 import { ServerSelectionComponent } from './server-selection/server-selection.component';
@@ -42,10 +45,25 @@ const routes: Routes = [
     component: MenuComponent,
   },  
   {
-    path: 'config',
+    path: 'config/guild',
     canActivate: [storeGuard],
     component: ConfigManComponent
   },
+  {
+    path: 'config/welcome',
+    canActivate: [storeGuard],
+    component: WelcomeConfigComponent
+  },  
+  {
+    path: 'config/follow',
+    canActivate: [storeGuard],
+    component: ThreadFollowConfigComponent
+  },
+  {
+    path: 'config/tp',
+    canActivate: [storeGuard],
+    component: ThreadPingConfigComponent
+  },  
   {
     path: 'events',
     canActivate: [storeGuard],

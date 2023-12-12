@@ -1,18 +1,26 @@
-<div class="container-fluid fixed-top bg-secondary p-2">
-  <app-user-profile></app-user-profile>
-</div>
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <server-menu></server-menu>
+    <app-user-profile></app-user-profile>
+  </div>
+</nav>
 
-<div class="container mt-5">
-  
-  <div class="message-container text-center position-fixed top-0 end-0 p-3 w-100">
-    <alerts [config]="{timeout: 5000, dismissOnNavigate: true, dismissible: false}"></alerts>
+<div class="container-fluid main-container">
+
+  <div class="container">
+    
+    <div class="message-container text-center position-fixed top-0 end-0 p-3 w-100">
+      <alerts [config]="{timeout: 5000, dismissOnNavigate: true, dismissible: false}"></alerts>
+    </div>
+
+    <router-outlet></router-outlet>
   </div>
 
-  <router-outlet></router-outlet>
 </div>
+
 <ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "ball-circus" [fullScreen] = "true"><p style="color: white" > Loading... </p></ngx-spinner>
 
-<div class="fixed-bottom" style="width: 65px;">
+<div class="fixed-bottom" style="width: 65px; z-index: 99999;">
   <a class="navbar-brand" href="#">
     <img src="/assets/q.webp" alt="Q" width="64" height="71" class="d-inline-block float-end mb-2">
   </a>

@@ -2,7 +2,8 @@ import { Territory, TerritoryEvents, Webhook } from '@/api';
 import { environment } from '@/env/environment';
 import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
-import { OAuthClient, OAuthGuild, OAuthToken } from '@/oauth';
+import { OAuthClient, OAuthClientFace, OAuthGuild, OAuthToken } from '@/oauth';
+import { StubClient } from '@/oauth/stub';
 import { CalendarModel, Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel } from '@/repository';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res } from 'decorators-express';
 import { ChannelType, PermissionsBitField } from 'discord.js';
@@ -13,11 +14,19 @@ const ENV_VARS = ['CALLBACK_URL','OAUTH_URL','CLIENT_ID','SECRET_ID','SESSION_SE
 
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
-const oClient = new OAuthClient({
-    clientId: environment.api.oauth.clientId!,
-    clientSecret: environment.api.oauth.secretId!,
-    redirectUri: environment.api.oauth.callbackUrl!
-});
+let oClient: OAuthClientFace;
+if (environment.api.stub === true) {
+    oClient = new StubClient({
+        redirectUri: environment.api.oauth.callbackUrl!
+    })
+} else {
+    oClient = new OAuthClient({
+        clientId: environment.api.oauth.clientId!,
+        clientSecret: environment.api.oauth.secretId!,
+        redirectUri: environment.api.oauth.callbackUrl!
+    });
+}
+
 
 const OAUTH_REDIRECT_URL = oClient.getAuthorizationUrl(OAUTH_SCOPES);
 
@@ -49,9 +58,8 @@ export class AuthController {
 }
 
 @Controller("/api")
-//@Use(TokenValidationMiddleware) // tslint:disable-next-line
+//@Use(TokenValidationMiddleware)
 export class ApiController {
-
     
     isGuildOwner(guild: OAuthGuild): boolean {
         const permissions = new PermissionsBitField(guild.permissions);

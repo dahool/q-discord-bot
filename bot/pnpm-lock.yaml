@@ -24,8 +24,8 @@ dependencies:
     specifier: ^1.4.6
     version: 1.4.6
   decorators-express:
-    specifier: ^1.1.14
-    version: 1.1.14
+    specifier: ^1.1.15
+    version: 1.1.15
   discord-api-types:
     specifier: ^0.37.60
     version: 0.37.60
@@ -1388,8 +1388,8 @@ packages:
     dependencies:
       ms: 2.1.2
 
-  /decorators-express@1.1.14:
-    resolution: {integrity: sha512-QmQ6hsL3ZJlbE4H816H7EWpu/4Xm6tkmO+scwPDLPSSvUOlzGn9eCHEGmfvYoa65VIBBfKfzLvvF76Q9nUXyAg==}
+  /decorators-express@1.1.15:
+    resolution: {integrity: sha512-eiq2CQhs2DDGFaLXbwUM0np2mSLiF7AYOjxnk4N1XLxRoI5VpzDivcvUUjPKg+KveVaVSFX4KJJBEwujDGHlUg==}
     dependencies:
       busboy: 1.6.0
       express: 4.18.2

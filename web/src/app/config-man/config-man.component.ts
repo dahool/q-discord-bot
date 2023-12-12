@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AlertService } from '../alerts';
 import { AppService } from '../service/app-services.service';
@@ -13,6 +12,10 @@ import { Channel, Config, EMPTY_CONFIG, Guild, Role } from '../service/models';
 })
 export class ConfigManComponent implements OnInit {
 
+  public service: AppService = inject(AppService);
+  public local: LocalService = inject(LocalService);
+  public toast: AlertService = inject(AlertService);
+
   server?: Guild;
   config!: Config;
   
@@ -24,64 +27,36 @@ export class ConfigManComponent implements OnInit {
   channels: Channel[] = [];
   roles: Role[] = [];
 
-  constructor(
-      private router: Router,
-      private route: ActivatedRoute,
-      private service: AppService,
-      private local: LocalService,
-      private toast: AlertService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.config = EMPTY_CONFIG;
-    this.server = this.local.getServer()!;
-    
-    forkJoin({
-      channels: this.service.listChannels(this.server.id),
-      //roles: this.service.listRoles(this.guildId),
-      config: this.service.getConfig(this.server.id)  
-    }).subscribe(result => {
-      this.channels = result.channels;
-      //this.roles = result.roles;
-      this.config = Object.assign(EMPTY_CONFIG, result.config) as Config;
-      this.isReady = true;
-    }, error => {
-      console.error(error);
-      this.toast.error("Ups, something went wrong. Try reloading");
-    });
-    
+    this.local.getServerSubject().subscribe(server => {
+      this.server = server;
+      this.loadServerConfig();
+    })
   }
 
-  addNewThreadFollow() {
-    const EMPTY_FOLLOW = {
-      channel: '',
-      silent: false
-    }
-    if (this.config!.autoFollowThreadChannels == undefined) {
-      this.config!.autoFollowThreadChannels = [EMPTY_FOLLOW];
-    } else {
-      this.config!.autoFollowThreadChannels.push(EMPTY_FOLLOW)
+  loadServerConfig() {
+    if (this.server) {
+      forkJoin({
+        channels: this.service.listChannels(this.server.id),
+        roles: this.service.listRoles(this.server.id),
+        config: this.service.getConfig(this.server.id)  
+      }).subscribe(result => {
+        this.channels = result.channels;
+        this.roles = result.roles;
+        this.config = Object.assign(EMPTY_CONFIG, result.config) as Config;
+        this.postLoadConfig();
+        this.isReady = true;
+      }, error => {
+        console.error(error);
+        this.toast.error("Ups, something went wrong. Try reloading");
+      });    
     }
   }
 
-  removeThreadFollow(index: number) {
-    this.config.autoFollowThreadChannels?.splice(index, 1);
-  }
-
-  addNewThreadAnnouncer() {
-    const EMPTY_ANNOUNCER = {
-      channels: [],
-      announceChannel: '',
-      message: ''   
-    }
-    if (this.config!.newThreadAnnouncer == undefined) {
-      this.config!.newThreadAnnouncer = [EMPTY_ANNOUNCER];
-    } else {
-      this.config!.newThreadAnnouncer.push(EMPTY_ANNOUNCER)
-    }
-  }
-
-  removeThreadAnnouncer(index: number) {
-    this.config.newThreadAnnouncer?.splice(index, 1);
+  postLoadConfig() {
   }
 
   printChange(e: any) {

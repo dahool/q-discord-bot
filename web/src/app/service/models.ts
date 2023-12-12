@@ -73,7 +73,21 @@ export interface Config {
         announceChannel: string
         message: string
     }]
-    territoyCalendar: string
+    territoyCalendar: string,
+    welcomeBye: {
+        join: {
+            channel?: string,
+            active: boolean,
+            message?: string,
+            message2?: string,
+            roles?: string[]
+        },
+        leaves: {
+            channel?: string,
+            active: boolean,
+            message?: string
+        }
+    }    
 }
 
 export const EMPTY_CONFIG: Config = {
@@ -90,5 +104,13 @@ export const EMPTY_CONFIG: Config = {
     allianceTag: '',
     autoFollowThreadChannels: undefined,
     newThreadAnnouncer: undefined,
-    territoyCalendar: ''
+    territoyCalendar: '',
+    welcomeBye: {
+        join: {
+            active: false
+        },
+        leaves: {
+            active: false
+        }
+    }
 }

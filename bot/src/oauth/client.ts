@@ -1,11 +1,11 @@
 import { logger } from '@/logging/logger';
 import axios, { AxiosInstance } from 'axios';
-import { OAuthGuild, OAuthToken, OAuthUser } from './classes';
+import { OAuthClientFace, OAuthGuild, OAuthToken, OAuthUser } from './classes';
 
 const API_ENDPOINT = 'https://discord.com/api/v10'
 const AUTH_ENDPOINT = 'https://discord.com/api/oauth2/authorize';
 
-export class OAuthClient {
+export class OAuthClient implements OAuthClientFace {
 
     clientId: string;
     clientSecret: string;

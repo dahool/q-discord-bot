@@ -1,0 +1,16 @@
+ <ng-select
+    [items]="roleList"
+    [multiple]="isMultiple"
+    bindLabel="name"
+    [selectableGroup]="false"
+    [selectableGroupAsModel]="false"
+    [closeOnSelect]="!isMultiple"
+    bindValue="id"
+    (change)="onValueUpdate($event)"
+    #inputField>
+
+    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+        <input id="item-{{formControlName}}-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.name }}
+    </ng-template>
+
+</ng-select>

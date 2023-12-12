@@ -18,7 +18,8 @@ export const environment = {
             clientId: process.env.CLIENT_ID,
             secretId: process.env.SECRET_ID,
             callbackUrl: process.env.CALLBACK_URL
-        }
+        },
+        stub: process.env.STUB_ACTIVE || false
     },
     infradb: {
         token: process.env.INFRA_TOKEN

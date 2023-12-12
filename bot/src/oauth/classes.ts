@@ -1,3 +1,17 @@
+export declare interface OAuthClientFace {
+
+    getAuthorizationUrl(scopes: string[]): string;
+
+    getAccessToken(code: string): Promise<OAuthToken>;
+
+    refreshToken(token: OAuthToken): Promise<OAuthToken>;
+
+    getUser(token: OAuthToken): Promise<OAuthUser>;
+
+    getGuilds(token: OAuthToken): Promise<OAuthGuild[]>;
+
+}
+
 export interface OAuthToken {
     accessToken: string,
     tokenType: string,

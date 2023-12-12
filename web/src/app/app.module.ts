@@ -12,9 +12,13 @@ import { AlertModule } from './alerts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ConfigManComponent } from './config-man/config-man.component';
+import { ThreadFollowConfigComponent } from './config-man/threadfollow.component';
+import { ThreadPingConfigComponent } from './config-man/threadping.component';
+import { WelcomeConfigComponent } from './config-man/wlecome.component';
 import { AgendaNewDialogComponent } from './event-agenda/agenda-new-dialog.component';
 import { AgendaListComponent } from './event-agenda/agenda.component';
 import { SelectChannelInputComponent } from './inputs/select-channel-input';
+import { SelectRoleInputComponent } from './inputs/select-role-input';
 import { ToggleSwitchInputComponent } from './inputs/toggle-switch-input';
 import { ErrorInterceptor } from './interceptor/error.interceptor';
 import { MenuComponent } from './server-selection/menu-selection.component';
@@ -30,7 +34,10 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     ConfigManComponent,
     UserProfileComponent,
     MenuComponent,
-    AgendaListComponent
+    AgendaListComponent,
+    WelcomeConfigComponent,
+    ThreadFollowConfigComponent,
+    ThreadPingConfigComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +53,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     NgSelectModule,
     NgbModule,
     AgendaNewDialogComponent,
-    ServerMenuComponent
+    ServerMenuComponent,
+    SelectRoleInputComponent
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }],
   bootstrap: [AppComponent],

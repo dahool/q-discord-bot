@@ -1,30 +1,67 @@
-<div class="server-menu">
-  <input id="menu__toggle" type="checkbox" />
-  <label class="menu__btn" for="menu__toggle">
-    <span></span>
-  </label>
+<ng-template #content let-offcanvas>
+	<div class="offcanvas-header">
+		
+	</div>
+	<div class="offcanvas-body">
 
-  <ul class="menu__box">
-    <li>
-      <div class="menu__item">
-        <button [routerLink]="'/config'" class="border rounded shadow-lg">
-            <img src="/assets/cog.svg" width="128px" height="128px">
-          <p>Settings</p>
-        </button>
-      </div>      
-    </li>
-    <li>
-      <div class="menu__item">
-        <button [routerLink]="'/events'" class="border rounded- shadow-lg">
-            <img src="/assets/agenda.svg" width="128px" height="128px">
-            <p>Events</p>
-        </button>
-      </div>
-    </li>
-  </ul>
-</div>
+    <div class="navbar-nav flex-shrink-0 p-3 text-white bg-dark">
 
-<div class="d-flex mt-1 mb-2" *ngIf="server">
-  <img src="{{server.icon}}" width="32px" height="32px">&nbsp;
-  <h5>{{server.name}}</h5>
-</div>
+      <li class="nav-item dropdown" *ngIf="servers">
+        <a class="nav-link dropdown-toggle" (click)="dropdownShow = !dropdownShow" role="button">
+          <ng-container *ngIf="server$ | async as server; else noServer">
+            <img src="{{server.icon}}" width="32px" height="32px">&nbsp;{{server.name}}
+          </ng-container>
+          <ng-template #noServer>Select server
+          </ng-template>
+        </a>
+        <ul class="dropdown-menu show" data-bs-popper="static" *ngIf="dropdownShow">
+          <li *ngFor="let sv of servers"><a class="dropdown-item" (click)="selectServer(sv)"><img src="{{sv.icon}}" width="32px" height="32px">&nbsp;{{sv.name}}</a></li>
+        </ul>
+      </li>
+      
+      <hr>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a (click)="navigateTo('/config/guild')" class="nav-link text-white" aria-current="page">
+            <i class="fa-solid fa-gear"></i> Settings
+          </a>
+        </li>
+        <li class="nav-item">
+          <a (click)="navigateTo('/config/welcome')" class="nav-link text-white" aria-current="page">
+            <i class="fa-regular fa-handshake"></i> Welcome & Goodbye
+          </a>
+        </li>
+        <li class="nav-item">
+          <a (click)="navigateTo('/config/follow')" class="nav-link text-white" aria-current="page">
+            <i class="fa-solid fa-user-plus"></i> Follow Threads
+          </a>
+        </li>
+        <li class="nav-item">
+          <a (click)="navigateTo('/config/tp')" class="nav-link text-white" aria-current="page">
+            <i class="fa-solid fa-bullhorn"></i> Thread Announcer
+          </a>
+        </li>                
+        <li class="nav-item">
+          <a (click)="navigateTo('/events')" class="nav-link text-white" aria-current="page">
+            <i class="fa-regular fa-calendar-days"></i> Events
+          </a>
+        </li>
+      </ul>
+      
+    </div>    
+
+	</div>
+</ng-template>
+
+<ng-container *ngIf="server$ | async as server">
+
+  <button class="navbar-toggler" type="button" (click)="open(content)">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  
+  <span class="navbar-brand text-center ml-3"><img src="{{server.icon}}" width="32px" height="32px">&nbsp;<h5 class="d-inline-block">{{server.name}}</h5></span>
+
+</ng-container>
+
+
+

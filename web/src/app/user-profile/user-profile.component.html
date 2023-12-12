@@ -1,3 +1,11 @@
-<div class="d-flex float-end" *ngIf="user">
-    <div>{{user.username}} <img src="{{user.icon}}" alt="Avatar" height="32" width="32" class="d-inline-block align-text-middle rounded-circle ml-2"></div>
+<div class="d-flex float-end dropdown" *ngIf="user">
+    <a (click)="openMenu = !openMenu" class="d-flex align-items-center text-white text-decoration-none">
+      <img src="{{user.icon}}" alt="Avatar" height="32" width="32" class="rounded-circle me-2">
+      <strong>{{user.username}}</strong>
+    </a>
+    <!-- class dropdown-toggle for anchor
+    <ul class="dropdown-menu dropdown-menu-dark text-small shadow" [class.show]="openMenu">
+      <li><a class="dropdown-item" href="#">Sign out</a></li>
+    </ul>
+    -->
 </div>

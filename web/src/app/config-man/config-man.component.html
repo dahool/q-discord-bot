@@ -1,5 +1,3 @@
-<server-menu server="server"></server-menu>
-
 <div class="list-group mt-5 mb-4">
 
     <form (ngSubmit)="trySave()" #form="ngForm">
@@ -40,65 +38,6 @@
                   <label for="calendar">External Territory Calendar Link (.ics)</label>
                   <input name="calendar" type="text" class="form-control" [(ngModel)]="config.territoyCalendar" pattern="(https|http):\/\/.*">
                 </div>
-              </fieldset>
-
-              <fieldset>
-                <legend>Autofollow New Threads
-                  <button (click)="addNewThreadFollow()" type="button" class="btn btn-primary float-end"><i class="fas fa-plus"></i></button>
-                </legend>
-
-                <div class="container-fluid border p-2 rounded mb-2" *ngFor="let nta of config.autoFollowThreadChannels; index as i" ngModelGroup="followGroup_{{i}}">
-
-                  <div class="clearfix">
-                    <button (click)="removeThreadFollow(i)" type="button" class="btn btn-danger float-end"><i class="fas fa-minus"></i></button>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-10">
-                      <div class="form-group">
-                        <label for="autoFollowThreadChannel{{i}}">Channel</label>
-                        <select-channel-input name="autoFollowThreadChannel{{i}}" [options]="channels" [(ngModel)]="nta.channel"></select-channel-input>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <div class="form-group">
-                        <label for="autoFollowThreadSilent{{i}}">Silent</label>
-                        <toggle-switch-input class="d-block" name="autoFollowThreadSilent{{i}}" [(ngModel)]="nta.silent"></toggle-switch-input>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </fieldset>
-
-              <fieldset>
-                <legend>Announce New Threads
-                  <button (click)="addNewThreadAnnouncer()" type="button" class="btn btn-primary float-end"><i class="fas fa-plus"></i></button>
-                </legend>
-                <div class="container-fluid border p-2 rounded mb-2" *ngFor="let nta of config.newThreadAnnouncer; index as i" ngModelGroup="ntaGroup_{{i}}">
-                  
-                  <div class="clearfix">
-                    <button (click)="removeThreadAnnouncer(i)" type="button" class="btn btn-danger float-end"><i class="fas fa-minus"></i></button>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="newThreadAnnouncerMessage">Message</label>
-                    <input name="newThreadAnnouncerMessage" type="text" class="form-control" [(ngModel)]="nta.message" required>
-                    <p class="form-text">Available placeholders: <span class="badge bg-secondary">&#123;channel&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;user&#125;</span> <span class="badge bg-secondary">&#123;title&#125;</span></p>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="newThreadAnnouncerAnnounceChannel">Announce in Channel</label>
-                    <select-channel-input name="newThreadAnnouncerAnnounceChannel" [options]="channels" [(ngModel)]="nta.announceChannel"></select-channel-input>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="newThreadAnnouncerChannels">Watch Channels</label>
-                    <select-channel-input name="newThreadAnnouncerChannels" [options]="channels" [(ngModel)]="nta.channels" [multiple]="true"></select-channel-input>
-                  </div>
-
-                </div>
-
               </fieldset>
 
           </div>

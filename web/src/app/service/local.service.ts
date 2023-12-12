@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { Guild } from "./models";
 
 
@@ -6,6 +7,12 @@ import { Guild } from "./models";
   providedIn: 'root'
 })
 export class LocalService {
+
+  serverSubject = new BehaviorSubject<any>(undefined);
+
+  constructor() {
+    this.serverSubject.next(this.getServer());
+  }
 
   getServer(): Guild | undefined {
     let v = sessionStorage.getItem('server');
@@ -20,7 +27,12 @@ export class LocalService {
       sessionStorage.removeItem('server');
     } else {
       sessionStorage.setItem('server', JSON.stringify(server));
+      this.serverSubject.next(server);
     }
   }
 
+  getServerSubject(): BehaviorSubject<Guild> {
+    return this.serverSubject;
+  }
+  
 }
