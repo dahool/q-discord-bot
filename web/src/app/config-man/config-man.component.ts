@@ -39,6 +39,7 @@ export class ConfigManComponent implements OnInit {
 
   loadServerConfig() {
     if (this.server) {
+      this.isReady = false;
       forkJoin({
         channels: this.service.listChannels(this.server.id),
         roles: this.service.listRoles(this.server.id),
@@ -76,6 +77,7 @@ export class ConfigManComponent implements OnInit {
 
       this.service.saveConfig(this.server!.id, this.config!).subscribe((s:any) => {
         if (s.status) {
+          this.service.getConfig(this.server!.id).subscribe(c => this.config = Object.assign(EMPTY_CONFIG, c) as Config);
           this.toast.success("Saved")
         } else {
           this.toast.error(s.error);

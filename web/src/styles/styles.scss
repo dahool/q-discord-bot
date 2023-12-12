@@ -13,7 +13,7 @@ select option:disabled {
     background: none;
 }
 
-.ng-submitted .ng-invalid {
+.ng-touched.ng-invalid, .ng-dirty.ng-invalid {
     @extend .is-invalid;
 }
 

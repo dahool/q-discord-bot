@@ -15,19 +15,19 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="newThreadAnnouncerMessage">Message</label>
-                  <input name="newThreadAnnouncerMessage" type="text" class="form-control" [(ngModel)]="nta.message" required>
+                  <label for="newThreadAnnouncerMessage{{i}}">Message</label>
+                  <input name="newThreadAnnouncerMessage{{i}}" type="text" class="form-control" [(ngModel)]="nta.message" required>
                   <p class="form-text">Available placeholders: <span class="badge bg-secondary">&#123;channel&#125;</span> <span class="badge bg-secondary ms-2 me-2">&#123;user&#125;</span> <span class="badge bg-secondary">&#123;title&#125;</span></p>
                 </div>
 
                 <div class="form-group">
-                  <label for="newThreadAnnouncerAnnounceChannel">Announce in Channel</label>
-                  <select-channel-input name="newThreadAnnouncerAnnounceChannel" [options]="channels" [(ngModel)]="nta.announceChannel"></select-channel-input>
+                  <label for="newThreadAnnouncerAnnounceChannel{{i}}">Announce in Channel</label>
+                  <select-channel-input class="form-control" name="newThreadAnnouncerAnnounceChannel{{i}}" [options]="channels" [(ngModel)]="nta.announceChannel" required></select-channel-input>
                 </div>
 
                 <div class="form-group">
-                  <label for="newThreadAnnouncerChannels">Watch Channels</label>
-                  <select-channel-input name="newThreadAnnouncerChannels" [options]="channels" [(ngModel)]="nta.channels" [multiple]="true"></select-channel-input>
+                  <label for="newThreadAnnouncerChannels{{i}}">Watch Channels</label>
+                  <select-channel-input class="form-control" name="newThreadAnnouncerChannels{{i}}" [options]="channels" [(ngModel)]="nta.channels" [multiple]="true" required></select-channel-input>
                 </div>
 
               </div>

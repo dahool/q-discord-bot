@@ -8,22 +8,22 @@
                 <legend>Channels</legend>
                 <div class="form-group">
                   <label for="announcements" class="form-label">Announcements</label>
-                  <select-channel-input name="announcements" [options]="channels" [(ngModel)]="config.channels.announcements"></select-channel-input>
+                  <select-channel-input class="form-control" name="announcements" [options]="channels" [(ngModel)]="config.channels.announcements"></select-channel-input>
                 </div>
 
                 <div class="form-group">
                   <label for="territory">Territory</label>
-                  <select-channel-input (change)="printChange($event)" name="territory" [options]="channels" [(ngModel)]="config.channels.territory"></select-channel-input>
+                  <select-channel-input class="form-control" (change)="printChange($event)" name="territory" [options]="channels" [(ngModel)]="config.channels.territory"></select-channel-input>
                 </div>
 
                 <div class="form-group">
                   <label for="scheduledEvents">Scheduled Events</label>
-                  <select-channel-input name="scheduledEvents" [options]="channels" [(ngModel)]="config.channels.scheduledEvents"></select-channel-input>
+                  <select-channel-input class="form-control" name="scheduledEvents" [options]="channels" [(ngModel)]="config.channels.scheduledEvents"></select-channel-input>
                 </div>
 
                 <div class="form-group">
                   <label for="dailyTerritory">Daily Territory Schedule</label>
-                  <select-channel-input name="dailyTerritory" [options]="channels" [(ngModel)]="config.channels.dailyTerritory"></select-channel-input>
+                  <select-channel-input class="form-control" name="dailyTerritory" [options]="channels" [(ngModel)]="config.channels.dailyTerritory"></select-channel-input>
                 </div>                
                 
               </fieldset>

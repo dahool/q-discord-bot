@@ -19,7 +19,7 @@
                   <div class="col-10">
                     <div class="form-group">
                       <label for="autoFollowThreadChannel{{i}}">Channel</label>
-                      <select-channel-input name="autoFollowThreadChannel{{i}}" [options]="channels" [(ngModel)]="nta.channel"></select-channel-input>
+                      <select-channel-input class="form-control" name="autoFollowThreadChannel{{i}}" [options]="channels" [(ngModel)]="nta.channel" required></select-channel-input>
                     </div>
                   </div>
                   <div class="col">
