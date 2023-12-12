@@ -18,16 +18,7 @@ export class AppService extends BaseService {
   }
 
   listServers(): Observable<UserServer[]> {
-    let v = sessionStorage.getItem('server-list');
-    if (v) {
-      return of(JSON.parse(v));
-    }
-    return this.executeGet('servers').pipe(map(list => {
-      if (list && list.size > 0) {
-        sessionStorage.setItem('server-list', JSON.stringify(list));
-      }
-      return list;
-    }));
+    return this.executeGet('servers');
   } 
  
   listChannels(id: string): Observable<Channel[]> {

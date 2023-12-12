@@ -1,14 +1,16 @@
+import { Observable } from 'rxjs';
+
 export declare interface OAuthClientFace {
 
     getAuthorizationUrl(scopes: string[]): string;
 
-    getAccessToken(code: string): Promise<OAuthToken>;
+    getAccessToken(code: string): Observable<OAuthToken>;
 
-    refreshToken(token: OAuthToken): Promise<OAuthToken>;
+    refreshToken(token: OAuthToken): Observable<OAuthToken>;
 
-    getUser(token: OAuthToken): Promise<OAuthUser>;
+    getUser(token: OAuthToken): Observable<OAuthUser>;
 
-    getGuilds(token: OAuthToken): Promise<OAuthGuild[]>;
+    getGuilds(token: OAuthToken): Observable<OAuthGuild[]>;
 
 }
 

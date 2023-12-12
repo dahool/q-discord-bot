@@ -2,13 +2,20 @@ import { Territory, TerritoryEvents, Webhook } from '@/api';
 import { environment } from '@/env/environment';
 import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
-import { OAuthClient, OAuthClientFace, OAuthGuild, OAuthToken } from '@/oauth';
+import { OAuthClient, OAuthClientFace, OAuthGuild, OAuthToken, OAuthUser } from '@/oauth';
 import { StubClient } from '@/oauth/stub';
 import { CalendarModel, Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel } from '@/repository';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res } from 'decorators-express';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, Use } from 'decorators-express';
 import { ChannelType, PermissionsBitField } from 'discord.js';
 import { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
+import { MemoryCache } from 'memory-cache-node';
+import { Observable, map } from 'rxjs';
+
+const itemsExpirationCheckIntervalInSecs = 60 * 60;
+const maxItemCount = 1000000;
+const timeToLive = 60 * 60;
+const memoryCache = new MemoryCache<string, number>(itemsExpirationCheckIntervalInSecs, maxItemCount);
 
 const ENV_VARS = ['CALLBACK_URL','OAUTH_URL','CLIENT_ID','SECRET_ID','SESSION_SECRET'];
 
@@ -27,7 +34,6 @@ if (environment.api.stub === true) {
     });
 }
 
-
 const OAUTH_REDIRECT_URL = oClient.getAuthorizationUrl(OAUTH_SCOPES);
 
 declare module "express-session" {
@@ -37,6 +43,20 @@ declare module "express-session" {
     }
 }
 
+function getOrCache(key: string, retriever: Observable<any>): Observable<any> {
+    if (memoryCache.hasItem(key)) {
+        logger.debug("Returning %s from cache", key)
+        return new Observable(sus => {
+            sus.next(memoryCache.retrieveItemValue(key));
+            sus.complete();
+        })
+    }
+    return retriever.pipe(map(value => {
+        memoryCache.storeExpiringItem(key, value, timeToLive);
+        return value;
+    }));
+}
+
 @Controller("/oauth")
 export class AuthController {
 
@@ -44,21 +64,22 @@ export class AuthController {
     redirect(@Query("code") code: string, @Req() req: Request, @Res() res: Response) {
         logger.debug("Entering /oauth/redirect with %s", code);
         if (code) {
-            oClient.getAccessToken(code).then(token => {
-                req.session.token = token;
-                req.session.token_expiration = DateTime.utc().plus({seconds: token.expiresIn});
-                res.redirect(environment.url.dashboard || '/');
-            }).catch((e) => {
-                logger.error(e);
-                res.redirect(OAUTH_REDIRECT_URL);
-            })
+            oClient.getAccessToken(code)
+                .subscribe({next: (token) => {
+                    req.session.token = token;
+                    req.session.token_expiration = DateTime.utc().plus({seconds: token.expiresIn});
+                    res.redirect(environment.url.dashboard || '/');
+                }, error: err => {
+                    logger.error(err);
+                    res.redirect(OAUTH_REDIRECT_URL);
+                }})
         }
     }
 
 }
 
 @Controller("/api")
-//@Use(TokenValidationMiddleware)
+@Use(TokenValidationMiddleware)
 export class ApiController {
     
     isGuildOwner(guild: OAuthGuild): boolean {
@@ -68,54 +89,66 @@ export class ApiController {
 
     @Get("/user")
     getUser(@Req() req: Request, @Res() res: Response) {
-        oClient.getUser(req.session.token!).then((user) => {
-            logger.debug("%O", user);
-            res.send({
-                username: user.username,
-                icon: user.avatarURL({size: 128, format: 'webp'})
-            })
-        }).catch((e) => {
-            logger.error(e);
-            res.send({});
-        })
+        getOrCache('user'+req.session.token?.accessToken, oClient.getUser(req.session.token!))
+            .subscribe({
+                next: (user: OAuthUser) => {
+                    logger.debug("%O", user);
+                    res.send({
+                        username: user.username,
+                        icon: user.avatarURL({size: 128, format: 'webp'})
+                    })
+                },
+                error: (e) => {
+                    logger.error(e);
+                    res.send({});
+                }
+            });
     }
 
     @Get("/servers")
     listServers(@Req() req: Request, @Res() res: Response) {
-        oClient.getGuilds(req.session.token!).then((guilds) => {
-            logger.debug("%O", guilds);
-            ConfigModel.find({}).exec().then(localGuilds => {
-                res.send(guilds.filter(g => this.isGuildOwner(g) && localGuilds.some(s => s.guild == g.id)).map(g => {
-                    return {
-                        id: g.id,
-                        name: g.name,
-                        icon: g.iconURL({size: 128, format: 'webp'})
-                    }
-                }))
-            })
-        }).catch((e) => {
-            logger.error(e);
-            res.send({});
-        })
+        getOrCache('servers'+req.session.token?.accessToken, oClient.getGuilds(req.session.token!))
+            .subscribe({
+                next: (guilds: OAuthGuild[]) => {
+                    logger.debug("%O", guilds);
+                    ConfigModel.find({}).exec().then(localGuilds => {
+                        res.send(guilds.filter(g => this.isGuildOwner(g) && localGuilds.some(s => s.guild == g.id)).map(g => {
+                            return {
+                                id: g.id,
+                                name: g.name,
+                                icon: g.iconURL({size: 128, format: 'webp'})
+                            }
+                        }))
+                    })
+                },
+                error: (e) => {
+                    logger.error(e);
+                    res.send({});
+                }
+            });
     }
 
     @Get("/server/:id")
     getServer(@Param("id") id: string, @Req() req: Request, @Res() res: Response) {
-        oClient.getGuilds(req.session.token!).then((guilds) => {
-            const guild = guilds.find(g => g.id == id)
-            if (guild) {
-                res.send({
-                    id: guild.id,
-                    name: guild.name,
-                    icon: guild.iconURL({size: 128, format: 'webp'})
-                })
-            } else {
-                res.status(404).send("Not found");
-            }
-        }).catch((e) => {
-            logger.error(e);
-            res.send({});
-        })
+        getOrCache('servers'+req.session.token?.accessToken, oClient.getGuilds(req.session.token!))
+            .subscribe({
+                next: (guilds: OAuthGuild[]) => {
+                    const guild = guilds.find(g => g.id == id)
+                    if (guild) {
+                        res.send({
+                            id: guild.id,
+                            name: guild.name,
+                            icon: guild.iconURL({size: 128, format: 'webp'})
+                        })
+                    } else {
+                        res.status(404).send("Not found");
+                    }
+                },
+                error: (e) => {
+                    logger.error(e);
+                    res.send({});
+                }
+            });
     }    
 
     @Get("/channels/:id")
@@ -265,14 +298,14 @@ async function validateOrRefreshToken(req: Request): Promise<boolean> {
             const token = req.session.token;
             // check if expired
             if (req.session.token_expiration && req.session.token_expiration < DateTime.utc()) {
-                oClient.refreshToken(token).then(newToken => {
+                oClient.refreshToken(token).subscribe({next: newToken => {
                     req.session.token = newToken;
                     req.session.token_expiration = DateTime.utc().plus({seconds: newToken.expiresIn});
                     resolve(true);
-                }).catch((e) => {
+                }, error: e => {
                     logger.error(e);
                     resolve(false);
-                });
+                }});
             } else if (req.session.token_expiration) {
                 resolve(true); // token present and not expired
             } else {

@@ -47,6 +47,9 @@ dependencies:
   luxon:
     specifier: ^3.4.3
     version: 3.4.3
+  memory-cache-node:
+    specifier: ^1.4.0
+    version: 1.4.0
   mongoose:
     specifier: ^7.5.0
     version: 7.6.1
@@ -59,6 +62,9 @@ dependencies:
   reflect-metadata:
     specifier: ^0.1.13
     version: 0.1.13
+  rxjs:
+    specifier: ^7.8.1
+    version: 7.8.1
   serve-favicon:
     specifier: ^2.5.0
     version: 2.5.0
@@ -2434,6 +2440,11 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
+  /memory-cache-node@1.4.0:
+    resolution: {integrity: sha512-rieJHT67nfitpZmOWcGSX11zC5G56vT2awgw5jApBhJowuMPl5mAPX36w8byJztAKGSluVK02LSW8LIxlTkXdA==}
+    engines: {node: '>= 12.19'}
+    dev: false
+
   /memory-pager@1.5.0:
     resolution: {integrity: sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==}
     requiresBuild: true
@@ -3135,6 +3146,12 @@ packages:
     dependencies:
       queue-microtask: 1.2.3
     dev: true
+
+  /rxjs@7.8.1:
+    resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
 
   /safe-array-concat@1.0.1:
     resolution: {integrity: sha512-6XbUAseYE2KtOuGueyeobCySj9L4+66Tn6KQMOPQJrAJEowYKW/YR/MGJZl7FdydUdaFu4LYyDZjxf4/Nmo23Q==}

@@ -1,5 +1,6 @@
 import { logger } from '@/logging/logger';
 import axios, { AxiosInstance } from 'axios';
+import { Observable, defer } from 'rxjs';
 import { OAuthClientFace, OAuthGuild, OAuthToken, OAuthUser } from './classes';
 
 const API_ENDPOINT = 'https://discord.com/api/v10'
@@ -63,54 +64,55 @@ export class OAuthClient implements OAuthClientFace {
         })
     }
 
-    getAccessToken(code: string): Promise<OAuthToken> {
-        return this._post({
+    getAccessToken(code: string): Observable<OAuthToken> {
+        return defer(() => this._post({
             'client_id': this.clientId,
             'client_secret': this.clientSecret,
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': this.redirectUri
-        });
+        }));
     }
 
-    refreshToken(token: OAuthToken): Promise<OAuthToken> {
-        return this._post({
+    refreshToken(token: OAuthToken): Observable<OAuthToken> {
+        return defer(() => this._post({
             'client_id': this.clientId,
             'client_secret': this.clientSecret,
             'grant_type': 'refresh_token',
             'refresh_token': token.refreshToken
-        });
+        }));
     }
 
-    getUser(token: OAuthToken): Promise<OAuthUser> {
-        return new Promise((resolve, reject) => {
+    getUser(token: OAuthToken): Observable<OAuthUser> {
+        return new Observable(sub => {
             logger.debug("getUser");
             this.axiosClient.get('/users/@me', {headers: {Authorization: `Bearer ${token.accessToken}`}})
                 .then(response => {
                     if (response.status < 200 || response.status > 299) {
-                        reject(new Error(response.data.error_description));
+                        sub.error(new Error(response.data.error_description));
                     } else {
-                        resolve(new OAuthUser(response.data));
+                        sub.next(new OAuthUser(response.data));
                     }
                 }).catch(error => {
-                    reject(error);
-                })
-        })
+                    sub.error(error);
+                }).finally(() => sub.complete());
+            
+        });
     }
 
-    getGuilds(token: OAuthToken): Promise<OAuthGuild[]> {
-        return new Promise((resolve, reject) => {
+    getGuilds(token: OAuthToken): Observable<OAuthGuild[]> {
+        return new Observable(sub => {
             logger.debug("getGuilds");
             this.axiosClient.get('/users/@me/guilds', {headers: {Authorization: `Bearer ${token.accessToken}`}})
                 .then(response => {
                     if (response.status < 200 || response.status > 299) {
-                        reject(new Error(response.data.error_description));
+                        sub.error(new Error(response.data.error_description));
                     } else {
-                        resolve( response.data.map((d: any) => new OAuthGuild(d)) );
+                        sub.next( response.data.map((d: any) => new OAuthGuild(d)) );
                     }
                 }).catch(error => {
-                    reject(error);
-                })
+                    sub.error(error);
+                }).finally(() => sub.complete());
         })
     }
 
