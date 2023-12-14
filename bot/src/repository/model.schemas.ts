@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { CalendarEvent, Config, GuildWebhook, LocalGuildChannel, LocalGuildRole, Member, PlayerInfo, TemporalRoles, TerritoryEvent, WebHookChannel } from "./model.interfaces";
+import { CalendarEvent, Config, GuildWebhook, InviteRoles, LocalGuildChannel, LocalGuildRole, Member, PlayerInfo, TemporalRoles, TerritoryEvent, WebHookChannel } from "./model.interfaces";
 
 const ConfigSchema = new Schema<Config>({
     guild: { type: String, required: true },
@@ -9,7 +9,8 @@ const ConfigSchema = new Schema<Config>({
         logging: String,
         territory: String,
         scheduledEvents: String,
-        dailyTerritory: String
+        dailyTerritory: String,
+        invitesChannel: String
     },
     token: String,
     allianceTag: String,
@@ -122,6 +123,14 @@ const TemporalRolesSchema = new Schema<TemporalRoles>({
     created: { type: Date, required: true }
 }, { collection: 'guild_temp_roles'})
 
+const GuildInviteRolesSchema = new Schema<InviteRoles>({
+    guild: { type: String, required: true },
+    code: { type: String, required: true },
+    roles: { type: [String], required: true },
+    created: { type: Date, required: true },
+    expiration: {type: Number, required: true}
+}, { collection: 'guild_invite_roles'})
+
 export const ConfigModel = mongoose.model<Config>('ConfigModel', ConfigSchema);
 export const PlayerInfoModel = mongoose.model<PlayerInfo>('PlayerInfoModel', PlayerInfoSchema);
 export const CalendarModel = mongoose.model<CalendarEvent>('CalendarModel', CalendarSchema); 
@@ -132,3 +141,4 @@ export const LocalGuildChannelModel = mongoose.model<LocalGuildChannel>('LocalGu
 export const WebhookModel = mongoose.model<GuildWebhook>('WebhookModel', WebhookSchema);
 export const GuildMemberModel = mongoose.model<Member>('GuildMemberModel', GuildMemberSchema);
 export const TemporalRolesModel = mongoose.model<TemporalRoles>('TemporalRolesModel', TemporalRolesSchema);
+export const GuildInviteRolesModel = mongoose.model<InviteRoles>('GuildInviteRolesModel', GuildInviteRolesSchema);

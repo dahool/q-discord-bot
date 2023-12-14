@@ -6,6 +6,12 @@
 
               <fieldset>
                 <legend>Channels</legend>
+
+                <div class="form-group">
+                  <label for="logging" class="form-label">Logging</label>
+                  <select-channel-input class="form-control" name="logging" [options]="channels" [(ngModel)]="config.channels.logging"></select-channel-input>
+                </div>
+
                 <div class="form-group">
                   <label for="announcements" class="form-label">Announcements</label>
                   <select-channel-input class="form-control" name="announcements" [options]="channels" [(ngModel)]="config.channels.announcements"></select-channel-input>

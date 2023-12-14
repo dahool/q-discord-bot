@@ -8,7 +8,8 @@ export interface Config extends Document {
         logging?: string,
         territory?: string,
         scheduledEvents?: string,
-        dailyTerritory?: string
+        dailyTerritory?: string,
+        invitesChannel?: string
     },
     token?: string,
     allianceTag?: string,
@@ -119,4 +120,12 @@ export interface TemporalRoles extends Document {
     memberId: string,
     roleId: string,
     created: Date
+}
+
+export interface InviteRoles extends Document {
+    guild: string,
+    code: string,
+    roles: string[],
+    created: Date
+    expiration: number
 }
