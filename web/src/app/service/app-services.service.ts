@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BaseService } from './base.service';
 import { Channel, Config, Guild, Role, SaveResponse, Schedule, Territory, User, UserServer } from './models';
@@ -18,7 +18,7 @@ export class AppService extends BaseService {
   }
 
   listServers(): Observable<UserServer[]> {
-    return this.executeGet('servers');
+    return this.executeGet('servers')
   } 
  
   listChannels(id: string): Observable<Channel[]> {
@@ -34,15 +34,7 @@ export class AppService extends BaseService {
   }
 
   getServer(id: string): Observable<Guild> {
-    let stored = sessionStorage.getItem('server-' + id);
-    if (stored) {
-      return of(JSON.parse(stored));
-    } else {
-      return this.executeGet('server/' + id).pipe(map(r => {
-        sessionStorage.setItem('server-' + id, JSON.stringify(r));
-        return r;
-      }));
-    }
+    return this.executeGet('server/' + id);
   }
 
   getConfig(server: string): Observable<Config> {

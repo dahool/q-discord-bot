@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppService } from '../service/app-services.service';
+import { Subject } from 'rxjs';
+import { CachedAppService } from '../service/cached-service';
 import { LocalService } from '../service/local.service';
 import { Guild, UserServer } from '../service/models';
 
@@ -10,22 +11,16 @@ import { Guild, UserServer } from '../service/models';
 })
 export class ServerSelectionComponent implements OnInit {
 
-  servers: UserServer[] = [];
+  serverList$: Subject<UserServer[]> = new Subject();
 
   constructor(
-    private service: AppService,
+    private service: CachedAppService,
     private router: Router,
     private local: LocalService) { }
 
   ngOnInit(): void {
     this.local.setServer(null);
-    this.service.listServers().subscribe(l => {
-      if (l && Array.isArray(l)) {
-        this.servers = l
-      } else {
-        this.servers = [];
-      }
-    });
+    this.serverList$ = this.service.listServers();
   }
 
   navigateTo(server: Guild) {

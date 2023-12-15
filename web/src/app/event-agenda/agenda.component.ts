@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DateTime } from 'luxon';
+import { Subject } from 'rxjs';
 import { AlertService } from '../alerts';
 import { AppService } from '../service/app-services.service';
 import { LocalService } from '../service/local.service';
@@ -15,6 +16,7 @@ import { AgendaDialog } from './agenda-new-dialog.component';
 })
 export class AgendaListComponent implements OnInit {
 
+  server$?: Subject<Guild>;
   server?: Guild;
 
   schedule?: Map<any, Schedule[]>;
@@ -31,10 +33,14 @@ export class AgendaListComponent implements OnInit {
       private toast: AlertService) {}
 
   ngOnInit(): void {
-    this.server = this.local.getServer()!;
-
-    this.service.getEvents(this.server.id).subscribe(ev => {
-      this.schedule = this._groupEvents(ev);
+    this.server$ = this.local.getServerSubject();
+    this.server$.subscribe(s => {
+      if (s) {
+        this.server = s;
+        this.service.getEvents(s.id).subscribe(ev => {
+          this.schedule = this._groupEvents(ev);
+        })
+      }
     })
     
   }

@@ -1,5 +1,3 @@
-<server-menu server="server"></server-menu>
-
 <div class="container">
   
   <nav class="navbar flex-row-reverse">
@@ -24,7 +22,4 @@
 
 </div>
 
-<dialog-agenda-new *ngIf="server" [guildId]="server.id" (save)="loadEvents()" #dialog></dialog-agenda-new>
-
-
-
+<dialog-agenda-new *ngIf="server$ | async as s" [guildId]="s.id" (save)="loadEvents()" #dialog></dialog-agenda-new>

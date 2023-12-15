@@ -6,7 +6,7 @@
 
     <div class="navbar-nav flex-shrink-0 p-3 text-white bg-dark">
 
-      <li class="nav-item dropdown" *ngIf="servers">
+      <li class="nav-item dropdown" *ngIf="serverList$ | async as servers">
         <a class="nav-link dropdown-toggle" (click)="dropdownShow = !dropdownShow" role="button">
           <ng-container *ngIf="server$ | async as server; else noServer">
             <img src="{{server.icon}}" width="32px" height="32px">&nbsp;{{server.name}}

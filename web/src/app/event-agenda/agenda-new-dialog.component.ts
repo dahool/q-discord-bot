@@ -1,6 +1,5 @@
 
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { AlertService } from '../alerts';
 import { AppService } from '../service/app-services.service';
 import { Role, Schedule, Territory } from '../service/models';
@@ -54,7 +53,6 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
   step: number = 0;
 
   constructor(
-      private router: Router,
       private service: AppService,
       private toast: AlertService,
       private modalService: NgbModal) {}

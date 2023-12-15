@@ -1,4 +1,4 @@
-<div class="list-group" style="margin-top: 60px;" *ngIf="servers">
+<div class="list-group" style="margin-top: 60px;" *ngIf="serverList$ | async as servers">
     <h3 class="text-center">Select Server</h3>
     <ng-container *ngFor="let server of servers">
     <li (click)="navigateTo(server)" class="list-group-item list-group-item-action">
