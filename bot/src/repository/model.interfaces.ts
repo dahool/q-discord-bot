@@ -36,7 +36,11 @@ export interface Config extends Document {
             active: boolean,
             message: string
         }
-    }
+    },
+    translateChannels?: [{
+        channel: string,
+        language: string
+    }]
 }
 
 export interface PlayerInfo extends Document {

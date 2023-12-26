@@ -37,7 +37,11 @@ const ConfigSchema = new Schema<Config>({
             active: Boolean,
             message: String
         }
-    }    
+    },
+    translateChannels: [{
+        channel: String,
+        language: String
+    }]    
 }, { collection: 'guild_config' })
 
 const PlayerInfoSchema = new Schema<PlayerInfo>({

@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterModule, RouterStat
 import { ConfigManComponent } from './config-man/config-man.component';
 import { ThreadFollowConfigComponent } from './config-man/threadfollow.component';
 import { ThreadPingConfigComponent } from './config-man/threadping.component';
+import { TranslatorConfigComponent } from './config-man/translator.component';
 import { WelcomeConfigComponent } from './config-man/wlecome.component';
 import { AgendaListComponent } from './event-agenda/agenda.component';
 import { MenuComponent } from './server-selection/menu-selection.component';
@@ -64,6 +65,11 @@ const routes: Routes = [
     canActivate: [storeGuard],
     component: ThreadPingConfigComponent
   },  
+  {
+    path: 'config/translate',
+    canActivate: [storeGuard],
+    component: TranslatorConfigComponent
+  },    
   {
     path: 'events',
     canActivate: [storeGuard],

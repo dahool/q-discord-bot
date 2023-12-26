@@ -1,8 +1,9 @@
 import { TranslatorClient } from "@/api/translator";
-import { Command } from "@/common/decorators";
-import { DiscordCommand } from "@/common/schemas";
+import { Command, EventListener } from "@/common/decorators";
+import { DiscordCommand, DiscordEventListener } from "@/common/schemas";
 import { logger } from "@/logging/logger";
-import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, Client, MessageContextMenuCommandInteraction, MessageFlags } from "discord.js";
+import { ConfigModel } from "@/repository";
+import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, Client, Events, IntentsBitField, Message, MessageContextMenuCommandInteraction, MessageFlags } from "discord.js";
 
 @Command({
 	name: 'translate',
@@ -119,5 +120,28 @@ export class TranslateContextCommand implements DiscordCommand {
         }
 
 	}
+
+}
+
+@EventListener({
+    event: Events.MessageCreate,
+    requiresIntents: [ IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent ]
+})
+export class AutomaticPostTranslator implements DiscordEventListener {
+
+    async onEvent(client: Client<boolean>, message: Message): Promise<any> {
+        if (!message.member?.user.bot) { // ignore any bot post, including myself
+            const config = await ConfigModel.findOne({guild: message.guildId}).exec();
+            if (config && config.translateChannels != undefined) {
+                const translateConfig = config.translateChannels.find(c => message.channelId == c.channel);
+                if (translateConfig != undefined) {
+                    logger.debug("Translating '%s'", message.content);
+                    const translator = new TranslatorClient();
+                    const response = await translator.translate(message.content, translateConfig.language);
+                    return message.channel.send({ content: `:flag_${translateConfig.language}:\n${response.text}`, flags: MessageFlags.SuppressNotifications });
+                }
+            }
+        }
+    }
 
 }

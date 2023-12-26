@@ -1,0 +1,49 @@
+<div class="list-group mt-5 mb-4">
+
+    <form (ngSubmit)="trySave()" #form="ngForm">
+      <div class="card" *ngIf="isReady">
+          <div class="card-body">
+
+            <fieldset>
+              <legend>Automatic Post Translation
+                <button (click)="addNewChannel()" type="button" class="btn btn-primary float-end"><i class="fas fa-plus"></i></button>
+              </legend>
+
+              <div class="container-fluid border p-2 rounded mb-2" *ngFor="let nta of config.translateChannels; index as i" ngModelGroup="followGroup_{{i}}">
+
+                <div class="clearfix">
+                  <button (click)="removeChannel(i)" type="button" class="btn btn-danger float-end"><i class="fas fa-minus"></i></button>
+                </div>
+
+                <div class="row">
+                  <div class="col-10">
+                    <div class="form-group">
+                      <label for="translateChannel{{i}}">Channel</label>
+                      <select-channel-input class="form-control" name="translateChannel{{i}}" [options]="channels" [(ngModel)]="nta.channel" required></select-channel-input>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="translateLanguage{{i}}">Translate To</label>
+                      <select class="form-select" name="translateLanguage{{i}}" [(ngModel)]="nta.language">
+                        <option selected>Select Language</option>
+                        <option value="es">Spanish / Español</option>
+                        <option value="fr">French / Français</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </fieldset>            
+
+          </div>
+
+          <div class="card-footer text-center">
+              <button type="submit" class="btn btn-success">Save</button>&nbsp;
+          </div>            
+        </div>
+    </form>      
+
+</div>
+

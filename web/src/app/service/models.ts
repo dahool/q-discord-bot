@@ -87,7 +87,11 @@ export interface Config {
             active: boolean,
             message?: string
         }
-    }    
+    },
+    translateChannels?: [{
+        channel: string,
+        language: string
+    }]
 }
 
 export const EMPTY_CONFIG: Config = {

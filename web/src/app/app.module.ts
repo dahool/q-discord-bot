@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 import { ConfigManComponent } from './config-man/config-man.component';
 import { ThreadFollowConfigComponent } from './config-man/threadfollow.component';
 import { ThreadPingConfigComponent } from './config-man/threadping.component';
+import { TranslatorConfigComponent } from './config-man/translator.component';
 import { WelcomeConfigComponent } from './config-man/wlecome.component';
 import { AgendaNewDialogComponent } from './event-agenda/agenda-new-dialog.component';
 import { AgendaListComponent } from './event-agenda/agenda.component';
@@ -37,7 +38,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     AgendaListComponent,
     WelcomeConfigComponent,
     ThreadFollowConfigComponent,
-    ThreadPingConfigComponent
+    ThreadPingConfigComponent,
+    TranslatorConfigComponent
   ],
   imports: [
     BrowserModule,
