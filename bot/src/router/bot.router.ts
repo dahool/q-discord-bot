@@ -22,6 +22,11 @@ export class BotController {
         });
     }
 
+    @Get("/bot")
+    home(@Res() res: Response) {
+        res.send("I'm alive");
+    }
+
     @Get("/cron_daily")
     dailyCron(@Res() res: Response) {
         Promise.all(DAILY_TASKS.map(f => f())).then((r) => {
