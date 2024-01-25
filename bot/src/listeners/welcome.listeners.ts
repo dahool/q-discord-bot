@@ -1,6 +1,6 @@
 import { EventListener } from "@/common/decorators";
 import { DiscordEventListener } from "@/common/schemas";
-import { asUser, isNotBlank } from "@/common/utils";
+import { isNotBlank } from "@/common/utils";
 import { logger } from "@/logging/logger";
 import { Config, ConfigModel, GuildMemberModel, TemporalRolesModel } from "@/repository";
 import { Client, Events, GuildMember, GuildTextBasedChannel } from "discord.js";
@@ -14,7 +14,7 @@ async function sendMessage(member: GuildMember, channelId: string, message: stri
     const channel = member.guild.channels.cache.get(channelId) as GuildTextBasedChannel;
     if (channel) {
         const payload = {
-            user: asUser(member.user.id),
+            user: member.toString(),
             server: member.guild.name
         }
         logger.debug("Posting message with payload %s on %s", payload, channel.name);

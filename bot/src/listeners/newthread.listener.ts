@@ -1,6 +1,6 @@
 import { EventListener } from "@/common/decorators";
 import { DiscordEventListener } from "@/common/schemas";
-import { asChannel, asUser } from "@/common/utils";
+import { asChannel } from "@/common/utils";
 import { logger } from "@/logging/logger";
 import { ConfigModel } from "@/repository";
 import { Client, Events, GuildTextBasedChannel, ThreadChannel } from "discord.js";
@@ -16,16 +16,16 @@ export class NewTheadFollowerListener implements DiscordEventListener {
         if (isNew && thread.invitable == null && thread.parent) {
             logger.debug("New Thread Created %s", thread.name);
             const config = await ConfigModel.findOne({guild: thread.guildId});
-            let memberstoAdd = thread.parent?.members.filter(member => !member.user.bot).map(member => member.id);
+            let memberstoAdd = thread.parent?.members.filter(member => !member.user.bot).map(member => member);
             config?.autoFollowThreadChannels?.filter(cfg => cfg.channel == thread.parentId).forEach(cfg => {
                 if (memberstoAdd.length > 0) {
                     logger.debug("Adding %d members to %s", memberstoAdd.length, thread.name);
                     if (cfg.silent) {
-                        thread.send(memberstoAdd.map(id => asUser(id)).join(' ')).then(message => {
+                        thread.send(memberstoAdd.map(member => member.toString()).join(' ')).then(message => {
                             setTimeout(100).then(() => message.delete());
                         })
                     } else {
-                        memberstoAdd.forEach(id => thread.members.add(id));
+                        memberstoAdd.forEach(member => thread.members.add(member));
                     }
                 }
             })
@@ -51,7 +51,7 @@ export class NewTheadPingerListener implements DiscordEventListener {
                 const payload = {
                     channel: asChannel(thread.parentId!),
                     title: asChannel(thread.id),
-                    user: asUser(thread.guild.members.cache.get(thread.ownerId!)?.id!)
+                    user: thread.guild.members.cache.get(thread.ownerId!)?.toString()
                 }
                 for (let aConf of config.newThreadAnnouncer) {
                     if (aConf.channels.includes(thread.parentId!)) {
