@@ -7,6 +7,12 @@ import { logger } from '@/logging/logger';
 import { Controller, Get, Query, Req, Res } from 'decorators-express';
 import { Request, Response } from 'express';
 
+async function runTasks(funcList: any): Promise<void> {
+    for (let f of funcList) {
+        await f();
+    }
+}
+
 @Controller("/")
 export class BotController {
 
@@ -29,17 +35,29 @@ export class BotController {
 
     @Get("/cron_daily")
     dailyCron(@Res() res: Response) {
-        Promise.all(DAILY_TASKS.map(f => f())).then((r) => {
+        /*Promise.all(DAILY_TASKS.map(f => f())).then((r) => {
             res.send("OK");
         }).catch((e) => {
             logger.error(e);
             res.send(e);
-        });
+        });*/
+        runTasks(DAILY_TASKS).then(() => {
+            res.send("OK");
+        }).catch((e) => {
+            logger.error(e);
+            res.send(e);
+        });        
     }
 
     @Get("/cron_midday")
     midDailyCron(@Res() res: Response) {
-        Promise.all(MID_DAILY_TASKS.map(f => f())).then((r) => {
+        /*Promise.all(MID_DAILY_TASKS.map(f => f())).then((r) => {
+            res.send("OK");
+        }).catch((e) => {
+            logger.error(e);
+            res.send(e);
+        });*/
+        runTasks(MID_DAILY_TASKS).then(() => {
             res.send("OK");
         }).catch((e) => {
             logger.error(e);
@@ -50,7 +68,13 @@ export class BotController {
 
     @Get("/cron_freq")
     freqCron(@Res() res: Response) {
-        Promise.all(FREQ_TASKS.map(f => f())).then(() => {
+        /*Promise.all(FREQ_TASKS.map(f => f())).then(() => {
+            res.send("OK");
+        }).catch((e) => {
+            logger.error(e);
+            res.send(e);
+        });*/
+        runTasks(FREQ_TASKS).then(() => {
             res.send("OK");
         }).catch((e) => {
             logger.error(e);
