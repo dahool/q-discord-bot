@@ -278,7 +278,7 @@ export async function postDailyEvents() {
                 }).join('\n')});
             })
 
-            localChannel?.send({ content: "@here", embeds: [msgEmbed]});
+            localChannel?.send({ embeds: [msgEmbed]});
         }
         
     });
