@@ -64,6 +64,7 @@ function parsePage(pageNumber: number, totalPages: number | undefined, version: 
 async function insertAllPlayers(list: any[], version: number): Promise<any> {
     if (list.length) {
         logger.debug("Insert %d players", list.length);
+        await PlayerInfoModel.deleteMany({version: version}).exec();
         let botConfig = await BotConfigModel.findOne().exec();
         if (botConfig == null) {
             botConfig = new BotConfigModel();
