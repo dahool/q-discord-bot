@@ -1,5 +1,5 @@
 import { TYPES, container } from "@/ic.config";
-import { TemporalRolesModel } from "@/repository";
+import { PlayerInfoModel, TemporalRolesModel } from "@/repository";
 import { Client } from "discord.js";
 import { DateTime } from "luxon";
 
@@ -14,4 +14,9 @@ export async function cleanupTempRoles(): Promise<any> {
         }
         return tempRole.deleteOne();
     }))
+}
+
+export async function cleanUpPlayerInfo(): Promise<any> {
+    const dt = parseInt(DateTime.now().minus({days: 7}).toFormat('yyyyMMdd'));
+    return PlayerInfoModel.deleteMany({version: { $lt: dt }}).exec();
 }
