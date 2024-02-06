@@ -1,6 +1,6 @@
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
-import { ConfigModel, PlayerInfoModel } from "@/repository";
+import { BotConfigModel, ConfigModel, PlayerInfoModel } from "@/repository";
 import { ApplicationCommandOptionType, AttachmentBuilder, ChatInputCommandInteraction, Client } from "discord.js";
 
 @Command({
@@ -20,6 +20,11 @@ import { ApplicationCommandOptionType, AttachmentBuilder, ChatInputCommandIntera
 		description: 'Alliance TAG',
 		type: ApplicationCommandOptionType.String,
 		required: false
+	}, {
+		name: 'version',
+		description: 'Version (yyyyMMdd)',
+		type: ApplicationCommandOptionType.String,
+		required: false
 	}]
 })
 export class AllianceCommand implements DiscordCommand {
@@ -29,6 +34,9 @@ export class AllianceCommand implements DiscordCommand {
 		await interaction.deferReply();
 		
 		const config = await ConfigModel.findOne({guild: interaction.guildId}).exec();
+		const botConfig = await BotConfigModel.findOne().exec();
+
+		const version = args.version || botConfig?.playerInfoVersion;
 
 		let tag = args.tag ? args.tag : config?.allianceTag;
 		if (tag == undefined || tag == '') {
@@ -37,9 +45,9 @@ export class AllianceCommand implements DiscordCommand {
 
 		let list;
 		if (tag == '*') {
-			list = await PlayerInfoModel.find({}).exec();
+			list = await PlayerInfoModel.find({version: version}).exec();
 		} else {
-			list = await PlayerInfoModel.find({tag: tag.toUpperCase()}).exec();
+			list = await PlayerInfoModel.find({tag: tag.toUpperCase(), version: version}).exec();
 		}
 
 		let content = list.sort((a, b) => a.name.localeCompare(b.name)).map(player => {

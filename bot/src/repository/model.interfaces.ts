@@ -1,5 +1,9 @@
 import { Document, Types } from "mongoose";
 
+export interface BotConfig extends Document {
+    playerInfoVersion: number
+}
+
 export interface Config extends Document { 
     guild: string,
     name?: string,
@@ -49,7 +53,8 @@ export interface PlayerInfo extends Document {
     tag: string,
     power: number,
     pd: number,
-    rss: number
+    rss: number,
+    version: number
 }
 
 export interface CalendarEvent extends Document {

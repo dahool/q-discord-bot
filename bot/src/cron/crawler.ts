@@ -1,10 +1,11 @@
 import { safeNull } from "@/common/utils";
 import { environment } from "@/env/environment";
 import { logger } from "@/logging/logger";
-import { PlayerInfoModel } from "@/repository/model.schemas";
+import { BotConfigModel, PlayerInfoModel } from "@/repository/model.schemas";
 import axios from 'axios';
+import { DateTime } from "luxon";
 
-function parsePlayer(data: any[], index: number): any {
+function parsePlayer(data: any[], index: number, version: number): any {
     const header = data[index];
     return {
         name: data[header.owner],
@@ -12,16 +13,17 @@ function parsePlayer(data: any[], index: number): any {
         tag: safeNull(data[header.alliance_tag]).toUpperCase(),
         power: data[header.score],
         pd: data[header.pd],
-        rss: data[header.rss]
-    }        
+        rss: data[header.rss],
+        version: version
+    }
 }
 
-function parseList(data: any[]): any[] {
+function parseList(data: any[], version: number): any[] {
     let players = [];
     for (let i = 0; i < data.length; i++) {
         if (data[i] != undefined && typeof data[i] === 'object' && 'owner' in data[i]) {
             try {
-                players.push(parsePlayer(data, i));    
+                players.push(parsePlayer(data, i, version));    
             } catch (error) {
                 logger.error("Error processing %O: %O", data[i], error);
                 console.error(error);
@@ -31,7 +33,7 @@ function parseList(data: any[]): any[] {
     return players;
 }
 
-function parsePage(pageNumber: number, totalPages: number | undefined): Promise<any[]> {
+function parsePage(pageNumber: number, totalPages: number | undefined, version: number): Promise<any[]> {
     if (totalPages == undefined || (totalPages != undefined && pageNumber <= totalPages)) {
         return new Promise((resolv, reject) => {
             logger.debug("Requesting page %s%s", environment.playerInfoURL, pageNumber);
@@ -43,8 +45,8 @@ function parsePage(pageNumber: number, totalPages: number | undefined): Promise<
                         const itemsPerPage = data[2];
                         totalPages = Math.ceil(totalItems / itemsPerPage);
                     }
-                    let list = parseList(data);
-                    parsePage(++pageNumber, totalPages).then((r: any) => {
+                    let list = parseList(data, version);
+                    parsePage(++pageNumber, totalPages, version).then((r: any) => {
                         resolv(list.concat(r));
                     });
                 })
@@ -59,40 +61,22 @@ function parsePage(pageNumber: number, totalPages: number | undefined): Promise<
     });
 }
 
-async function insertPlayers(guildId: string, tag: string | undefined, list: any[]): Promise<any> {
-    if (tag == undefined || tag == '') {
-        return PlayerInfoModel.deleteMany({'guild': guildId}).exec();
-    } 
-    logger.debug("Processing tag %s", tag);
-    const toInsert =  list.filter(player => player.tag == tag.toUpperCase()).map(player => {
-        player['guild'] = guildId;
-        return player;
-    });
-    if (toInsert.length) {
-        await PlayerInfoModel.deleteMany({'guild': guildId}).exec();
-        logger.debug("Insert %O", toInsert);
-        return PlayerInfoModel.insertMany(toInsert);
-    }
-    return Promise.resolve();
-}
-
-
-async function insertAllPlayers(list: any[]): Promise<any> {
+async function insertAllPlayers(list: any[], version: number): Promise<any> {
     if (list.length) {
-        await PlayerInfoModel.deleteMany({}).exec();
         logger.debug("Insert %d players", list.length);
+        let botConfig = await BotConfigModel.findOne().exec();
+        if (botConfig == null) {
+            botConfig = new BotConfigModel();
+        }
+        botConfig.playerInfoVersion = version;
+        botConfig.save();
         return PlayerInfoModel.insertMany(list);
     }
     return Promise.resolve();
 }
 
 export async function executeCrawler(): Promise<any> {
-    /*let configs = await ConfigModel.find({"allianceTag":{$ne:null}}).exec();
-    if (configs.length) {
-        const playersList = await parsePage(0, undefined);
-        return Promise.all(configs.map(cfg => insertPlayers(cfg.guild!, cfg.allianceTag, playersList)));
-    }
-    return Promise.resolve();*/
-    const playersList = await parsePage(0, undefined);
-    return insertAllPlayers(playersList);
+    const version = parseInt(DateTime.now().toFormat('yyyyMMdd'));
+    const playersList = await parsePage(0, undefined, version);
+    return insertAllPlayers(playersList, version);
 }

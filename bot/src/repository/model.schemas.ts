@@ -1,5 +1,9 @@
 import mongoose, { Schema } from "mongoose";
-import { CalendarEvent, Config, GuildWebhook, InviteRoles, LocalGuildChannel, LocalGuildRole, Member, PlayerInfo, TemporalRoles, TerritoryEvent, WebHookChannel } from "./model.interfaces";
+import { BotConfig, CalendarEvent, Config, GuildWebhook, InviteRoles, LocalGuildChannel, LocalGuildRole, Member, PlayerInfo, TemporalRoles, TerritoryEvent, WebHookChannel } from "./model.interfaces";
+
+const BotConfigSchema = new Schema<BotConfig>({
+    playerInfoVersion: Number
+}, { collection: 'bot_config'})
 
 const ConfigSchema = new Schema<Config>({
     guild: { type: String, required: true },
@@ -50,7 +54,8 @@ const PlayerInfoSchema = new Schema<PlayerInfo>({
     tag: String,
     power: Number,
     pd: Number,
-    rss: Number
+    rss: Number,
+    version: Number,
 }, { collection: 'playerinfo'})
 
 const CalendarSchema = new Schema<CalendarEvent>({
@@ -135,6 +140,7 @@ const GuildInviteRolesSchema = new Schema<InviteRoles>({
     expiration: {type: Number, required: true}
 }, { collection: 'guild_invite_roles'})
 
+export const BotConfigModel = mongoose.model<BotConfig>('BotConfigModel', BotConfigSchema);
 export const ConfigModel = mongoose.model<Config>('ConfigModel', ConfigSchema);
 export const PlayerInfoModel = mongoose.model<PlayerInfo>('PlayerInfoModel', PlayerInfoSchema);
 export const CalendarModel = mongoose.model<CalendarEvent>('CalendarModel', CalendarSchema); 
@@ -146,3 +152,4 @@ export const WebhookModel = mongoose.model<GuildWebhook>('WebhookModel', Webhook
 export const GuildMemberModel = mongoose.model<Member>('GuildMemberModel', GuildMemberSchema);
 export const TemporalRolesModel = mongoose.model<TemporalRoles>('TemporalRolesModel', TemporalRolesSchema);
 export const GuildInviteRolesModel = mongoose.model<InviteRoles>('GuildInviteRolesModel', GuildInviteRolesSchema);
+
