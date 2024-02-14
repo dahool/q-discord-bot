@@ -1,7 +1,8 @@
 import { Command } from "@/common/decorators";
 import { DiscordCommand } from "@/common/schemas";
 import { ConfigModel, GuildInviteRolesModel } from "@/repository";
-import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, Client, GuildMemberRoleManager, PermissionFlagsBits, Role } from "discord.js";
+import { ApplicationCommandOptionType, BaseGuildTextChannel, ChatInputCommandInteraction, Client, EmbedBuilder, GuildMemberRoleManager, PermissionFlagsBits, Role, roleMention, time } from "discord.js";
+import { DateTime } from "luxon";
 
 @Command({
 	name: 'createinvite',
@@ -105,8 +106,27 @@ export class CreateInviteCommand implements DiscordCommand {
         }
 
         return channel.createInvite({maxAge: args.daystolive * 86400, unique: true}).then(invite => {
-            GuildInviteRolesModel.create({guild: guild.id, code: invite.code, roles: [... new Set(roles.map(r => r.id))], created: new Date(), expiration: args.daystolive});
-            interaction.editReply({content: "Here's your invite link: " + invite.url});
+            let roleArray = [... new Set(roles.map(r => r.id))];
+            GuildInviteRolesModel.create({guild: guild.id, code: invite.code, roles: roleArray, created: new Date(), expiration: args.daystolive});
+            
+            const msgEmbed = new EmbedBuilder()
+                .setColor("Random")
+                .setTitle("Discord Invite")
+                .setThumbnail(interaction.guild ? interaction.guild.iconURL() : interaction.client.user.avatarURL())
+            
+            msgEmbed.addFields(
+                {name: "Link", value: invite.url},
+                {name: "Code", value: invite.code},
+                {name: "Expires", value: time(DateTime.now().plus({days: args.daystolive}).toJSDate(), 'R') }
+            )
+            
+            if (roleArray.length > 0) {
+                msgEmbed.addFields(
+                    {name: "Roles", value: roleArray.map(id => roleMention(id)).join("\n")}
+                )
+            }
+
+            interaction.editReply({ embeds: [ msgEmbed ]});
         })
 
 	}
