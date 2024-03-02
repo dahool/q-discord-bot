@@ -14,6 +14,7 @@ async function sendMessage(member: GuildMember, channelId: string, message: stri
     const channel = member.guild.channels.cache.get(channelId) as GuildTextBasedChannel;
     if (channel) {
         const payload = {
+            name: member.displayName,
             user: member.toString(),
             server: member.guild.name
         }
