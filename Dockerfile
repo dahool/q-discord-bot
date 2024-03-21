@@ -1,5 +1,5 @@
 # build
-FROM node:18 AS build
+FROM node:20 AS build
 
 RUN npm install -g pnpm@~8
 
@@ -22,7 +22,7 @@ RUN cp -R /usr/build/bot/public /usr/build/dist/ \
     && cp /usr/build/pm/* /usr/build/dist
 
 # server
-FROM node:18-alpine
+FROM node:20-alpine
 
 RUN npm install -g pm2@~5.3
 
