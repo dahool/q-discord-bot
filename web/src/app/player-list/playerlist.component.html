@@ -29,7 +29,7 @@
     </div>
     <div class="col">
       <button (click)="search()" class="btn btn-primary mr" type="button" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-      <button (click)="search()" class="btn btn-secondary" type="button" title="Download"><i class="fa-solid fa-download"></i></button>
+      @if (resultList) {<button (click)="exportList()" class="btn btn-secondary" type="button" title="Download"><i class="fa-solid fa-download"></i></button>}
     </div>
   </div>    
 

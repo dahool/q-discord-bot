@@ -47,6 +47,9 @@ importers:
       core-js-pure:
         specifier: ^3.32.2
         version: 3.33.0
+      file-saver:
+        specifier: ^2.0.5
+        version: 2.0.5
       luxon:
         specifier: ^3.4.3
         version: 3.4.3
@@ -81,6 +84,9 @@ importers:
       '@angular/localize':
         specifier: ^17.3.10
         version: 17.3.10(@angular/compiler-cli@17.3.10(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@6.6.7)(zone.js@0.14.6)))(typescript@5.4.5))(@angular/compiler@17.3.10(@angular/core@17.3.10(rxjs@6.6.7)(zone.js@0.14.6)))
+      '@types/file-saver':
+        specifier: ^2.0.7
+        version: 2.0.7
       '@types/jasmine':
         specifier: ~3.8.0
         version: 3.8.2
@@ -1535,6 +1541,9 @@ packages:
   '@types/express@4.17.19':
     resolution: {integrity: sha512-UtOfBtzN9OvpZPPbnnYunfjM7XCI4jyk1NvnFhTVz5krYAnW4o5DCoIekvms+8ApqhB4+9wSge1kBijdfTSmfg==}
 
+  '@types/file-saver@2.0.7':
+    resolution: {integrity: sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==}
+
   '@types/http-errors@2.0.2':
     resolution: {integrity: sha512-lPG6KlZs88gef6aD85z3HNkztpj7w2R7HmR3gygjfXCQmsLloWNARFkMuzKiiY8FGdh1XDpgBdrSf4aKDiA7Kg==}
 
@@ -2337,6 +2346,9 @@ packages:
   figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
     engines: {node: '>=8'}
+
+  file-saver@2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
 
   fill-range@7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
@@ -5777,6 +5789,8 @@ snapshots:
       '@types/qs': 6.9.8
       '@types/serve-static': 1.15.3
 
+  '@types/file-saver@2.0.7': {}
+
   '@types/http-errors@2.0.2': {}
 
   '@types/http-proxy@1.17.12':
@@ -6717,6 +6731,8 @@ snapshots:
   figures@3.2.0:
     dependencies:
       escape-string-regexp: 1.0.5
+
+  file-saver@2.0.5: {}
 
   fill-range@7.0.1:
     dependencies:
