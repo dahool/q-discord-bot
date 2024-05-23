@@ -4,13 +4,14 @@ import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
 import { OAuthClient, OAuthClientFace, OAuthGuild, OAuthToken, OAuthUser } from '@/oauth';
 import { StubClient } from '@/oauth/stub';
-import { CalendarModel, Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel } from '@/repository';
+import { BotConfigModel, CalendarModel, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel, PlayerInfoModel } from '@/repository';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, Use } from 'decorators-express';
 import { ChannelType, PermissionsBitField } from 'discord.js';
 import { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
 import { MemoryCache } from 'memory-cache-node';
 import { Observable, map } from 'rxjs';
+import { PlayerInfoFilter } from './api.dto';
 
 const itemsExpirationCheckIntervalInSecs = 60 * 60;
 const maxItemCount = 1000000;
@@ -282,6 +283,71 @@ export class ApiController {
             await calendar?.deleteOne();
         }
         res.send({status: true});
+    }
+
+    @Get("versions")
+    async getPlayerVersions(@Res() res: Response) {
+        let versions: any = await PlayerInfoModel.aggregate([
+            {
+                $group: {
+                    _id: "0",
+                    values: { $addToSet: "$version"}
+                }
+            }
+        ]).exec();
+        res.send(versions[0])
+    }
+
+    @Get("tags")
+    async getPlayerTags(@Res() res: Response) {
+        let l: any = await PlayerInfoModel.aggregate([
+            {
+                $group: {
+                    _id: "0",
+                    values: { $addToSet: "$tag"}
+                }
+            }
+        ]).exec();
+        res.send(l[0])
+    }
+    
+    @Post("playerInfo")
+    async getPlayerInfo(@Body() payload: PlayerInfoFilter, @Res() res: Response) {
+		const botConfig = await BotConfigModel.findOne().exec();
+		const version = payload.version || botConfig?.playerInfoVersion;
+
+        let query: any = {};
+        if (version != "*") {
+            query['version'] = version;
+        } else if (!payload.name) {
+            query['version'] = botConfig?.playerInfoVersion;
+        }
+        if (payload.tag && payload.tag.trim().length > 0) {
+            if (payload.tag == "[|]") query['tag'] = "";
+            else query['tag'] = payload.tag.trim().toUpperCase();
+        }
+        if (payload.name && payload.name.trim().length > 0) {
+            query['name'] = {'$regex': `.*${payload.name.trim()}.*`, "$options": "i" }
+        }
+
+        console.log(query);
+
+        let list = await PlayerInfoModel.find(query).sort({level: 'desc', name: 'asc'}) .exec();
+
+        let i = 0;
+        res.send(list.map(p => {
+            return {
+                id: i++,
+                name: p.name,
+                level: p.level,
+                tag: p.tag,
+                power: p.power,
+                pd: p.pd,
+                rss: p.rss,
+                version: p.version
+            }
+        }))
+        
     }
 
     _postConfigUpdate(updated: Config) {

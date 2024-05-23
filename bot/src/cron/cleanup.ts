@@ -17,6 +17,6 @@ export async function cleanupTempRoles(): Promise<any> {
 }
 
 export async function cleanUpPlayerInfo(): Promise<any> {
-    const dt = parseInt(DateTime.now().minus({days: 7}).toFormat('yyyyMMdd'));
+    const dt = parseInt(DateTime.now().minus({days: 10}).toFormat('yyyyMMdd'));
     return PlayerInfoModel.deleteMany({version: { $lt: dt }}).exec();
 }

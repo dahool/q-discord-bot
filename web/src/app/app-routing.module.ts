@@ -6,6 +6,7 @@ import { ThreadPingConfigComponent } from './config-man/threadping.component';
 import { TranslatorConfigComponent } from './config-man/translator.component';
 import { WelcomeConfigComponent } from './config-man/wlecome.component';
 import { AgendaListComponent } from './event-agenda/agenda.component';
+import { PlayerListComponent } from './player-list/playerlist.component';
 import { MenuComponent } from './server-selection/menu-selection.component';
 import { ServerSelectionComponent } from './server-selection/server-selection.component';
 import { LocalService } from './service/local.service';
@@ -74,6 +75,10 @@ const routes: Routes = [
     path: 'events',
     canActivate: [storeGuard],
     component: AgendaListComponent
+  },
+  {
+    path: 'players',
+    component: PlayerListComponent
   }  
 ];
 

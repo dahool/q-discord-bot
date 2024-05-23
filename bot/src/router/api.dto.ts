@@ -7,3 +7,9 @@ export interface EventDto {
     recurrent: Boolean,
     duration: Number
 }
+
+export interface PlayerInfoFilter {
+    tag: string,
+    name: string,
+    version: string
+}

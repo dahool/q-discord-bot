@@ -25,7 +25,7 @@ function setupExpress(mongoClient: any) {
     app.use(cookieParser());
     app.use(sessions({
         secret: environment.api.sessionSecret!,
-        cookie: { maxAge: oneDayInMillis },
+        cookie: { maxAge: oneDayInMillis, sameSite: 'strict' },
         saveUninitialized: false, // don't create session until something stored
         resave: false, //don't save session if unmodified
         store: MongoStore.create({

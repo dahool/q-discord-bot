@@ -65,4 +65,16 @@ export class AppService extends BaseService {
     return this.executeDelete('event', id);
   }
 
+  getPlayerInfoVersions(): Observable<any> {
+    return this.executeGet('versions');
+  }
+  
+  getPlayerInfoTags(): Observable<any> {
+    return this.executeGet('tags');
+  }
+
+  getPlayerList(query: any): Observable<any[]> {
+    return this.executePost('playerInfo', query);
+  }
+
 }
