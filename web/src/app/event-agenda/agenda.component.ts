@@ -24,7 +24,7 @@ export class AgendaListComponent implements OnInit {
   @ViewChild("dialog")
   dialog?: AgendaDialog;
 
-  timeFormat = DateTime.TIME_SIMPLE;
+  timeFormat = DateTime.TIME_24_SIMPLE;
 
   constructor(
       private router: Router,
@@ -42,7 +42,7 @@ export class AgendaListComponent implements OnInit {
         })
       }
     })
-    
+
   }
 
   _groupEvents(agenda: Schedule[]) {

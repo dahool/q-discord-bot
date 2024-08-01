@@ -16,7 +16,8 @@ export interface AgendaDialog {
     open(editable?: Schedule): void;
 }
 
-const WEEK_FORMAT = {...DateTime.TIME_SIMPLE, weekday: 'long' };
+const WEEK_FORMAT = {...DateTime.TIME_24_SIMPLE, weekday: 'long' };
+const DATETIME_FORMAT = {...DateTime.DATETIME_MED, ...DateTime.TIME_24_SIMPLE };
 
 interface Event {
   zone: string,
@@ -44,7 +45,7 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
   roles: Role[] = [];
   zones: Territory[] = [];
 
-  dtFormat = DateTime.DATETIME_MED;
+  dtFormat = DATETIME_FORMAT;
 
   // @ts-ignore
   event: Event;
@@ -85,12 +86,12 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
     this.event.next = zone?.next.toISO()!;
     console.log(this.event);
   }
-  
+
   get weekday() {
     // @ts-ignore
     return DateTime.fromISO(this.event.next).toLocaleString(WEEK_FORMAT);
   }
- 
+
   removeEvent() {
     this.service.deleteEvent(this.editable?.id!).subscribe(s => {
       if (s.status) {
@@ -99,10 +100,10 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
         this.modalService.dismissAll();
       } else {
         this.toast.error(s.error);
-      }      
+      }
     })
   }
-  
+
   diplayEventDate() {
     return DateTime.fromISO(this.event.next).plus({days: 7 * this.step}).toLocal().toLocaleString(this.dtFormat);
     //event.next | dateTimeFromIso | dateTimeToLocal | dateTimeToLocaleString:dtFormat
@@ -136,6 +137,6 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
       }
     });
 
-  }    
-  
+  }
+
 }
