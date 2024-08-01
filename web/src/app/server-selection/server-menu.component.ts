@@ -27,7 +27,7 @@ export class ServerMenuComponent implements OnInit {
     private local: LocalService,
     private service: CachedAppService,
     private router: Router) {}
-  
+
   ngOnInit(): void {
     this.server$ = this.local.getServerSubject();
     this.server$.subscribe(() => {
@@ -42,6 +42,10 @@ export class ServerMenuComponent implements OnInit {
   selectServer(server: Guild) {
     this.local.setServer(server);
     this.dropdownShow = false;
+  }
+
+  closeCanvas() {
+    this.canvasService.dismiss();
   }
 
   navigateTo(link: string) {
