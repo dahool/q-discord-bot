@@ -7,12 +7,13 @@ import { AppRouter } from 'decorators-express';
 import express from "express";
 import sessions from "express-session";
 import favicon from "serve-favicon";
+import cors from "cors";
 import { logger } from "./logging/logger";
 import { ApiController, AuthController, BotController, TokenValidationMiddleware } from "./router";
 
 const app = express();
 
-const oneDayInMillis = 1000 * 60 * 60 * 24;
+const oneDayInMillis = 1000 * 60 * 60 * 24 * 7;
 
 /*jshint unused: true */
 const views = [BotController, AuthController, ApiController]; // requerido para registrar los decorators de AppRouter
@@ -20,6 +21,7 @@ const views = [BotController, AuthController, ApiController]; // requerido para 
 function setupExpress(mongoClient: any) {
 
     app.use(express.json());
+    app.use(cors())
     app.use(favicon('public/favicon.ico'));
     app.use(express.static('static'))
     app.use(cookieParser());
@@ -30,7 +32,7 @@ function setupExpress(mongoClient: any) {
         resave: false, //don't save session if unmodified
         store: MongoStore.create({
             client: mongoClient,
-            touchAfter: 24 * 3600
+            touchAfter: 720 * 3600
         })
     }));
     app.use("/api", TokenValidationMiddleware);

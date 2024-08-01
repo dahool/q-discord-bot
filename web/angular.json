@@ -20,7 +20,7 @@
             "allowedCommonJsDependencies": [
               "file-saver"
             ],
-            "outputPath": "../dist/static",
+            "outputPath": "../bot/static",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -36,6 +36,7 @@
           },
           "configurations": {
             "production": {
+              "outputPath": "../dist/static",
               "budgets": [
                 {
                   "type": "initial",
@@ -104,5 +105,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

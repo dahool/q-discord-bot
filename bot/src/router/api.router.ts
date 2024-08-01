@@ -4,7 +4,7 @@ import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
 import { OAuthClient, OAuthClientFace, OAuthGuild, OAuthToken, OAuthUser } from '@/oauth';
 import { StubClient } from '@/oauth/stub';
-import { BotConfigModel, CalendarModel, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel, PlayerInfoModel } from '@/repository';
+import { BotConfigModel, CalendarModel, Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel, PlayerInfoModel } from '@/repository';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, Use } from 'decorators-express';
 import { ChannelType, PermissionsBitField } from 'discord.js';
 import { NextFunction, Request, Response } from 'express';
@@ -386,6 +386,8 @@ async function validateOrRefreshToken(req: Request): Promise<boolean> {
 export function TokenValidationMiddleware(req: Request, res: Response, next: NextFunction) {
     validateOrRefreshToken(req).then((s) => {
         if (!s) {
+            console.log(req.path);
+            console.log(req.url);
             res.format({
                 html: function() {
                     res.redirect(OAUTH_REDIRECT_URL);

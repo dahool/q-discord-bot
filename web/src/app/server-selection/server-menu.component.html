@@ -1,6 +1,6 @@
 <ng-template #content let-offcanvas>
 	<div class="offcanvas-header">
-		
+
 	</div>
 	<div class="offcanvas-body">
 
@@ -18,7 +18,7 @@
           <li *ngFor="let sv of servers"><a class="dropdown-item" (click)="selectServer(sv)"><img src="{{sv.icon}}" width="32px" height="32px">&nbsp;{{sv.name}}</a></li>
         </ul>
       </li>
-      
+
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
@@ -40,22 +40,29 @@
           <a (click)="navigateTo('/config/tp')" class="nav-link text-white" aria-current="page">
             <i class="fa-solid fa-bullhorn"></i> Thread Announcer
           </a>
-        </li> 
+        </li>
         <li class="nav-item">
           <a (click)="navigateTo('/config/translate')" class="nav-link text-white" aria-current="page">
             <i class="fas fa-language"></i> Post Translator
           </a>
-        </li>                        
+        </li>
         <li class="nav-item">
           <a (click)="navigateTo('/events')" class="nav-link text-white" aria-current="page">
             <i class="fa-regular fa-calendar-days"></i> Events
           </a>
         </li>
       </ul>
-      
-    </div>    
+
+    </div>
+
+    <div class="mt-4 d-flex justify-content-center">
+      <button routerLink="/players" class="btn btn-secondary"><i class="fa-solid fa-users"></i> Player List</button>
+    </div>
 
 	</div>
+
+
+
 </ng-template>
 
 <ng-container *ngIf="server$ | async as server">
@@ -63,7 +70,7 @@
   <button class="navbar-toggler" type="button" (click)="open(content)">
     <span class="navbar-toggler-icon"></span>
   </button>
-  
+
   <span class="navbar-brand text-center ml-3"><img src="{{server.icon}}" width="32px" height="32px">&nbsp;<h5 class="d-inline-block">{{server.name}}</h5></span>
 
 </ng-container>
