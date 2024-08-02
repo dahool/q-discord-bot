@@ -11,7 +11,7 @@ export const FREQ_TASKS = [
 
 export const DAILY_TASKS = [
     cleanUpCalendar,
-    executeCrawler,
+    //executeCrawler,
     loadCalendarEvents,
     cleanupTempRoles,
     cleanUpPlayerInfo
