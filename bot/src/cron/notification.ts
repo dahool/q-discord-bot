@@ -190,7 +190,7 @@ export async function scheduleDiscordEvents() {
     
 }
 
-export async function processAnnouncements(minutesAhead: number = 35) {
+export async function processAnnouncements(minutesAhead: number = 20) {
 
     const fromDate = DateTime.utc().toJSDate();
     const toDate = DateTime.utc().plus({minutes: minutesAhead}).toJSDate();

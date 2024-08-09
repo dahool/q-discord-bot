@@ -1,19 +1,21 @@
 # build
-FROM node:20 AS build
+FROM node:22 AS build
 
-RUN npm install -g pnpm@~8
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 # create build directory and copy everything
 COPY . /usr/build
 
 # build dashboard
 WORKDIR /usr/build/web
-RUN pnpm install \
+RUN pnpm install --frozen-lockfile \
     && pnpm run build
 
 # build bot
 WORKDIR /usr/build/bot
-RUN pnpm install \
+RUN pnpm install --frozen-lockfile \
     && pnpm run build \
     && pnpm prune --prod
 
@@ -22,9 +24,9 @@ RUN cp -R /usr/build/bot/public /usr/build/dist/ \
     && cp /usr/build/pm/* /usr/build/dist
 
 # server
-FROM node:20-alpine
+FROM node:22-alpine
 
-RUN npm install -g pm2@~5.3
+RUN npm install -g pm2@~5
 
 RUN mkdir /usr/app \
     && addgroup appuser && adduser --system --ingroup appuser appuser \
