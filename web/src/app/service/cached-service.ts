@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { AppService } from './app-services.service';
 import { UserServer } from './models';
+import { APP_SERVICE, IAppService } from '.';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class CachedAppService {
 
   listServersSubject?: BehaviorSubject<UserServer[]>;
 
-  constructor(private service: AppService) {}
+  constructor(@Inject(APP_SERVICE) private service: IAppService) {}
 
   listServers():  BehaviorSubject<UserServer[]> {
     let stored = sessionStorage.getItem('server-list');
@@ -25,6 +25,6 @@ export class CachedAppService {
       })
     }
     return this.listServersSubject;
-  } 
+  }
 
 }

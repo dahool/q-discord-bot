@@ -7,7 +7,7 @@
             <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
         </div>
         <div class="modal-body">
-            
+
                 <div class="form-group">
                     <label for="zone" class="form-label">Territory</label>
                     <ng-select name="zone" [items]="zones"
@@ -19,12 +19,17 @@
                                 required>
                     </ng-select>
                 </div>
-                
+
                 <ng-container *ngIf="event.zone">
 
                     <div class="form-group">
                         <label for="next" class="form-label">Next Schedule</label>
                         <input name="next" class="form-control" type="text" [value]="diplayEventDate()" readonly/>
+                        <div class="float-end">
+                          <button type="button" class="btn btn-info" placement="bottom" [ngbPopover]="discordTimes" [autoClose]="'outside'" [popoverClass]="'popElement'">
+                            <i class="fa-regular fa-clock"></i>
+                          </button>
+                        </div>
                         <div class="d-flex justify-content-center">
                             <div class="btn-group" role="group">
                                 <button [disabled]="step == 0" (click)="step=step-1" type="button" class="btn btn-secondary"><i class="fa-solid fa-backward"></i></button>
@@ -71,4 +76,16 @@
         </div>
 
     </form>
+</ng-template>
+
+<ng-template #discordTimes>
+  <table class="table table-bordered table-striped">
+    @for (fmt of discordFormats|keyvalue; track fmt.key) {
+      <tr>
+        <td>{{eventDate|discordTime:fmt.key}}</td>
+        <td>{{eventDate|discordTimeDisplay:fmt.key}}</td>
+        <td><button [cdkCopyToClipboard]="eventDate|discordTime:fmt.key" type="button" class="btn btn-secondary"><i class="fa-regular fa-copy"></i></button></td>
+      </tr>
+    }
+  </table>
 </ng-template>

@@ -33,7 +33,7 @@ export interface UserServer {
 export interface Channel {
     id: string;
     name: string;
-    parent: string;
+    parent?: string;
 }
 
 export interface Role {
@@ -52,7 +52,7 @@ export interface SaveResponse {
     error: string;
 }
 
-export interface Config { 
+export interface Config {
     guild: string
     name: string
     channels: {
@@ -62,8 +62,8 @@ export interface Config {
         scheduledEvents: string
         dailyTerritory: string
     }
-    token: string
-    allianceTag: string
+    token?: string
+    allianceTag?: string
     autoFollowThreadChannels?: [{
         channel: string,
         silent: boolean
@@ -73,7 +73,7 @@ export interface Config {
         announceChannel: string
         message: string
     }]
-    territoyCalendar: string,
+    territoyCalendar?: string,
     welcomeBye: {
         join: {
             channel?: string,

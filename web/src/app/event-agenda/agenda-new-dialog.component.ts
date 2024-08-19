@@ -1,16 +1,18 @@
 
-import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { AlertService } from '../alerts';
-import { AppService } from '../service/app-services.service';
 import { Role, Schedule, Territory } from '../service/models';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DateTime } from 'luxon';
 import { LuxonModule } from 'luxon-angular';
 import { Observable } from 'rxjs';
+import { APP_SERVICE, IAppService } from '../service';
+import { DISCORD_FORMATS, DiscordTimeDisplayPipe, DiscordTimePipe } from '../pipes/discordtime.pipe';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 export interface AgendaDialog {
     open(editable?: Schedule): void;
@@ -32,7 +34,16 @@ interface Event {
   templateUrl: './agenda-new-dialog.component.html',
   styleUrls: ['./agenda-new-dialog.component.scss'],
   standalone: true,
-  imports: [FormsModule, CommonModule, NgSelectModule, LuxonModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    NgSelectModule,
+    LuxonModule,
+    NgbPopoverModule,
+    DiscordTimePipe,
+    DiscordTimeDisplayPipe,
+    ClipboardModule
+  ],
 })
 export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
 
@@ -47,6 +58,8 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
 
   dtFormat = DATETIME_FORMAT;
 
+  discordFormats = DISCORD_FORMATS;
+
   // @ts-ignore
   event: Event;
   editable?: Schedule;
@@ -54,7 +67,8 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
   step: number = 0;
 
   constructor(
-      private service: AppService,
+      @Inject(APP_SERVICE)
+      private service: IAppService,
       private toast: AlertService,
       private modalService: NgbModal) {}
 
@@ -105,8 +119,13 @@ export class AgendaNewDialogComponent implements AgendaDialog, OnInit {
   }
 
   diplayEventDate() {
-    return DateTime.fromISO(this.event.next).plus({days: 7 * this.step}).toLocal().toLocaleString(this.dtFormat);
+    //return DateTime.fromISO(this.event.next).plus({days: 7 * this.step}).toLocal().toLocaleString(this.dtFormat);
     //event.next | dateTimeFromIso | dateTimeToLocal | dateTimeToLocaleString:dtFormat
+    return this.eventDate.toLocaleString(this.dtFormat);
+  }
+
+  get eventDate() {
+    return DateTime.fromISO(this.event.next).plus({days: 7 * this.step}).toLocal();
   }
 
   saveEvent(form: NgForm) {

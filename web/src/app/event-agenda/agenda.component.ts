@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DateTime } from 'luxon';
 import { Subject } from 'rxjs';
@@ -8,6 +8,7 @@ import { LocalService } from '../service/local.service';
 import { Guild, Schedule } from '../service/models';
 import { GroupBy } from '../utils';
 import { AgendaDialog } from './agenda-new-dialog.component';
+import { APP_SERVICE, IAppService } from '../service';
 
 @Component({
   selector: 'app-agenda-list',
@@ -28,7 +29,8 @@ export class AgendaListComponent implements OnInit {
 
   constructor(
       private router: Router,
-      private service: AppService,
+      @Inject(APP_SERVICE)
+      private service: IAppService,
       private local: LocalService,
       private toast: AlertService) {}
 

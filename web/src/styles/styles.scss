@@ -24,3 +24,8 @@ select option:disabled {
 .card-body .form-group {
     margin-top: 10px;
 }
+
+.popElement {
+  max-width: fit-content !important;
+  min-width: 450px !important;
+}

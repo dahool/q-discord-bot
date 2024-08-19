@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
-
 const useCredentials = environment.production;
 
 const httpOptions = {
@@ -16,6 +15,16 @@ const httpOptions = {
 }
 
 export const ROOT_API = environment.hostUrl;
+
+export function parseDate(data: any, ...properties: string[]): any {
+  properties.forEach(name => {
+    let value = data[name];
+    if (value != undefined && value != null && value != '') {
+      data[name] = DateTime.fromISO(value);
+    }
+  })
+  return data;
+}
 
 export abstract class BaseService {
 
@@ -79,16 +88,6 @@ export abstract class BaseService {
       ob = this.http.delete(ROOT_API + this.servicePath + idUrl, httpOptions);
     }
     return this.attachSpinner(ob);
-  }
-
-  protected parseDate(data: any, ...properties: string[]): any {
-    properties.forEach(name => {
-      let value = data[name];
-      if (value != undefined && value != null && value != '') {
-        data[name] = DateTime.fromISO(value);
-      }
-    })
-    return data;
   }
 
 }

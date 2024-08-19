@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { AlertService } from '../alerts';
-import { AppService } from '../service/app-services.service';
+import { APP_SERVICE, IAppService } from '../service';
 import { LocalService } from '../service/local.service';
 import { Channel, Config, EMPTY_CONFIG, Guild, Role } from '../service/models';
 
@@ -12,13 +12,13 @@ import { Channel, Config, EMPTY_CONFIG, Guild, Role } from '../service/models';
 })
 export class ConfigManComponent implements OnInit {
 
-  public service: AppService = inject(AppService);
+  public service: IAppService = inject(APP_SERVICE);
   public local: LocalService = inject(LocalService);
   public toast: AlertService = inject(AlertService);
 
   server?: Guild;
   config!: Config;
-  
+
   isReady = false;
 
   @ViewChild("form", { static: true })
@@ -43,7 +43,7 @@ export class ConfigManComponent implements OnInit {
       forkJoin({
         channels: this.service.listChannels(this.server.id),
         roles: this.service.listRoles(this.server.id),
-        config: this.service.getConfig(this.server.id)  
+        config: this.service.getConfig(this.server.id)
       }).subscribe(result => {
         this.channels = result.channels;
         this.roles = result.roles;
@@ -53,7 +53,7 @@ export class ConfigManComponent implements OnInit {
       }, error => {
         console.error(error);
         this.toast.error("Ups, something went wrong. Try reloading");
-      });    
+      });
     }
   }
 
