@@ -31,7 +31,7 @@ export class DiscordTimeDisplayPipe implements PipeTransform {
 
   transform(value: DateTime | Date, format: string): string | null {
     let dt = (value instanceof Date) ? DateTime.fromJSDate(value) : value;
-    if (format == 'R') {
+    if (format == 'R' ) {
       return dt.toRelative();
     }
     return dt.toFormat(DISCORD_FORMATS.get(format)!);

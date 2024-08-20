@@ -26,7 +26,7 @@
                         <label for="next" class="form-label">Next Schedule</label>
                         <input name="next" class="form-control" type="text" [value]="diplayEventDate()" readonly/>
                         <div class="float-end">
-                          <button type="button" class="btn btn-info" placement="bottom" [ngbPopover]="discordTimes" [autoClose]="'outside'" [popoverClass]="'popElement'">
+                          <button type="button" class="btn btn-info" placement="start" [ngbPopover]="discordTimes" [autoClose]="'outside'" [popoverClass]="'popElement'">
                             <i class="fa-regular fa-clock"></i>
                           </button>
                         </div>
@@ -80,11 +80,12 @@
 
 <ng-template #discordTimes>
   <table class="table table-bordered table-striped">
+    @let varEventDate = eventDate;
     @for (fmt of discordFormats|keyvalue; track fmt.key) {
       <tr>
-        <td>{{eventDate|discordTime:fmt.key}}</td>
-        <td>{{eventDate|discordTimeDisplay:fmt.key}}</td>
-        <td><button [cdkCopyToClipboard]="eventDate|discordTime:fmt.key" type="button" class="btn btn-secondary"><i class="fa-regular fa-copy"></i></button></td>
+        <td>{{varEventDate|discordTime:fmt.key}}</td>
+        <td>{{varEventDate|discordTimeDisplay:fmt.key}}</td>
+        <td><button [cdkCopyToClipboard]="varEventDate|discordTime:fmt.key" type="button" class="btn btn-secondary"><i class="fa-regular fa-copy"></i></button></td>
       </tr>
     }
   </table>
