@@ -4,8 +4,10 @@ import { loadCalendarEvents, serveCalendar } from '@/cron/calendar';
 import { executeCrawler } from '@/cron/crawler';
 import { processAnnouncements } from '@/cron/notification';
 import { openAllThreads } from '@/cron/threadopen';
+import { container, TYPES } from '@/ic.config';
 import { logger } from '@/logging/logger';
-import { Controller, Get, Query, Req, Res } from 'decorators-express';
+import { Body, Controller, Get, Param, Post, Query, Req, Res } from 'decorators-express';
+import { Client, GuildTextBasedChannel } from 'discord.js';
 import { Request, Response } from 'express';
 
 async function runTasks(funcList: any): Promise<void> {
@@ -111,5 +113,39 @@ export class BotController {
         logger.debug("threadOpener");
         openAllThreads().then(() => res.send("OK"));
     }
+ 
+    @Post("publish")
+    async publish(@Body() payload: {[key:string]: any}, @Res() res: Response) {
+        
+        console.log(payload);
+
+        const client = container.get(TYPES.Bot).client as Client;
+        const guild = client.guilds.cache.get(payload.guild);
+        const channel = guild?.channels.resolve(payload.channel);
+
+        if (channel && channel.isTextBased()) {
+            if (payload.reply) {
+                const message = await channel.messages.fetch(payload.reply);
+                console.log(message);
+                if (message) {
+                    message.reply({content: payload.message})
+                        .then(() => res.send("OK"))
+                        .catch(e => res.send(e));
+                } else {
+                    res.send("NOK");        
+                }
+            } else {
+                (channel as GuildTextBasedChannel).send({content: payload.message})
+                .then(() => res.send("OK"))
+                .catch(e => res.send(e));
+            }
+        } else {
+            res.send("NOK");
+        }
+
+    }
+
+
     
+
 }
