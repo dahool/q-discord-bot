@@ -10,6 +10,7 @@ import { PlayerListComponent } from './player-list/playerlist.component';
 import { MenuComponent } from './server-selection/menu-selection.component';
 import { ServerSelectionComponent } from './server-selection/server-selection.component';
 import { LocalService } from './service/local.service';
+import { ThreadOpenerConfigComponent } from './config-man/threadopener.component';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,7 @@ const routes: Routes = [
     path: 'server',
     canActivate: [storeGuard],
     component: MenuComponent,
-  },  
+  },
   {
     path: 'config/guild',
     canActivate: [storeGuard],
@@ -55,7 +56,7 @@ const routes: Routes = [
     path: 'config/welcome',
     canActivate: [storeGuard],
     component: WelcomeConfigComponent
-  },  
+  },
   {
     path: 'config/follow',
     canActivate: [storeGuard],
@@ -65,12 +66,17 @@ const routes: Routes = [
     path: 'config/tp',
     canActivate: [storeGuard],
     component: ThreadPingConfigComponent
-  },  
+  },
+  {
+    path: 'config/twatcher',
+    canActivate: [storeGuard],
+    component: ThreadOpenerConfigComponent
+  },
   {
     path: 'config/translate',
     canActivate: [storeGuard],
     component: TranslatorConfigComponent
-  },    
+  },
   {
     path: 'events',
     canActivate: [storeGuard],
@@ -79,7 +85,7 @@ const routes: Routes = [
   {
     path: 'players',
     component: PlayerListComponent
-  }  
+  }
 ];
 
 @NgModule({

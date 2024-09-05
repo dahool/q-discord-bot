@@ -38,20 +38,24 @@ export class AppServiceMock implements IAppService {
       {
         id: "872582478206996584",
         name: "general",
-        parent: "Text Channels"
+        parent: "Text Channels",
+        type: "0"
       },
       {
         id: "1128341026734624819",
-        name: "rules"
+        name: "rules",
+        type: "0"
       },
       {
         id: "1128341026734624820",
-        name: "moderator-only"
+        name: "moderator-only",
+        type: "0"
       },
       {
         id: "1128341116148781177",
         name: "forum-channel",
-        parent: "Text Channels"
+        parent: "Text Channels",
+        type: "15"
       }
     ]);
   }

@@ -26,6 +26,9 @@ export interface Config extends Document {
         announceChannel: string,
         message: string
     }],
+    threadArchiverWatcher?: {
+        channels: string[]
+    },
     territoyCalendar?: string,
     welcomeBye?: {
         join?: {

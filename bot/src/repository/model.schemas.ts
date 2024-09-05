@@ -28,6 +28,9 @@ const ConfigSchema = new Schema<Config>({
         announceChannel: String,
         message: String
     }], // new threads announcements
+    threadArchiverWatcher: {
+        channels: [String]
+    },
     welcomeBye: {
         join: {
             channel: String,

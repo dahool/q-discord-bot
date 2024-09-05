@@ -3,6 +3,7 @@ import { DAILY_TASKS, FREQ_TASKS, MID_DAILY_TASKS } from '@/cron';
 import { loadCalendarEvents, serveCalendar } from '@/cron/calendar';
 import { executeCrawler } from '@/cron/crawler';
 import { processAnnouncements } from '@/cron/notification';
+import { openAllThreads } from '@/cron/threadopen';
 import { logger } from '@/logging/logger';
 import { Controller, Get, Query, Req, Res } from 'decorators-express';
 import { Request, Response } from 'express';
@@ -105,4 +106,10 @@ export class BotController {
         loadCalendarEvents().then(() => res.send("OK"));
     }    
 
+    @Get("/threadOpener")
+    threadOpener(@Res() res: Response) {
+        logger.debug("threadOpener");
+        openAllThreads().then(() => res.send("OK"));
+    }
+    
 }

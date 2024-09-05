@@ -1,0 +1,43 @@
+<div class="list-group mt-5 mb-4">
+
+    <form (ngSubmit)="trySave()" #form="ngForm">
+      @if (isReady) {
+      <div class="card">
+          <div class="card-body">
+
+            <fieldset>
+              <legend>Keep Threads Unarchived
+                <button (click)="addNewThreadFollow()" type="button" class="btn btn-primary float-end"><i class="fas fa-plus"></i></button>
+              </legend>
+
+              @for (nta of config.threadArchiverWatcher?.channels; track $index; let i = $index) {
+              <div class="container-fluid border p-2 rounded mb-2" ngModelGroup="followGroup_{{i}}">
+
+                <div class="clearfix">
+                  <button (click)="removeThreadFollow(i)" type="button" class="btn btn-danger float-end"><i class="fas fa-minus"></i></button>
+                </div>
+
+                <div class="row">
+                  <div class="col-10">
+                    <div class="form-group">
+                      <label for="autoFollowThreadChannel{{i}}">Channel</label>
+                      <select-channel-input class="form-control" name="autoFollowThreadChannel{{i}}" [options]="filteredChannelList" [(ngModel)]="config.threadArchiverWatcher!.channels[i]" required></select-channel-input>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              }
+            </fieldset>
+
+          </div>
+
+          <div class="card-footer text-center">
+              <button type="submit" class="btn btn-success">Save</button>&nbsp;
+          </div>
+        </div>
+      }
+    </form>
+
+</div>
+

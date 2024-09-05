@@ -15,14 +15,14 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
       useExisting: forwardRef(() => SelectChannelInputComponent),
       multi: true,
     },
-  ],    
+  ],
 })
 export class SelectChannelInputComponent implements  ControlValueAccessor, OnInit {
 
   @Input() formControlName: string = '';
   @Input("options") channelList: any[] = [];
   @Input("multiple") isMultiple: boolean = false;
-  
+
   @Output("change") onChange = new EventEmitter<any>();
 
   @ViewChild('inputField', { static: true })
@@ -38,7 +38,7 @@ export class SelectChannelInputComponent implements  ControlValueAccessor, OnIni
           this.formControlName = "select-channel-input-" + Math.random().toString(36).substring(2, 9);
       }
   }
-  
+
   onValueUpdate(value: any) {
     let publish;
     if (Array.isArray(value)) {
@@ -48,7 +48,7 @@ export class SelectChannelInputComponent implements  ControlValueAccessor, OnIni
     }
     this.onChange.emit(publish);
     this._onChange(publish);
-  }  
+  }
 
   writeValue(obj: any) {
     this.field.writeValue(obj);
@@ -65,5 +65,5 @@ export class SelectChannelInputComponent implements  ControlValueAccessor, OnIni
   setDisabledState?(isDisabled: boolean): void {
     this.field.setDisabledState(isDisabled);
   }
-  
+
 }

@@ -2,6 +2,7 @@ import { cleanUpCalendar, postDailyEvents, processAnnouncements, rolloutEvents, 
 import { loadCalendarEvents } from "./calendar"
 import { cleanUpPlayerInfo, cleanupTempRoles } from "./cleanup"
 import { executeCrawler } from "./crawler"
+import { openAllThreads } from "./threadopen"
 
 export const FREQ_TASKS = [
     processAnnouncements,
@@ -14,7 +15,8 @@ export const DAILY_TASKS = [
     //executeCrawler,
     loadCalendarEvents,
     cleanupTempRoles,
-    cleanUpPlayerInfo
+    cleanUpPlayerInfo,
+    openAllThreads
 ]
 
 export const MID_DAILY_TASKS = [

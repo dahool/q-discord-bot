@@ -159,7 +159,8 @@ export class ApiController {
                 return {
                     id: c.channelId,
                     name: c.name,
-                    parent: c.category
+                    parent: c.category,
+                    type: c.type
                 }
             }))
         });

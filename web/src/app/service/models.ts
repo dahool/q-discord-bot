@@ -34,6 +34,7 @@ export interface Channel {
     id: string;
     name: string;
     parent?: string;
+    type?: string
 }
 
 export interface Role {
@@ -67,7 +68,10 @@ export interface Config {
     autoFollowThreadChannels?: [{
         channel: string,
         silent: boolean
-    }]
+    }],
+    threadArchiverWatcher?: {
+      channels: string[]
+    },
     newThreadAnnouncer?: [{
         channels: string[]
         announceChannel: string

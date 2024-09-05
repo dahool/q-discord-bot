@@ -147,14 +147,14 @@ export async function rolloutEvents() {
     return Promise.all(asyncWaiting);
 }
 
-export async function cleanUpCalendar() {
+export async function cleanUpCalendar(): Promise<any> {
     logger.debug("Running cleanUpCalendar");
     return CalendarModel.deleteMany({
         start: { $lt: DateTime.utc().minus({ days: 1 }).toJSDate()},
     }).exec();
 }
 
-export async function scheduleDiscordEvents() {
+export async function scheduleDiscordEvents(): Promise<any> {
 
     logger.debug("Running scheduleDiscordEvents");
     
