@@ -1,7 +1,6 @@
 import { environment } from "@/env/environment";
 import { createLogger, format, transports } from 'winston';
 import { PapertrailTransport } from 'winston-papertrail-transport';
-import { get } from 'stack-trace';
 
 const papertrailTransport = new PapertrailTransport({
   host: 'logs4.papertrailapp.com',
@@ -11,20 +10,8 @@ const papertrailTransport = new PapertrailTransport({
   disableTls: false, // Habilita TLS para una conexión segura
 });
 
-const traceContext = format((log) => {
-  const trace = get();
-  const caller = trace[10]; // Ajusta el índice según la profundidad de la pila de llamadas
-  log.meta = {
-    functionName: caller.getFunctionName(),
-    fileName: caller.getFileName(),
-    lineNumber: caller.getLineNumber(),
-  };
-  log.context = `${caller.getFileName()}.${caller.getFunctionName()}:${caller.getLineNumber()}`;
-  return log;
-});
-
 const loggingFormat = format.printf(({timestamp, level, stack, context, message}) => {
-  return `${timestamp} - [${level}] - [${context}]: ${stack || message}`
+  return `${timestamp} [${level}] ${stack || message}`
 })
 
 export const logger = createLogger({
@@ -35,9 +22,7 @@ export const logger = createLogger({
     format.splat(),
     format.colorize(),
     format.simple(),
-    traceContext(),
     loggingFormat
-    //format.printf((log) => `${log.timestamp} [${log.level}]: ${log.message}`)
   ),
   transports: [
     new transports.Console(),
