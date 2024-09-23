@@ -1,7 +1,7 @@
 import { environment } from "@/env/environment";
 import { createLogger, format, transports } from 'winston';
 import { PapertrailTransport } from 'winston-papertrail-transport';
-import * as stackTrace from 'stack-trace';
+import { get } from 'stack-trace';
 
 const papertrailTransport = new PapertrailTransport({
   host: 'logs4.papertrailapp.com',
@@ -12,7 +12,7 @@ const papertrailTransport = new PapertrailTransport({
 });
 
 const traceContext = format((log) => {
-  const trace = stackTrace.get();
+  const trace = get();
   const caller = trace[10]; // Ajusta el índice según la profundidad de la pila de llamadas
   log.meta = {
     functionName: caller.getFunctionName(),
