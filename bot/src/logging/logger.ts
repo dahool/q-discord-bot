@@ -5,6 +5,8 @@ import { PapertrailTransport } from 'winston-papertrail-transport';
 const papertrailTransport = new PapertrailTransport({
   host: 'logs4.papertrailapp.com',
   port: parseInt(environment.logging.port), // Reemplaza con tu puerto de Papertrail
+  hostname: environment.logging.system,
+  program: 'Bot',
   disableTls: false, // Habilita TLS para una conexión segura
 });
 
