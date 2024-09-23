@@ -1,61 +1,24 @@
-/*
 import { environment } from "@/env/environment";
-import * as log4js from "log4js";
+import { createLogger, format, transports } from 'winston';
+import { PapertrailTransport } from 'winston-papertrail-transport';
 
-log4js.configure({
-  appenders: {
-    console: {
-      type: "stdout",
-      layout: {
-        type: "pattern",
-        pattern: "%d{yyyy-MM-dd hh:mm.ss} [%p] [%C] %m"
-      }
-    },
-    database: {
-      type: myAppenderModule,
-      host: environment.logging.host,
-      token: environment.logging.token,
-      database: environment.logging.database,
-      measurement: environment.logging.measurement,
-      fields: ['data', 'fileName', 'lineNumber'],
-      tags: ['level', 'fileName']
-    },
-  },
-  categories: {
-    default: {
-      appenders: ["console", "database"],
-      level: "debug",
-      enableCallStack: true
-    }
-  },
-  pm2: true
+const papertrailTransport = new PapertrailTransport({
+  host: 'logs4.papertrailapp.com',
+  port: parseInt(environment.logging.port), // Reemplaza con tu puerto de Papertrail
+  disableTls: false, // Habilita TLS para una conexión segura
 });
 
-export const logger = log4js.getLogger();
-*/
-
-import { environment } from "@/env/environment";
-import { Logger } from "@tsed/logger";
-import "./influxAppender";
-
-export const logger = new Logger("default");
-
-logger.appenders
-  .set("database", {
-    type: "influxAppender",
-    host: environment.logging.host,
-    database: environment.logging.database,
-    token: environment.logging.token,
-    measurement: environment.logging.measurement,
-    fields: ['data', 'fileName', 'lineNumber'],
-    layout: {
-      type: "messagePassThrough"
-    }
-  })
-  .set("console", {
-    type: "stdout",
-    layout: {
-      type: "pattern",
-      pattern: "%d{yyyy-MM-dd hh:mm:ss} [%p] %m"
-    }
-  });
+export const logger = createLogger({
+  level: environment.logging.logLevel,
+  format: format.combine(
+    format.timestamp(),
+    format.splat(),
+    format.colorize(),
+    format.simple(),
+    format.printf((log) => `${log.timestamp} [${log.level}]: ${log.message}`)
+  ),
+  transports: [
+    new transports.Console(),
+    papertrailTransport
+  ]
+});

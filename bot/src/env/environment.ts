@@ -33,7 +33,8 @@ export const environment = {
         database: process.env.LOGGING_DB,
         measurement: process.env.LOGGING_MES,
         token: process.env.LOGGING_TOKEN,
-        logLevel: process.env.LOGGING_LEVEL || 'debug'
+        logLevel: process.env.LOGGING_LEVEL || 'debug',
+        port: process.env.LOGGING_PORT || '0'
     },
     translator: {
         endpoint: process.env.TRANSLATOR_ENDPOINT || 'https://api.cognitive.microsofttranslator.com/',
