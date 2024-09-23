@@ -37,6 +37,7 @@
     "serve-favicon": "^2.5.0",
     "sherlockjs": "^1.4.2",
     "source-map-support": "^0.5.21",
+    "stack-trace": "1.0.0-pre2",
     "string-template": "^1.0.0",
     "striptags": "^3.2.0",
     "typeorm": "^0.3.20",

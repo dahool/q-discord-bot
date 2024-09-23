@@ -80,6 +80,9 @@ importers:
       source-map-support:
         specifier: ^0.5.21
         version: 0.5.21
+      stack-trace:
+        specifier: 1.0.0-pre2
+        version: 1.0.0-pre2
       string-template:
         specifier: ^1.0.0
         version: 1.0.0
@@ -2073,6 +2076,10 @@ packages:
 
   stack-trace@0.0.10:
     resolution: {integrity: sha512-KGzahc7puUKkzyMt+IqAep+TVNbKP+k2Lmwhub39m1AsTSkaDutx56aDCo+HLDzf/D26BIHTJWNiTG1KAJiQCg==}
+
+  stack-trace@1.0.0-pre2:
+    resolution: {integrity: sha512-2ztBJRek8IVofG9DBJqdy2N5kulaacX30Nz7xmkYF6ale9WBVmIy6mFBchvGX7Vx/MyjBhx+Rcxqrj+dbOnQ6A==}
+    engines: {node: '>=16'}
 
   statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
@@ -4532,6 +4539,8 @@ snapshots:
       tweetnacl: 0.14.5
 
   stack-trace@0.0.10: {}
+
+  stack-trace@1.0.0-pre2: {}
 
   statuses@2.0.1: {}
 
