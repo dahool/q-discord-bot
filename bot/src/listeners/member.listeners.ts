@@ -140,7 +140,7 @@ export class GuildMemberPresenceUpdateListener implements DiscordEventListener {
 
     async onEvent(client: Client, oldPre: Presence, newPre: Presence): Promise<any> {
         let model = await getOrCreateMember(newPre.member!);
-        logger.debug("Updated: %s", model.username)
+        //logger.debug("Updated: %s", model.username)
         model.lastSeen = new Date();
         if (newPre.member) model.avatar = newPre.member.displayAvatarURL();
         return model.save();
