@@ -87,7 +87,7 @@ function buildGeneralReminderAnnouncement(event: CalendarEvent): MessageCreateOp
 }
 
 function buildScheduledEventsAnnouncement(event: CalendarEvent): MessageCreateOptions {
-    return { content: `Attention @everyone **${event.summary}** is starting soon. Join us ${event.extra}` }
+    return { content: `Attention @everyone **${event.summary}** is starting soon. ${event.extra}` }
 }
 
 async function postAnnouncement(event: CalendarEvent, channel: LocalChannelManager): Promise<CalendarEvent> {
