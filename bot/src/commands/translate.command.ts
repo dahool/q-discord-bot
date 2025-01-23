@@ -5,6 +5,27 @@ import { logger } from "@/logging/logger";
 import { ConfigModel } from "@/repository";
 import { ApplicationCommandOptionType, ApplicationCommandType, ChatInputCommandInteraction, Client, Events, IntentsBitField, Message, MessageContextMenuCommandInteraction, MessageFlags } from "discord.js";
 
+function splitIntoParagraph(text: string) {
+    if (text.length < 2000) {
+        return [text];
+    }
+    const paragraphs = text.split('\n');
+    const sections: string[] = [];
+    let current = '';
+    for (const paragraph of paragraphs) {
+        if ((current.length + paragraph.length + 4) < 2000) {
+            current += '\n' + paragraph;
+        } else {
+            sections.push(current);
+            current = paragraph;
+        }
+    }
+    if (current.length > 0) {
+        sections.push(current);
+    }
+    return sections;
+}
+
 @Command({
 	name: 'translate',
 	description: 'Translate Text',
@@ -81,7 +102,10 @@ export class TranslatePrivateContextCommand implements DiscordCommand {
 
         try {
             const response = await translator.translate(text, translateTo, lang);
-            return interaction.editReply({ content: response.text });
+            await interaction.editReply({ content: (translateTo == 'es' ? 'Traducido desde ' : 'Translated from ') + '`'+lang+'`'});
+            for (const text of splitIntoParagraph(response.text)) {
+                await interaction.followUp({ content: text, ephemeral: true });
+            }
         } catch (error) {
             logger.error(error);
             return interaction.editReply({ content: "Sorry, there was an error processing your request" });
@@ -112,7 +136,10 @@ export class TranslateContextCommand implements DiscordCommand {
 
         try {
             const response = await translator.translate(text, translateTo, lang);
-            interaction.targetMessage.reply({ content: response.text, flags: MessageFlags.SuppressNotifications });
+            // texts should be posted in order
+            for (const text of splitIntoParagraph(response.text)) {
+                await interaction.channel?.send({ content: `:flag_${translateTo}:\n${text}`, flags: MessageFlags.SuppressNotifications });
+            }
             return interaction.editReply({ content: (translateTo == 'es' ? 'Traducido desde ' : 'Translated from ') + '`'+lang+'`'});
         } catch (error) {
             logger.error(error);
@@ -138,7 +165,9 @@ export class AutomaticPostTranslator implements DiscordEventListener {
                     logger.debug("Translating '%s'", message.content);
                     const translator = new TranslatorClient();
                     const response = await translator.translate(message.content, translateConfig.language);
-                    return message.channel.send({ content: `:flag_${translateConfig.language}:\n${response.text}`, flags: MessageFlags.SuppressNotifications });
+                    for (const text of splitIntoParagraph(response.text)) {
+                        await message.channel.send({ content: `:flag_${translateConfig.language}:\n${text}`, flags: MessageFlags.SuppressNotifications });
+                    }
                 }
             }
         }
