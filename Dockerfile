@@ -53,6 +53,8 @@ COPY --from=build --chown=appuser:appuser /usr/build/pm /usr/app
 COPY --from=build --chown=appuser:appuser /usr/build/dist /usr/app/bot
 COPY --from=build --chown=appuser:appuser /usr/build/bot/node_modules /usr/app/bot/node_modules
 
+RUN chmod +x ./entrypoint.sh
+
 USER appuser
 
 EXPOSE 80
