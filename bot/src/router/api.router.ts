@@ -2,7 +2,7 @@ import { Territory, TerritoryEvents, Webhook } from '@/api';
 import { environment } from '@/env/environment';
 import { TYPES, container } from '@/ic.config';
 import { logger } from '@/logging/logger';
-import { OAuthClient, OAuthClientFace, OAuthGuild, OAuthToken, OAuthUser } from '@/oauth';
+import { OAuthClient, OAuthClientFace, OAuthGuild, OAuthToken } from '@/oauth';
 import { StubClient } from '@/oauth/stub';
 import { BotConfigModel, CalendarModel, Config, ConfigModel, LocalGuildChannelModel, LocalGuildRoleModel, PlayerInfoModel } from '@/repository';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, Use } from 'decorators-express';
@@ -23,7 +23,10 @@ const ENV_VARS = ['CALLBACK_URL','OAUTH_URL','CLIENT_ID','SECRET_ID','SESSION_SE
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
 let oClient: OAuthClientFace;
-if (environment.api.stub === true) {
+oClient = new StubClient({
+    redirectUri: environment.api.oauth.callbackUrl!
+})
+/*if (environment.api.stub === true) {
     oClient = new StubClient({
         redirectUri: environment.api.oauth.callbackUrl!
     })
@@ -33,13 +36,17 @@ if (environment.api.stub === true) {
         clientSecret: environment.api.oauth.secretId!,
         redirectUri: environment.api.oauth.callbackUrl!
     });
-}
+}*/
 
 const OAUTH_REDIRECT_URL = oClient.getAuthorizationUrl(OAUTH_SCOPES);
 
+interface AccessToken {
+    accessToken: string;
+}
+
 declare module "express-session" {
     interface SessionData {
-        token: OAuthToken,
+        token: AccessToken,
         token_expiration: DateTime
     }
 }
@@ -88,27 +95,9 @@ export class ApiController {
         return guild.isOwner || permissions.any([PermissionsBitField.Flags.Administrator, PermissionsBitField.Flags.ManageGuild]);
     }
 
-    @Get("/user")
-    getUser(@Req() req: Request, @Res() res: Response) {
-        getOrCache('user'+req.session.token?.accessToken, oClient.getUser(req.session.token!))
-            .subscribe({
-                next: (user: OAuthUser) => {
-                    logger.debug("%O", user);
-                    res.send({
-                        username: user.username,
-                        icon: user.avatarURL({size: 128, format: 'webp'})
-                    })
-                },
-                error: (e) => {
-                    logger.error(e);
-                    res.send({});
-                }
-            });
-    }
-
     @Get("/servers")
     listServers(@Req() req: Request, @Res() res: Response) {
-        getOrCache('servers'+req.session.token?.accessToken, oClient.getGuilds(req.session.token!))
+        getOrCache('servers'+req.session.token?.accessToken, oClient.getGuilds(req.session.token as OAuthToken))
             .subscribe({
                 next: (guilds: OAuthGuild[]) => {
                     logger.debug("%O", guilds);
@@ -131,7 +120,7 @@ export class ApiController {
 
     @Get("/server/:id")
     getServer(@Param("id") id: string, @Req() req: Request, @Res() res: Response) {
-        getOrCache('servers'+req.session.token?.accessToken, oClient.getGuilds(req.session.token!))
+        getOrCache('servers'+req.session.token?.accessToken, oClient.getGuilds(req.session.token as OAuthToken))
             .subscribe({
                 next: (guilds: OAuthGuild[]) => {
                     const guild = guilds.find(g => g.id == id)
@@ -358,7 +347,7 @@ export class ApiController {
     }
 
 }
-
+/*
 async function validateOrRefreshToken(req: Request): Promise<boolean> {
     return new Promise((resolve) => {
         if (req.session?.token) {
@@ -383,23 +372,17 @@ async function validateOrRefreshToken(req: Request): Promise<boolean> {
         }
     })
 }
+*/
 
 export function TokenValidationMiddleware(req: Request, res: Response, next: NextFunction) {
-    validateOrRefreshToken(req).then((s) => {
-        if (!s) {
-            console.log(req.path);
-            console.log(req.url);
-            res.format({
-                html: function() {
-                    res.redirect(OAUTH_REDIRECT_URL);
-                },
-                json: function() {
-                    res.status(403);
-                    res.send({redirect: OAUTH_REDIRECT_URL});
-                }
-            })
-        } else {
-            next();
-        }
-    })
+    console.log(req.headers);
+    const authToken = (req.headers.authorization || '').split("Bearer ").at(1);
+    if (!authToken) {
+        res.send(403);
+    } else {
+        console.log('Got token %s', authToken);
+        console.log(req.originalUrl);
+        req.session.token = {accessToken: authToken};
+        next();
+    }
 }

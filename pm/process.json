@@ -3,6 +3,14 @@
       {
         "name": "Bot",
         "script": "./main.js",
+        "cwd": "./bot",
+        "autorestart": true,
+        "restart_delay": 5000,
+        "max_restarts": 5
+      },
+      {
+        "name": "Dashboard",
+        "script": "./server.js",
         "cwd": "./",
         "autorestart": true,
         "restart_delay": 5000,

@@ -1,19 +1,19 @@
 services:
-  db:
-    image: 'mongo:7'
-    container_name: qdb
-    volumes:
-      - ./dbdata:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=discordbot
-      - MONGO_INITDB_ROOT_PASSWORD=discordbot
-      - MONGO_INITDB_DATABASE=discordbot
-    command: mongod --quiet --logpath /dev/null 
+  # db:
+  #   image: 'mongo:7'
+  #   container_name: qdb
+  #   volumes:
+  #     - mongodata:/data/db
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=discordbot
+  #     - MONGO_INITDB_ROOT_PASSWORD=discordbot
+  #     - MONGO_INITDB_DATABASE=discordbot
+  #   command: mongod --quiet --logpath /dev/null
 
   # mongo-express:
   #   image: mongo-express
   #   depends_on:
-  #     - db    
+  #     - db
   #   ports:
   #     - 8081:8081
   #   environment:
@@ -38,15 +38,15 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
-        window: 120s    
-    depends_on:
-      - db
-    env_file:    
+        window: 120s
+    env_file:
       - ./bot/.env
     environment:
       - TZ=Etc/UTC
       - DASHBOARD_URL=http://localhost:3000
       - NODE_ENV=dev
-      - DBCONN=mongodb://discordbot:discordbot@db:27017/discordbot?authSource=admin
     ports:
-       - "3000:3000"
+       - "80:80"
+
+#volumes:
+ # mongodata:

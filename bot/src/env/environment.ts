@@ -45,6 +45,7 @@ export const environment = {
     timeZone: process.env.ZONE,
     defaultTZ: process.env.TZ,
     secret: process.env.SECRET,
-    port: process.env.WEB_PORT || 3000,
+    //port: process.env.WEB_PORT || 3000,
+    port: 3001,
     playerInfoURL: process.env.PLAYER_INFO_URL || 'https://stfc.wtf/power/__data.json?server=36&sort=level&page='
 }

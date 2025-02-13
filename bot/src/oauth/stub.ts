@@ -47,7 +47,7 @@ export class StubClient implements OAuthClientFace {
         let guilds = [new OAuthGuild({
             id: '695281624786534420',
             name: 'Test1',
-            icon: null,
+            icon: "f3652292f3cfb78f9f4bd041d6254c8b",
             owner: true,
             permissions: PermissionsBitField.Flags.Administrator,
             features: ['X']
@@ -55,11 +55,20 @@ export class StubClient implements OAuthClientFace {
         new OAuthGuild({
             id: '700723065524584599',
             name: 'Test2',
-            icon: null,
+            icon: "4c96dfaf43fb8f161405f016365d0d33",
             owner: true,
             permissions: PermissionsBitField.Flags.Administrator,
             features: ['X']
-        })];        
+        }),
+        new OAuthGuild({
+            id: '872582478206996581',
+            name: 'Test3',
+            icon: "003bd069e18510ef76096f6749d3cb9e",
+            owner: true,
+            permissions: PermissionsBitField.Flags.Administrator,
+            features: ['X']
+        })
+        ];        
         return of(guilds);
     }
 
