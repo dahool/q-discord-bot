@@ -18,8 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.ico" />
         <ThemeModeScript />
-      </head>      
+      </head>
       <body className={`${inter.className} antialised`}>{children}</body>
     </html>
   );
