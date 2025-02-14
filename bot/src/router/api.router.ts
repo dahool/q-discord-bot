@@ -23,10 +23,7 @@ const ENV_VARS = ['CALLBACK_URL','OAUTH_URL','CLIENT_ID','SECRET_ID','SESSION_SE
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
 let oClient: OAuthClientFace;
-oClient = new StubClient({
-    redirectUri: environment.api.oauth.callbackUrl!
-})
-/*if (environment.api.stub === true) {
+if (environment.api.stub === true) {
     oClient = new StubClient({
         redirectUri: environment.api.oauth.callbackUrl!
     })
@@ -36,7 +33,7 @@ oClient = new StubClient({
         clientSecret: environment.api.oauth.secretId!,
         redirectUri: environment.api.oauth.callbackUrl!
     });
-}*/
+}
 
 const OAUTH_REDIRECT_URL = oClient.getAuthorizationUrl(OAUTH_SCOPES);
 
@@ -89,7 +86,7 @@ export class AuthController {
 @Controller("/api")
 @Use(TokenValidationMiddleware)
 export class ApiController {
-    
+
     isGuildOwner(guild: OAuthGuild): boolean {
         const permissions = new PermissionsBitField(guild.permissions);
         return guild.isOwner || permissions.any([PermissionsBitField.Flags.Administrator, PermissionsBitField.Flags.ManageGuild]);
@@ -139,7 +136,7 @@ export class ApiController {
                     res.send({});
                 }
             });
-    }    
+    }
 
     @Get("/channels/:id")
     listChannels(@Param("id") id: string, @Req() req: Request, @Res() res: Response) {
@@ -153,7 +150,7 @@ export class ApiController {
                 }
             }))
         });
-    }    
+    }
 
     @Get("/roles/:id")
     listRoles(@Param("id") id: string, @Req() req: Request, @Res() res: Response) {
@@ -192,7 +189,7 @@ export class ApiController {
             }).catch(e => {
                 logger.error(e);
                 res.send({status: false, error: e});
-            })        
+            })
 
     }
 
@@ -214,7 +211,7 @@ export class ApiController {
                 })
             }));
         });
-    }    
+    }
 
     @Post("newEvent/:id")
     saveNewEvent(@Param("id") id: string, @Body() payload: {[key:string]: any}, @Res() res: Response) {
@@ -300,7 +297,7 @@ export class ApiController {
         ]).exec();
         res.send(l[0])
     }
-    
+
     @Post("playerInfo")
     async getPlayerInfo(@Body() payload: PlayerInfoFilter, @Res() res: Response) {
 		const botConfig = await BotConfigModel.findOne().exec();
@@ -337,7 +334,7 @@ export class ApiController {
                 version: p.version
             }
         }))
-        
+
     }
 
     _postConfigUpdate(updated: Config) {
