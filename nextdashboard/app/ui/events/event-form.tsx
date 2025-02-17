@@ -4,19 +4,18 @@ import { FaSave } from "react-icons/fa"
 import { Button, Label, Modal, TextInput, ToggleSwitch } from "flowbite-react"
 import { useEffect, useState } from "react"
 import Select from "@dahool/react-tailwindcss-select"
-import { fetchServerRoles, fetchZoneList } from "@/app/services/services"
-import { EventSchedule, Role, Zone } from "@/app/models"
+import { EventSchedule } from "@/app/models"
 import {
   SelectValue,
   Option,
 } from "@dahool/react-tailwindcss-select/dist/components/type"
 import { DateTime } from "luxon"
 import { WEEK_FORMAT } from "@/app/dateformat"
-import { saveEvent } from "@/app/services/actions"
+import { saveEvent } from "@/lib/server/actions"
 import { toast } from "react-toastify"
 import { useAppDispatch } from "@/lib/hooks"
-import { loadEvents } from '@/lib/features/events'
 import clsx from 'clsx';
+import { eventsQuery, useGetRolesQuery, useGetZonesQuery, useUpdateEventMutation } from "@/lib/server/query"
 
 interface FormValues {
   zone?: string
@@ -26,12 +25,17 @@ interface FormValues {
   ping?: string[]
 }
 
+interface EventDialogProps {
+  serverId: string
+  event?: EventSchedule
+  show: boolean
+  onClose: () => void
+}
+
 interface EventFormProps {
   serverId: string
-  id?: string
-  openModal: boolean
+  event?: EventSchedule
   onClose: () => void
-  data?: EventSchedule
 }
 
 const initialValue: FormValues = {
@@ -42,27 +46,54 @@ const initialValue: FormValues = {
   ping: []
 }
 
-export default function EventForm({ serverId, id, openModal, onClose, data }: EventFormProps) {
+export default function EventFormDialog(props: EventDialogProps) {
+
+  const [openModal, setOpenModal] = useState(false)
+
+  const onCloseModal = () => {
+    props.onClose()
+    setOpenModal(false)
+  }
+
+  useEffect(() => {
+    setOpenModal(props.show)
+  }, [props.show])
+
+  if (!openModal) {
+    return (<></>)
+  }
+
+  return (
+      <Modal show={openModal} size="md" onClose={onCloseModal} popup>
+        <Modal.Header />
+        <Modal.Body>
+            <EventForm {...props} onClose={onCloseModal} />
+        </Modal.Body>
+      </Modal>
+  )
+
+}
+
+export function EventForm({serverId, event, onClose}: EventFormProps) {
   const dispatch = useAppDispatch()
-  const [zones, setZones] = useState<Zone[]>([])
-  const [roles, setRoles] = useState<Role[]>([])
-  const [eventData, setEventData] = useState<EventSchedule | undefined>(data)
-  const [zoneTime, setZoneTime] = useState<string | undefined>("")
+  const { data: zones, isFetching: isZonesPending } = useGetZonesQuery()
+  const { data: roles, isFetching: isRolesPending } = useGetRolesQuery(serverId)
+  const [eventData, setEventData] = useState<EventSchedule | undefined>(undefined)
+  const [zoneTime, setZoneTime] = useState<string>("")
   const [formData, setFormData] = useState<FormValues>(initialValue)
   const [isSubmit, setIsSubmit] = useState(false)
   const [errors, setErrors] = useState<any>({})
 
-  const saveServerEvent = saveEvent.bind(null, serverId, id)
+  const saveServerEvent = saveEvent.bind(null, serverId, event?.id)
 
   const handleZoneChange = (op: SelectValue) => {
     const zoneName = (op as Option).value
-    const next = zones.find((z) => z.zone == zoneName)?.next
+    const next = zones!.find((z) => z.zone == zoneName)!.next // is certain a zone exists
     setZoneTime(next)
     setFormData({ ...formData, zone: zoneName, next: next })
   }
   const onFormChange = (value: any) => {
     setFormData({ ...formData, [value.target.id]: value.target.value })
-    console.log(formData)
   }
   const onPingChange = (value: any) => {
     if (value != null) {
@@ -78,7 +109,7 @@ export default function EventForm({ serverId, id, openModal, onClose, data }: Ev
     console.log(r)
     setIsSubmit(false)
     if (r.status === true) {
-      dispatch(loadEvents(serverId))
+      dispatch(eventsQuery.util.resetApiState())
       toast.success('Saved')
       closeHandler()
     } else if (r.status === false) {
@@ -91,109 +122,94 @@ export default function EventForm({ serverId, id, openModal, onClose, data }: Ev
   }
 
   useEffect(() => {
+    setEventData(event)
+  }, [event])
+
+  useEffect(() => {
     if (eventData) {
       setFormData({ ...formData, title: eventData.summary, recurrent: eventData.recurrent, zone: eventData.location, next: eventData.dtStart, ping: eventData.pingRoles })
     }
   }, [eventData])
 
-  useEffect(() => {
-    const fetchZones = async () => {
-      setZones(await fetchZoneList())
-    }
-    fetchZones()
-  }, [])
-
-  useEffect(() => {
-    const fetchRoles = async () => {
-      setRoles(await fetchServerRoles(serverId))
-    }
-    fetchRoles()
-  }, [serverId])
+  console.log(zones)
 
   return (
-    <>
-      <Modal show={openModal} size="md" onClose={closeHandler} popup>
-        <Modal.Header />
-        <Modal.Body>
-          <form>
-            <div className="space-y-6">
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="zone" value="Territory" />
-                </div>
-                <div className={clsx({'border rounded-md invalid': errors?.zone })}>
-                <Select
-                  isSearchable={true}
-                  placeholder="Territory"
-                  loading={zones.length == 0}
-                  options={zones?.map((o) => {
-                    return { value: o.zone, label: o.zone }
-                  })}
-                  onChange={handleZoneChange}
-                  isDisabled={id != null}
-                  value={
-                    formData.zone
-                      ? { value: formData.zone, label: formData.zone }
-                      : null
-                  }
-                  primaryColor="blue"
-                  classNames={{
-                    list: "h-[10rem] overflow-y-auto",
-                  }}
-                />
-                </div>
-              </div>
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="next" value="Next Schedule" />
-                </div>
-                <DisplayNextTime initialValue={zoneTime} value={formData.next} onChange={(v) => setFormData({ ...formData, next: v }) }/>
-              </div>
-              <div className="flex items-center gap-2">
-                <ToggleSwitch checked={formData.recurrent == true} label="Repeat" onChange={(v) => setFormData({ ...formData, recurrent: v }) } />
-              </div>
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="title" value="Summary" />
-                </div>
-                <TextInput
-                  id="title"
-                  type="text"
-                  value={formData.title}
-                  onChange={onFormChange}
-                  required={true}
-                  color={errors?.title ? "failure" : undefined}
-                />
-              </div>
-              <div>
-                <div className="mb-2 block">
-                  <Label htmlFor="ping" value="Ping Roles" />
-                </div>
-                <Select
-                  isSearchable={false}
-                  isClearable={true}
-                  placeholder="Ping Roles"
-                  loading={roles.length == 0}
-                  options={roles?.map((o) => {
-                    return { value: o.id, label: o.name }
-                  })}
-                  onChange={onPingChange}
-                  isMultiple={true}
-                  value={ formData.ping ? formData.ping.map(v => {return { value: v, label: roles?.find(r => r.id == v)?.name || '' }}) : null }
-                  primaryColor="blue"
-                  classNames={{
-                    list: "h-[10rem] overflow-y-auto",
-                  }}
-                />
-              </div>
-              <div className="w-full flex justify-center">
-                <Button onClick={formSubmit} isProcessing={isSubmit} disabled={isSubmit}><FaSave className="mr-2 h-5 w-5"/> Save</Button>
-              </div>
-            </div>
-          </form>
-        </Modal.Body>
-      </Modal>
-    </>
+    <form>
+      <div className="space-y-6">
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="zone" value="Territory" />
+          </div>
+          <div className={clsx({'border rounded-md invalid': errors?.zone })}>
+          <Select
+            isSearchable={true}
+            placeholder="Territory"
+            loading={isZonesPending}
+            options={zones ? zones?.map((o) => {
+              return { value: o.zone, label: o.zone }
+            }) : []}
+            onChange={handleZoneChange}
+            isDisabled={event != undefined}
+            value={
+              formData.zone
+                ? { value: formData.zone, label: formData.zone }
+                : null
+            }
+            primaryColor="blue"
+            classNames={{
+              list: "h-[10rem] overflow-y-auto",
+            }}
+          />
+          </div>
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="next" value="Next Schedule" />
+          </div>
+          <DisplayNextTime initialValue={zoneTime} value={formData.next} onChange={(v) => setFormData({ ...formData, next: v }) }/>
+        </div>
+        <div className="flex items-center gap-2">
+          <ToggleSwitch checked={formData.recurrent == true} label="Repeat" onChange={(v) => setFormData({ ...formData, recurrent: v }) } />
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="title" value="Summary" />
+          </div>
+          <TextInput
+            id="title"
+            type="text"
+            value={formData.title}
+            onChange={onFormChange}
+            required={true}
+            color={errors?.title ? "failure" : undefined}
+          />
+        </div>
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="ping" value="Ping Roles" />
+          </div>
+          <Select
+            isSearchable={false}
+            isClearable={true}
+            placeholder="Ping Roles"
+            loading={isRolesPending}
+            options={roles ? roles?.map((o) => {
+              return { value: o.id, label: o.name }
+            }): []}
+            onChange={onPingChange}
+            isMultiple={true}
+            value={ formData.ping ? formData.ping.map(v => {return { value: v, label: roles?.find(r => r.id == v)?.name || '' }}) : null }
+            primaryColor="blue"
+            classNames={{
+              list: "h-[10rem] overflow-y-auto",
+            }}
+          />
+        </div>
+        <div className="w-full flex justify-center">
+          <Button onClick={formSubmit} isProcessing={isSubmit} disabled={isSubmit}><FaSave className="mr-2 h-5 w-5"/> Save</Button>
+        </div>
+      </div>
+    </form>
   )
 }
 

@@ -1,10 +1,9 @@
-import { fetchServerById } from "@/app/services/services";
 import StoreProvider from "@/app/StoreProvider";
-import EventList, { EventListLoader } from "@/app/ui/events/event-list";
-import { Suspense } from "react";
+import EventList from "@/app/ui/events/event-list";
+import { getServer } from "@/lib/server/api";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-  const server = await fetchServerById((await params).id)
+  const server = await getServer((await params).id)
   return (
     <StoreProvider>
       <EventList server={server} />

@@ -1,4 +1,4 @@
-import { EventSchedule, Role, Server, Zone } from "../models";
+import { EventSchedule, Role, Server, Zone } from "../../app/models";
 import { ApiResponse } from "./api";
 
 export default class ServerApiStub {

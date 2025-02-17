@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { EventSchedule } from '@/app/models'
 import { AppThunk } from '../store'
-import { fetchServerEvents } from '@/app/services/services'
-import { parseISOdate } from '@/app/utils'
+import { listEvents } from '../server/api'
 
 interface EventsState {
     value: EventSchedule[]
@@ -25,8 +24,7 @@ export const eventsSlice = createSlice({
 export const { setEvents } = eventsSlice.actions
 
 export const loadEvents = (server: string): AppThunk => async dispatch => {
-    //const list = (await fetchServerEvents(server)).map((e) => parseISOdate(e, "dtStart" ,"dtEnd"));
-    const list = await fetchServerEvents(server);
+    const list = await listEvents(server);
     dispatch(setEvents(list));
 }
 export default eventsSlice.reducer

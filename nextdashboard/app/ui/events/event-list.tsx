@@ -6,10 +6,10 @@ import { DateTime } from "luxon";
 import { Bebas_Neue } from "next/font/google";
 import { GROUP_DATE_FORMAT } from "@/app/dateformat";
 import { useEffect, useState } from "react";
-import { AddEvent } from "./add-event";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { loadEvents } from '@/lib/features/events';
-
+import { Button } from "flowbite-react";
+import { FaPlusCircle } from "react-icons/fa";
+import { useGetEventsQuery } from "@/lib/server/query";
+import EventFormDialog from "./event-form";
 const bebas = Bebas_Neue({ weight: "400", style: "normal", subsets: ["latin"] });
 
 function groupEvents(agenda: EventSchedule[]): Map<DateTime, EventSchedule[]> {
@@ -20,29 +20,33 @@ function groupEvents(agenda: EventSchedule[]): Map<DateTime, EventSchedule[]> {
 }
 
 export default function EventList({ server }: { server: Server }) {
-  console.log("SERVER %s", server.id)
-  const eventList = useAppSelector(state => state.events.value)
-  const dispatch = useAppDispatch()
 
-  const [eventGroups, setEventGroups] = useState<Map<DateTime, EventSchedule[]> | null>(null);
-
-  useEffect(() => {
-    console.log("load events")
-    dispatch(loadEvents(server.id))
-  }, [server, dispatch])
+  const [eventGroups, setEventGroups] = useState<Map<DateTime, EventSchedule[]> | null>(null)
+  const [openForm, setOpenForm] = useState<boolean>(false)
+  const [formEvent, setFormEvent] = useState<EventSchedule | undefined>(undefined)
+  const { data: eventList } = useGetEventsQuery(server.id)
 
   useEffect(() => {
     console.log("group events")
+    if (!eventList) return;
     const groupedEvents = groupEvents(eventList);
     setEventGroups(groupedEvents);
   }, [eventList])
+
+  const showForm = (event: EventSchedule | undefined = undefined) => {
+    setFormEvent(event)
+    setOpenForm(true)
+  }
 
   if (!eventGroups) return EventListLoader();
 
   return (
     <>
+      <EventFormDialog serverId={server.id} event={formEvent} show={openForm} onClose={() => setOpenForm(false)}/>
       <div className="m-4 flex justify-end">
-        <AddEvent server={server}/>
+        <Button color="blue" title="Add" aria-label="Add" onClick={() => showForm()}>
+            <FaPlusCircle className="h-4 w-4"/>
+        </Button>
       </div>
       {
       [...eventGroups.entries()].map(
@@ -54,7 +58,7 @@ export default function EventList({ server }: { server: Server }) {
               </div>
               <div className="grid grid-cols-1 gap-2">
                 {
-                  events.map((e: EventSchedule) => <EventCard event={e} key={e._id}/>)
+                  events.map((e: EventSchedule) => <EventCard event={e} key={e._id} onEdit={showForm}/>)
                 }
               </div>
             </div>

@@ -1,11 +1,18 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import eventsReducer from './features/events'
+import { eventsQuery, serverQuery } from './server/query'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      events: eventsReducer
-    }
+      events: eventsReducer,
+      [serverQuery.reducerPath]: serverQuery.reducer,
+      [eventsQuery.reducerPath]: eventsQuery.reducer
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware()
+        .concat(serverQuery.middleware)
+        .concat(eventsQuery.middleware)
   })
 }
 

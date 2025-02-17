@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { fetchUser } from '../services/services';
 import SignOut from './signout';
+import { fetchUser } from '@/lib/server/actions';
 
 export default async function UserProfile() {
   const user = await fetchUser();

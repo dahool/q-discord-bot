@@ -5,7 +5,7 @@ export const environment = {
     },
     url: {
         calendar: process.env.CALENDAR_URL,
-        dashboard: process.env.DASHBOARD_URL  
+        dashboard: process.env.DASHBOARD_URL
     },
     discord: {
         token: process.env.Q_TOKEN,
@@ -19,7 +19,7 @@ export const environment = {
             secretId: process.env.SECRET_ID,
             callbackUrl: process.env.CALLBACK_URL
         },
-        stub: process.env.STUB_ACTIVE || false
+        stub: process.env.NODE_ENV == 'development' || false
     },
     infradb: {
         token: process.env.INFRA_TOKEN
@@ -35,7 +35,7 @@ export const environment = {
         token: process.env.LOGGING_TOKEN,
         logLevel: process.env.LOGGING_LEVEL || 'debug',
         port: process.env.LOGGING_PORT || '0',
-        system: process.env.LOGGING_SYSTEM || 'localhost'        
+        system: process.env.LOGGING_SYSTEM || 'localhost'
     },
     translator: {
         endpoint: process.env.TRANSLATOR_ENDPOINT || 'https://api.cognitive.microsofttranslator.com/',

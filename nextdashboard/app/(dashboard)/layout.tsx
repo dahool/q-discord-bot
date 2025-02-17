@@ -1,4 +1,3 @@
-import MainContent from "../ui/main-content";
 import UserProfile from "../ui/profile";
 
 export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode; }>) {

@@ -3,11 +3,10 @@ import { FaTrashAlt } from "react-icons/fa";
 import { Button, Spinner } from "flowbite-react";
 import { useState } from "react";
 import ConfirmDialog from "../confirm-dialog";
-import { removeEvent } from "@/app/services/actions";
+import { removeEvent } from "@/lib/server/actions";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@/lib/hooks";
-import { loadEvents } from '@/lib/features/events';
-
+import { eventsQuery } from "@/lib/server/query";
 
 export function DeleteEvent({ serverId, id, editable }: { serverId: string, id: string, editable: boolean }) {
 
@@ -28,7 +27,7 @@ export function DeleteEvent({ serverId, id, editable }: { serverId: string, id: 
       setSpinner(true);
       const r = await deleteServerEvent();
       if (r.status) {
-        dispatch(loadEvents(serverId));
+        dispatch(eventsQuery.util.resetApiState())
         toast.success('Event removed');
       } else {
         toast.error(r.message);

@@ -1,9 +1,9 @@
-import { fetchServerById } from "@/app/services/services";
 import Image from "next/image";
 import Link from "next/link";
+import { getServer } from "@/lib/server/api";
 
 export default async function ServerTitle({serverId}: {serverId: string}) {
-  const server = await fetchServerById(serverId);
+  const server = await getServer(serverId);
   return (
       <Link href="/" title="Change Server">
           <div className="flex justify-center items-center text-white">

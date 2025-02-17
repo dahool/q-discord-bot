@@ -1,9 +1,9 @@
-import { fetchServers } from "@/app/services/services";
 import { ListGroup } from "flowbite-react";
+import { listServers } from "@/lib/server/api";
 import Image from "next/image";
 
 export default async function ServerList() {
-    const servers = await fetchServers();
+    const servers = await listServers();
     return (
         <div className="flex w-full">
             <ListGroup className="w-full">

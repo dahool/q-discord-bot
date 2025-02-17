@@ -1,7 +1,7 @@
 "use server"
 import { z } from 'zod';
-import ServerApi from './api';
-import { signOut } from 'next-auth/react';
+import { deleteEvent, updateEvent } from '@/lib/server/api';
+import { auth } from '@/auth';
 
 const FormSchema = z.object({
     zone: z.string().nonempty(),
@@ -17,7 +17,10 @@ export interface ServerAction {
     status?: boolean;
 }
 
-const serverApi = new ServerApi();
+export async function fetchUser(): Promise<any> {
+  const session = await auth();
+  return session?.user;
+}
 
 export async function saveEvent(serverId: string, eventId: string | undefined, formData: any): Promise<ServerAction> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -30,7 +33,7 @@ export async function saveEvent(serverId: string, eventId: string | undefined, f
         }
     }
     try {
-        return await serverApi.updateEvent(serverId, eventId, formData);
+        return await updateEvent(serverId, formData, eventId);
     } catch (e: unknown) {
         console.log(e);
         let message = 'Error';
@@ -46,7 +49,7 @@ export async function saveEvent(serverId: string, eventId: string | undefined, f
 
 export async function removeEvent(eventId: string) {
     try {
-        return await serverApi.deleteEvent(eventId);
+        return await deleteEvent(eventId);
     } catch (e: unknown) {
         console.log(e);
         let message = 'Error';
@@ -58,25 +61,3 @@ export async function removeEvent(eventId: string) {
         return {status: false, message: message}
     }
 }
-
-/*
-    @Post("newEvent/:id")
-    saveNewEvent(@Param("id") id: string, @Body() payload: {[key:string]: any}, @Res() res: Response) {
-        const zone = Territory.findZonesByName(payload.zone);
-        if (zone.length > 0) {
-            TerritoryEvents.createNewEvent(id, zone[0], {
-                title: payload.title,
-                recurrent: payload.recurrent,
-                ping: payload.ping,
-                nextDt: payload.next
-            }).then(e => {
-                res.send({status: true})
-            }).catch(e => {
-                logger.error(e);
-                res.send({status: false, error: e});
-            })
-        } else {
-            res.send({status: false, error: "Zone " + payload.zone + " not found."});
-        }
-    }
-*/
