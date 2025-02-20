@@ -110,7 +110,7 @@ export class ApiController {
                 },
                 error: (e) => {
                     logger.error(e);
-                    res.send({});
+                    res.send([]);
                 }
             });
     }
@@ -128,7 +128,7 @@ export class ApiController {
                             icon: guild.iconURL({size: 128, format: 'webp'})
                         })
                     } else {
-                        res.status(404).send("Not found");
+                        res.sendStatus(404)
                     }
                 },
                 error: (e) => {

@@ -1,7 +1,8 @@
 'use server'
-import { EventSchedule, Role, Server, Zone } from "@/app/models";
+import { EventSchedule, Role, Server, Zone } from "@/app/models"
 import { auth } from "@/auth"
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance } from "axios"
+import { API_ROOT } from "@/app/env"
 
 export interface ApiResponse {
     status: boolean;
@@ -14,7 +15,7 @@ export interface ApiFetchError {
 }
 
 const axiosClient: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:3001/api/',
+    baseURL: `${API_ROOT}/api/`,
     headers: {'Content-Type': 'application/json'},
     responseType: 'json'
 })
@@ -32,13 +33,14 @@ function handle_error(error: any) {
 async function _request(method: "post" | "put" | "get" | "delete", url: string, payload?: any): Promise<any> {
     const session = await auth();
     try {
-        return axiosClient.request({url: url, method: method, data: payload, headers: {Authorization: `Bearer ${session?.access_token}`}})
+        const response = await axiosClient.request({url: url, method: method, data: payload, headers: {Authorization: `Bearer ${session?.access_token}`}})
+        return response
     } catch (error: any) {
         handle_error(error)
     }
 }
 
-async function _get(url: string): Promise<any> {
+export async function _get(url: string): Promise<any> {
     return _request('get', url)
 }
 

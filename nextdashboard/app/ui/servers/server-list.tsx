@@ -3,7 +3,9 @@ import { listServers } from "@/lib/server/api";
 import Image from "next/image";
 
 export default async function ServerList() {
-    const servers = await listServers();
+    const servers = await listServers()
+    if (!servers) return ServerListSkeleton()
+    console.log(servers)
     return (
         <div className="flex w-full">
             <ListGroup className="w-full">

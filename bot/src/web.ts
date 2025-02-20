@@ -1,13 +1,9 @@
 import "reflect-metadata";
 import { environment } from "./env/environment";
 
-import MongoStore from "connect-mongo";
-import cookieParser from "cookie-parser";
 import { AppRouter } from 'decorators-express';
 import express from "express";
 import sessions from "express-session";
-import favicon from "serve-favicon";
-import cors from "cors";
 import { logger } from "./logging/logger";
 import { ApiController, AuthController, BotController, TokenValidationMiddleware } from "./router";
 
