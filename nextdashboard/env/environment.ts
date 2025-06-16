@@ -4,11 +4,12 @@ export const environment = {
         name: 'Q Dashboard'
     },
     database: {
-        url: process.env.DBCONN
+        url: process.env.DBCONN,
+        at_collection: 'iron_at'
     },
     url: {
         calendar: process.env.CALENDAR_URL,
-        dashboard: process.env.DASHBOARD_URL  
+        dashboard: process.env.DASHBOARD_URL
     },
     discord: {
         token: process.env.Q_TOKEN,
@@ -38,7 +39,7 @@ export const environment = {
         token: process.env.LOGGING_TOKEN,
         logLevel: process.env.LOGGING_LEVEL || 'debug',
         port: process.env.LOGGING_PORT || '0',
-        system: process.env.LOGGING_SYSTEM || 'localhost'        
+        system: process.env.LOGGING_SYSTEM || 'localhost'
     },
     translator: {
         endpoint: process.env.TRANSLATOR_ENDPOINT || 'https://api.cognitive.microsofttranslator.com/',

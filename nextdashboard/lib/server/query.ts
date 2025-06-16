@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { EventSchedule, Role, Server, Zone } from "../../app/models";
 import { ApiResponse, deleteEvent, getServer, listEvents, listRoles, listServers, listZones, updateEvent } from '@/lib/server/api';
+import { RankEntry, retrieveRanks } from './db'
+import { DateTime } from 'luxon'
 
 export const serverQuery = createApi({
     reducerPath: 'serverApi',
@@ -135,5 +137,24 @@ export const eventsQuery = createApi({
     })
 })
 
+export const ranksQuery = createApi({
+    reducerPath: 'ranksApi',
+    baseQuery: fetchBaseQuery({ baseUrl: '/' }),
+    tagTypes: ['Ranks'],
+    endpoints: (build) => ({
+        getRanks: build.query<RankEntry[] | null, string>({
+            queryFn: async(date) => {
+                try {
+                    return {data: await retrieveRanks(date) };
+                } catch (e: any) {
+                    console.error(e);
+                    return {data: null}
+                }
+            }
+        })
+    })
+})
+
 export const { useGetZonesQuery, useGetRolesQuery, useGetServersQuery, useGetServerQuery } = serverQuery
 export const { useGetEventsQuery, useDeleteEventMutation, useUpdateEventMutation } = eventsQuery
+export const { useGetRanksQuery } = ranksQuery
