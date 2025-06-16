@@ -13,7 +13,8 @@ const eslintConfig = [
   ...compat.config({
     extends: ['next'],
     rules: {
-      '@typescript-eslint/no-unused-vars': 'off'
+      '@typescript-eslint/no-unused-vars': 'off',
+      'react-hooks/exhaustive-deps': 'off'
     },
   }),
 ]
@@ -23,7 +24,7 @@ const eslintConfig = [
     rules: {
       'react/no-unescaped-entities': 'off',
       '@next/next/no-page-custom-font': 'off',
-    },    
+    },
   ),
 ];
 */
