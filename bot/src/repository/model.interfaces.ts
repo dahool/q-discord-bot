@@ -13,7 +13,8 @@ export interface Config extends Document {
         territory?: string,
         scheduledEvents?: string,
         dailyTerritory?: string,
-        invitesChannel?: string
+        invitesChannel?: string,
+        contactInfo?: string
     },
     token?: string,
     allianceTag?: string,
@@ -124,7 +125,8 @@ export interface Member extends Document {
     join?: Date,
     lastSeen?: Date,
     left?: Date,
-    alias: string[]
+    alias: string[],
+    contactInfo?: string
 }
 
 export interface TemporalRoles extends Document {

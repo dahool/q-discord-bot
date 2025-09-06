@@ -42,7 +42,7 @@ export class RoleDeleteListener implements DiscordEventListener {
 
     async onEvent(client: Client, role: Role): Promise<any> {
         logger.debug("Deleted role %s", role.name);
-        return LocalGuildRoleModel.findOneAndRemove({guild: role.guild.id, roleId: role.id }).exec();
+        return LocalGuildRoleModel.findOneAndDelete({guild: role.guild.id, roleId: role.id }).exec();
     }
     
 }
