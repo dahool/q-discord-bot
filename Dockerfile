@@ -12,7 +12,7 @@ RUN npm install -g pnpm@9
 COPY . /usr/build
 
 # build dashboard
-WORKDIR /usr/build/nextdashboard
+WORKDIR /usr/build/dashboard
 RUN pnpm install --frozen-lockfile \
     && pnpm build
 
@@ -23,8 +23,7 @@ RUN pnpm install --frozen-lockfile \
     && pnpm prune --prod
 
 # prepare for distribution
-RUN cp -R /usr/build/bot/public /usr/build/dist/ \
-    && cp /usr/build/pm/* /usr/build/dist
+RUN cp -R /usr/build/bot/public /usr/build/dist
 
 # server
 FROM node:22-alpine
@@ -41,15 +40,10 @@ RUN mkdir /usr/app \
 
 WORKDIR /usr/app
 
-COPY --from=build --chown=appuser:appuser /usr/build/nextdashboard/public ./public
-COPY --from=build --chown=appuser:appuser /usr/build/nextdashboard/.next/standalone ./
-COPY --from=build --chown=appuser:appuser /usr/build/nextdashboard/.next/static ./.next/static
-
 COPY --from=build --chown=appuser:appuser /usr/build/pm /usr/app
 COPY --from=build --chown=appuser:appuser /usr/build/dist /usr/app/bot
+COPY --from=build --chown=appuser:appuser /usr/build/bot/static /usr/app/bot/static
 COPY --from=build --chown=appuser:appuser /usr/build/bot/node_modules /usr/app/bot/node_modules
-
-RUN chmod +x ./entrypoint.sh
 
 USER appuser
 

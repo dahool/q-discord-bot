@@ -81,6 +81,20 @@ export class AuthController {
         }
     }
 
+    @Post("/logout")
+    logout(@Req() req: Request, @Res() res: Response) {
+       req.session.destroy((err) => {
+            if (err) {
+            console.error("Error destroying session:", err);
+            return res.status(500).json({ message: "Logout failed" });
+            }
+            res.clearCookie("connect.sid", {
+                path: "/", 
+                sameSite: "strict"
+            });
+            return res.status(200).json({ message: "Logged out" });
+       })
+    }    
 }
 
 @Controller("/api")
@@ -90,6 +104,24 @@ export class ApiController {
     isGuildOwner(guild: OAuthGuild): boolean {
         const permissions = new PermissionsBitField(guild.permissions);
         return guild.isOwner || permissions.any([PermissionsBitField.Flags.Administrator, PermissionsBitField.Flags.ManageGuild]);
+    }
+
+    @Get("/user")
+    getUser(@Req() req: Request, @Res() res: Response) {
+        getOrCache('user'+req.session.token?.accessToken, oClient.getUser(req.session.token!))
+            .subscribe({
+                next: (user: OAuthUser) => {
+                    logger.debug("%O", user);
+                    res.send({
+                        username: user.username,
+                        icon: user.avatarURL({size: 128, format: 'webp'})
+                    })
+                },
+                error: (e) => {
+                    logger.error(e);
+                    res.send({});
+                }
+            });
     }
 
     @Get("/servers")
@@ -344,7 +376,7 @@ export class ApiController {
     }
 
 }
-/*
+
 async function validateOrRefreshToken(req: Request): Promise<boolean> {
     return new Promise((resolve) => {
         if (req.session?.token) {
@@ -369,17 +401,23 @@ async function validateOrRefreshToken(req: Request): Promise<boolean> {
         }
     })
 }
-*/
 
 export function TokenValidationMiddleware(req: Request, res: Response, next: NextFunction) {
-    console.log(req.headers);
-    const authToken = (req.headers.authorization || '').split("Bearer ").at(1);
-    if (!authToken) {
-        res.send(403);
-    } else {
-        console.log('Got token %s', authToken);
-        console.log(req.originalUrl);
-        req.session.token = {accessToken: authToken};
-        next();
-    }
+    validateOrRefreshToken(req).then((s) => {
+        if (!s) {
+            console.log(req.path);
+            console.log(req.url);
+            res.format({
+                html: function() {
+                    res.redirect(OAUTH_REDIRECT_URL);
+                },
+                json: function() {
+                    res.status(403);
+                    res.send({redirect: OAUTH_REDIRECT_URL});
+                }
+            })
+        } else {
+            next();
+        }
+    })
 }

@@ -1,8 +1,0 @@
-:80 {
-    handle /bot/* {
-        reverse_proxy http://localhost:3001
-    }
-    handle {
-        reverse_proxy http://localhost:3000
-    }
-}

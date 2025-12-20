@@ -1,0 +1,50 @@
+{
+  "name": "dashboard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dahool/react-tailwindcss-select": "github:dahool/react-tailwindcss-select",
+    "@generouted/react-router": "^1.20.0",
+    "@reduxjs/toolkit": "^2.5.1",
+    "clsx": "^2.1.1",
+    "dotenv": "^16.4.7",
+    "flowbite-react": "^0.10.2",
+    "luxon": "^3.5.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.4.0",
+    "react-lazy-load-image-component": "^1.6.3",
+    "react-redux": "^9.2.0",
+    "react-router": "^7.10.1",
+    "react-toastify": "^11.0.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-lazy-load-image-component": "^1.6.5",
+    "@vitejs/plugin-react": "^5.1.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "packageManager": "pnpm@9.15.9+sha512.68046141893c66fad01c079231128e9afb89ef87e2691d69e4d40eee228988295fd4682181bae55b58418c3a253bde65a505ec7c5f9403ece5cc3cd37dcf2531"
+}

@@ -84,7 +84,9 @@ export class TerritoryEventList implements DiscordCommand {
 				'TOKEN': encodeURIComponent(guildConfig.token),
 				'ID': encodeURIComponent(interaction.guildId!)
 			}
-			url = createURLwithParameters(environment.url.calendar!, params);
+			if (environment.url.calendar) {
+				url = createURLwithParameters(environment.url.calendar, params);
+			}
 		}
 	
 		const msgEmbed = new EmbedBuilder()

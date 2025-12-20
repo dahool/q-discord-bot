@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #222;
+  --foreground: #ffffff;
+  --flowbite-datepicker-ring-color: #3b82f6;
+}
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Inter", sans-serif;
+}
+.card-color {
+  color: var(--background);
+}
+
+/* event list */
+.event_date {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}

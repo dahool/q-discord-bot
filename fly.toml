@@ -16,7 +16,7 @@ kill_timeout = "10s"
   LOGGING_MES = "PROD"
   NAME = "QBOT"
   NODE_ENV = "production"
-  PORT = "3000"
+  WEB_PORT = "3000"
   TZ = "UTC"
   ZONE = "America/Argentina/Buenos_Aires"
 
