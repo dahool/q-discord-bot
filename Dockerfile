@@ -3,7 +3,7 @@ FROM node:22 AS build
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@9 --activate
 
 # create build directory and copy everything
 COPY . /usr/build
