@@ -3,10 +3,9 @@ FROM node:22 AS build
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV NEXT_TELEMETRY_DISABLED=1
 
-#RUN corepack enable
-RUN npm install -g pnpm@9
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN corepack enable && corepack prepare pnpm@9 --activate
 
 # create build directory and copy everything
 COPY . /usr/build
