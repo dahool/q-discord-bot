@@ -1,0 +1,488 @@
+[
+	{
+		"zone": "Framtid",
+		"type": 1,
+		"weekday": 5,
+		"time": "1700",
+		"particle": "Quantum",
+		"rss": ["iso2", "tritanium"],
+		"paths": ["Innlasn","Hrojost","Nujord"]
+	},
+	{
+		"zone": "Hrojost",
+		"type": 2,
+		"weekday": 4,
+		"time": "2200",
+		"particle": "Quantum",
+		"rss": ["iso3", "gas3"],
+		"paths": ["Nyrheimur","Framtid","Nujord","Eldur"]
+	},
+	{
+		"zone": "Nujord",
+		"type": 1,
+		"weekday": 3,
+		"time": "2200",
+		"particle": "Phantom",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Nyrheimur","Framtid","Duportas"]
+	},
+	{
+		"zone": "Nyrheimur",
+		"type": 3,
+		"weekday": 6,
+		"time": "2200",
+		"particle": "Quantum",
+		"rss": ["gas3", "gas4"],
+		"paths": ["Hrojost","Vantar","Eldur"]
+	},	
+	{
+		"zone": "Innlasn",
+		"type": 1,
+		"weekday": 7,
+		"time": "1800",
+		"particle": "Quantum",
+		"rss": ["iso2", "dilithium"],
+		"paths": ["Framtid","Vantar","Tefkari"]		
+	},
+	{
+		"zone": "Vantar",
+		"type": 2,
+		"weekday": 4,
+		"time": "1700",
+		"particle": "Quantum",
+		"rss": ["iso3", "gas3"],
+		"paths": ["Innlasn","Nyrheimur","Tefkari","Klefaski"]
+	},
+	{
+		"zone": "Klefaski",
+		"type": 1,
+		"weekday": 5,
+		"time": "2300",
+		"particle": "Quantum",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Vantar","Eldur","Helvi"]
+	},	
+	{
+		"zone": "Tefkari",
+		"type": 1,
+		"weekday": 3,
+		"time": "2100",
+		"particle": "Quantum",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Zhian","Innlasn","Vantar"]
+	},
+	{
+		"zone": "Zhian",
+		"type": 2,
+		"weekday": 1,
+		"time": "1800",
+		"particle": "Surax",
+		"rss": ["iso3", "gas3"],
+		"paths": ["Tefkari","Helvi","Triss","Mak'ala"]
+	},	
+	{
+		"zone": "Helvi",
+		"type": 1,
+		"weekday": 7,
+		"time": "2000",
+		"particle": "Quantum",
+		"rss": ["iso2", "parsteel"],
+		"paths": ["Lenara","Klefaski","Zhian"]		
+	},
+	{
+		"zone": "Lenara",
+		"type": 1,
+		"weekday": 4,
+		"time": "0100",
+		"particle": "Surax",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Helvi","Triss","Abilakk"]
+	},	
+	{
+		"zone": "Triss",
+		"type": 2,
+		"weekday": 4,
+		"time": "2000",
+		"particle": "Surax",
+		"rss": ["iso3", "gas3"],
+		"paths": ["Zhian","Lenara","Tigan","Mak'ala"]
+	},
+	{
+		"zone": "Mak'ala",
+		"type": 3,
+		"weekday": 6,
+		"time": "2000",
+		"particle": "Surax",
+		"rss": ["gas3", "gas4"],
+		"paths": ["Triss","Zhian","Hoobishan"]		
+	},	
+	{
+		"zone": "Vemira",
+		"type": 1,
+		"weekday": 7,
+		"time": "1900",
+		"particle": "Surax",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Tigan","Tezera","Hoobishan"]		
+	},
+	{
+		"zone": "Hoobishan",
+		"type": 2,
+		"weekday": 1,
+		"time": "1700",
+		"particle": "Surax",
+		"rss": ["iso3", "gas3"],
+		"paths": ["Mak'ala","Vemira","Ezla","Perim"]				
+	},
+	{
+		"zone": "Perim",
+		"type": 1,
+		"weekday": 3,
+		"time": "1800",
+		"particle": "Surax",
+		"rss": ["iso2", "parsteel"],
+		"paths": ["Hoobishan","Temeri","Ezla"]
+	},	
+	{
+		"zone": "Temeri",
+		"type": 1,
+		"weekday": 7,
+		"time": "2200",
+		"particle": "Phantom",
+		"rss": ["iso2", "dilithium"],
+		"paths": ["Adia","Perim","Ezla"]
+	},		
+	{
+		"zone": "Ezla",
+		"type": 1,
+		"weekday": 5,
+		"time": "2000",
+		"particle": "Surax",
+		"rss": ["iso2", "tritanium"],
+		"paths": ["Hoobishan","Temeri","Perim"]
+	},	
+	{
+		"zone": "Adia",
+		"type": 1,
+		"weekday": 3,
+		"time": "1600",
+		"particle": "Phantom",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Tezera","Crios"]		
+	},
+	{
+		"zone": "Tezera",
+		"type": 2,
+		"weekday": 4,
+		"time": "2300",
+		"particle": "Phantom",
+		"rss": ["iso3", "crystal3"],
+		"paths": ["Adia","Vemira","Tigan","Tholus"]		
+	},
+	{
+		"zone": "Tigan",
+		"type": 1,
+		"weekday": 6,
+		"time": "0100",
+		"particle": "Surax",
+		"rss": ["iso2", "dilithium"],
+		"paths": ["Tezera","Vemira","Triss"]		
+	},
+	{
+		"zone": "Tholus",
+		"type": 3,
+		"weekday": 7,
+		"time": "0000",
+		"particle": "Phantom",
+		"rss": ["crystal3", "crystal4"],
+		"paths": ["Tezera","Abilakk","Anzat"]		
+	},	
+	{
+		"zone": "Abilakk",
+		"type": 2,
+		"weekday": 2,
+		"time": "0100",
+		"particle": "Phantom",
+		"rss": ["crystal3", "iso3"],
+		"paths": ["Tholus","Lenara","Anzat"]		
+	},
+	{
+		"zone": "Thosz",
+		"type": 1,
+		"weekday": 4,
+		"time": "0000",
+		"particle": "Phantom",
+		"rss": ["iso2", "parsteel"],
+		"paths": ["Aylus","Abilakk","Eldur"]				
+	},
+	{
+		"zone": "Eldur",
+		"type": 2,
+		"weekday": 2,
+		"time": "0000",
+		"particle": "Quantum",
+		"rss": ["iso3", "gas3"],
+		"paths": ["Thosz","Klefaski","Hrojost","Nyrheimur"]						
+	},	
+	{
+		"zone": "Aylus",
+		"type": 1,
+		"weekday": 1,
+		"time": "0100",
+		"particle": "Phantom",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Thosz","Duportas","Tazolka"]								
+	},
+	{
+		"zone": "Duportas",
+		"type": 2,
+		"weekday": 1,
+		"time": "2300",
+		"particle": "Phantom",
+		"rss": ["iso3", "crystal3"],
+		"paths": ["Nujord","Aylus","Ber'tho","Brellan"]										
+	},
+	{
+		"zone": "Brellan",
+		"type": 3,
+		"weekday": 7,
+		"time": "0100",
+		"particle": "Phantom",
+		"rss": ["crystal3", "crystal4"],
+		"paths": ["Duportas","Bimasa","Ber'tho"]		
+	},
+	{
+		"zone": "Ber'Tho",
+		"type": 2,
+		"weekday": 5,
+		"time": "0100",
+		"particle": "Phantom",
+		"rss": ["iso3", "crystal3"],
+		"paths": ["Brellan","Duportas","Zamaro","Tazolka"]				
+	},
+	{
+		"zone": "Tazolka",
+		"type": 1,
+		"weekday": 6,
+		"time": "0000",
+		"particle": "Phantom",
+		"rss": ["iso2", "tritanium"],
+		"paths": ["Aylus","Ber'Tho","Zamaro","Anzat"]		
+	},
+	{
+		"zone": "Zamaro",
+		"type": 1,
+		"weekday": 3,
+		"time": "2300",
+		"particle": "Phantom",
+		"rss": ["iso2", "dilithium"],
+		"paths": ["Bimasa","Ber'Tho","Saldeti"]				
+	},	
+	{
+		"zone": "Anzat",
+		"type": 2,
+		"weekday": 5,
+		"time": "0000",
+		"particle": "Phantom",
+		"rss": ["iso3", "crystal3"],
+		"paths": ["Tazolka","Abilakk","Tholus","Parturi"]						
+	},
+	{
+		"zone": "Parturi",
+		"type": 1,
+		"weekday": 1,
+		"time": "0000",
+		"particle": "Surax",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Anzat","Bolari","Asiti"]		
+	},	
+	{
+		"zone": "Asiti",
+		"type": 1,
+		"weekday": 3,
+		"time": "2000",
+		"particle": "Surax",
+		"rss": ["iso2", "dilithium"],
+		"paths": ["Parturi","Kolava","Qeyma"]				
+	},	
+	{
+		"zone": "Qeyma",
+		"type": 1,
+		"weekday": 7,
+		"time": "1600",
+		"particle": "Surax",
+		"rss": ["iso2", "tritanium"],
+		"paths": ["Asiti","Kolava","Crios"]						
+	},
+	{
+		"zone": "Crios",
+		"type": 2,
+		"weekday": 1,
+		"time": "1900",
+		"particle": "Quantum",
+		"rss": ["iso3", "ore3"],
+		"paths": ["Qeyma","Adia","Corva","Stilhe"]								
+	},
+	{
+		"zone": "Corva",
+		"type": 3,
+		"weekday": 6,
+		"time": "2100",
+		"particle": "Quantum",
+		"rss": ["ore3", "ore4"],
+		"paths": ["Crios","Roshar","Avansa"]										
+	},
+	{
+		"zone": "Stilhe",
+		"type": 1,
+		"weekday": 7,
+		"time": "2300",
+		"particle": "Surax",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Crios","Roshar","Burran"]		
+	},	
+	{
+		"zone": "Kolava",
+		"type": 1,
+		"weekday": 5,
+		"time": "2100",
+		"particle": "Surax",
+		"rss": ["iso2", "parsteel"],
+		"paths": ["Bolari","Qeyma","Asiti"]				
+	},
+	{
+		"zone": "Bolari",
+		"type": 2,
+		"weekday": 1,
+		"time": "2000",
+		"particle": "Surax",
+		"rss": ["iso3", "ore3"],
+		"paths": ["Parturi","Kolava","Brijac","Barasa"]						
+	},	
+	{
+		"zone": "Saldeti",
+		"type": 1,
+		"weekday": 5,
+		"time": "1900",
+		"particle": "Phantom",
+		"rss": ["iso2", "parsteel"],
+		"paths": ["Gelida","Zamaro","Brijac"]		
+	},
+	{
+		"zone": "Gelida",
+		"type": 1,
+		"weekday": 7,
+		"time": "1700",
+		"particle": "Phantom",
+		"rss": ["iso2", "tritanium"],
+		"paths": ["Saldeti","Beku","Bimasa"]		
+	},
+	{
+		"zone": "Bimasa",
+		"type": 2,
+		"weekday": 1,
+		"time": "2200",
+		"particle": "Phantom",
+		"rss": ["crystal3", "iso3"],
+		"paths": ["Brellan","Beku","Zamaro","Gelida"]		
+	},	
+	{
+		"zone": "Beku",
+		"type": 1,
+		"weekday": 5,
+		"time": "2200",
+		"particle": "Phantom",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Bimasa","Brijac","Gelida"]		
+	},	
+	{
+		"zone": "Brijac",
+		"type": 2,
+		"weekday": 4,
+		"time": "2100",
+		"particle": "Surax",
+		"rss": ["iso3", "ore3"],
+		"paths": ["Beku","Saldeti","Bolari","Barasa"]		
+	},	
+	{
+		"zone": "Barasa",
+		"type": 3,
+		"weekday": 6,
+		"time": "2300",
+		"particle": "Surax",
+		"rss": ["ore3", "ore4"],
+		"paths": ["Brijac","Bolari","Burran"]		
+	},	
+	{
+		"zone": "Burran",
+		"type": 2,
+		"weekday": 4,
+		"time": "1900",
+		"particle": "Surax",
+		"rss": ["iso3", "ore3"],
+		"paths": ["Barasa","Stilhe","Thaylen","Comst"]				
+	},	
+	{
+		"zone": "Roshar",
+		"type": 2,
+		"weekday": 1,
+		"time": "2100",
+		"particle": "Quantum",
+		"rss": ["iso3", "ore3"],
+		"paths": ["Corva","Stilhe","Thaylen","Avansa"]		
+	},	
+	{
+		"zone": "Thaylen",
+		"type": 1,
+		"weekday": 3,
+		"time": "1900",
+		"particle": "Quantum",
+		"rss": ["iso2", "dilithium"],
+		"paths": ["Burran","Roshar","Comst"]		
+	},
+	{
+		"zone": "Comst",
+		"type": 1,
+		"weekday": 5,
+		"time": "1600",
+		"particle": "Quantum",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Burran","Thaylen","Aonad"]				
+	},
+	{
+		"zone": "Aonad",
+		"type": 1,
+		"weekday": 7,
+		"time": "2100",
+		"particle": "Quantum",
+		"rss": ["iso2", "tritanium"],
+		"paths": ["Comst","Ruhe","Otima"]		
+	},	
+	{
+		"zone": "Ruhe",
+		"type": 1,
+		"weekday": 5,
+		"time": "1800",
+		"particle": "Quantum",
+		"rss": ["iso1", "iso2"],
+		"paths": ["Aonad","Avansa","Otima"]				
+	},
+	{
+		"zone": "Avansa",
+		"type": 2,
+		"weekday": 4,
+		"time": "1800",
+		"particle": "Quantum",
+		"rss": ["iso3", "ore3"],
+		"paths": ["Ruhe","Roshar","Otima","Corva"]		
+	},
+	{
+		"zone": "Otima",
+		"type": 1,
+		"weekday": 3,
+		"time": "1700",
+		"particle": "Quantum",
+		"rss": ["iso2", "parsteel"],
+		"paths": ["Avansa","Ruhe","Aonad"]		
+	}	
+]

@@ -1,13 +1,9 @@
 import "reflect-metadata";
 import { environment } from "./env/environment";
 
-import MongoStore from "connect-mongo";
-import cookieParser from "cookie-parser";
 import { AppRouter } from 'decorators-express';
 import express from "express";
 import sessions from "express-session";
-import favicon from "serve-favicon";
-import cors from "cors";
 import { logger } from "./logging/logger";
 import { ApiController, AuthController, BotController, TokenValidationMiddleware } from "./router";
 
@@ -21,11 +17,11 @@ const views = [BotController, AuthController, ApiController]; // requerido para 
 function setupExpress(mongoClient: any) {
 
     app.use(express.json());
-    app.use(cors())
+    /*app.use(cors())
     app.use(favicon('public/favicon.ico'));
     app.use(express.static('static'))
-    app.use(cookieParser());
-    app.use(sessions({
+    app.use(cookieParser());*/
+    /*app.use(sessions({
         secret: environment.api.sessionSecret!,
         cookie: { maxAge: oneDayInMillis, sameSite: 'strict' },
         saveUninitialized: false, // don't create session until something stored
@@ -34,15 +30,20 @@ function setupExpress(mongoClient: any) {
             client: mongoClient,
             touchAfter: 720 * 3600
         })
+    }));*/
+    app.use(sessions({
+        secret: environment.api.sessionSecret!,
+        saveUninitialized: false, // don't create session until something stored
+        resave: false, //don't save session if unmodified
     }));
     app.use("/api", TokenValidationMiddleware);
     app.use(AppRouter.getInstance());
-
+/*
     app.get('*', function(req, res){
         res.redirect("index.html");
         //res.sendFile(__dirname + "/../static/index.html");
     });
-
+*/
 }
 
 

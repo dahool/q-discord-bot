@@ -16,7 +16,7 @@ async function runTasks(funcList: any): Promise<void> {
     }
 }
 
-@Controller("/")
+@Controller("/bot")
 export class BotController {
 
     // deprecated
@@ -38,28 +38,16 @@ export class BotController {
 
     @Get("/cron_daily")
     dailyCron(@Res() res: Response) {
-        /*Promise.all(DAILY_TASKS.map(f => f())).then((r) => {
-            res.send("OK");
-        }).catch((e) => {
-            logger.error(e);
-            res.send(e);
-        });*/
         runTasks(DAILY_TASKS).then(() => {
             res.send("OK");
         }).catch((e) => {
             logger.error(e);
             res.send(e);
-        });        
+        });
     }
 
     @Get("/cron_midday")
     midDailyCron(@Res() res: Response) {
-        /*Promise.all(MID_DAILY_TASKS.map(f => f())).then((r) => {
-            res.send("OK");
-        }).catch((e) => {
-            logger.error(e);
-            res.send(e);
-        });*/
         runTasks(MID_DAILY_TASKS).then(() => {
             res.send("OK");
         }).catch((e) => {
@@ -68,23 +56,16 @@ export class BotController {
         });
     }
 
-
     @Get("/cron_freq")
     freqCron(@Res() res: Response) {
-        /*Promise.all(FREQ_TASKS.map(f => f())).then(() => {
-            res.send("OK");
-        }).catch((e) => {
-            logger.error(e);
-            res.send(e);
-        });*/
         runTasks(FREQ_TASKS).then(() => {
             res.send("OK");
         }).catch((e) => {
             logger.error(e);
             res.send(e);
         });
-    }    
-    
+    }
+
     // deprecated
     @Get("/crawler")
     crawler(@Res() res: Response) {
@@ -96,7 +77,7 @@ export class BotController {
             res.send(e);
         });
     }
-    
+
     @Get("/calendar")
     calendarServer(@Req() req: Request, @Res() res: Response) {
         serveCalendar(req, res);
@@ -106,17 +87,17 @@ export class BotController {
     @Get("/load")
     loadCalendar(@Req() req: Request, @Res() res: Response) {
         loadCalendarEvents().then(() => res.send("OK"));
-    }    
+    }
 
     @Get("/threadOpener")
     threadOpener(@Res() res: Response) {
         logger.debug("threadOpener");
         openAllThreads().then(() => res.send("OK"));
     }
- 
+
     @Post("publish")
     async publish(@Body() payload: {[key:string]: any}, @Res() res: Response) {
-        
+
         console.log(payload);
 
         const client = container.get(TYPES.Bot).client as Client;
@@ -132,7 +113,7 @@ export class BotController {
                         .then(() => res.send("OK"))
                         .catch(e => res.send(e));
                 } else {
-                    res.send("NOK");        
+                    res.send("NOK");
                 }
             } else {
                 (channel as GuildTextBasedChannel).send({content: payload.message})
@@ -144,8 +125,5 @@ export class BotController {
         }
 
     }
-
-
-    
 
 }

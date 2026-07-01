@@ -14,7 +14,8 @@ const ConfigSchema = new Schema<Config>({
         territory: String,
         scheduledEvents: String,
         dailyTerritory: String,
-        invitesChannel: String
+        invitesChannel: String,
+        contactInfo: String
     },
     token: String,
     allianceTag: String,
@@ -125,7 +126,8 @@ const GuildMemberSchema = new Schema<Member>({
     join: Date,
     lastSeen: Date,
     left: Date,
-    alias: [String]
+    alias: [String],
+    contactInfo: String
 }, { collection: 'guild_members'})
 
 const TemporalRolesSchema = new Schema<TemporalRoles>({
